@@ -1,4 +1,7 @@
 
+using BookingApp.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 namespace BookingApp.API
 {
     public class Program
@@ -8,6 +11,11 @@ namespace BookingApp.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration["DbConnectionString"]);
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
