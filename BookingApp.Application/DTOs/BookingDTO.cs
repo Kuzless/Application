@@ -1,6 +1,8 @@
-﻿namespace BookingApp.Domain.Entities
+﻿using BookingApp.Domain.Entities;
+
+namespace BookingApp.Application.DTOs
 {
-    public class Booking
+    public class BookingDTO
     {
         public int Id { get; set; }
         public int RoomId { get; set; }

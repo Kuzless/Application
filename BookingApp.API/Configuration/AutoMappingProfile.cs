@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+using BookingApp.Application.DTOs;
+using BookingApp.Domain.Entities;
 
 namespace BookingApp.API.Configuration
 {
@@ -6,7 +9,9 @@ namespace BookingApp.API.Configuration
     {
         public AutoMappingProfile()
         {
-            
+            // booking
+            CreateMap<CreateNewBookingCommand, Booking>();
+            CreateMap<Booking, BookingDTO>();
         }
     }
 }

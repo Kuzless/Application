@@ -1,6 +1,8 @@
-﻿namespace BookingApp.Domain.Interfaces
+﻿using BookingApp.Domain.Entities;
+
+namespace BookingApp.Domain.Interfaces
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IGenericRepository<Booking>
     {
     }
 }

@@ -1,4 +1,6 @@
-﻿using BookingApp.Domain.Interfaces;
+﻿using System.Reflection;
+using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+using BookingApp.Domain.Interfaces;
 using BookingApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,7 @@ namespace BookingApp.API.Configuration
             builder.Services.AddAutoMapper(typeof(AutoMappingProfile));
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssemblyContaining<Program>();
+                cfg.RegisterServicesFromAssembly(typeof(CreateNewBookingCommand).Assembly);
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
