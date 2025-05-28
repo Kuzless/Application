@@ -5,6 +5,8 @@ using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.DeleteBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
 using BookingApp.Application.CQRS.Booking.Queries.GetAllBookings;
+using BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit;
+using BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,16 +67,14 @@ namespace BookingApp.API.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> GetDataForNewBooking()
         {
-            // This endpoint is not implemented in the original code.
-            // You can implement it as needed, for example, to return data for editing bookings.
-            return Ok("Edit booking data endpoint is not implemented yet.");
+            var data = await _mediator.Send(new GetDataForNewBookingQuery());
+            return _apiResponseHandler.Handle(data);
         }
         [HttpGet("edit/{id}")]
-        public async Task<IActionResult> GetBookingForEdit()
+        public async Task<IActionResult> GetBookingForEdit(int id)
         {
-            // This endpoint is not implemented in the original code.
-            // You can implement it as needed, for example, to return data for editing bookings.
-            return Ok("Edit booking data endpoint is not implemented yet.");
+            var data = await _mediator.Send(new GetBookingForEditQuery { Id = id });
+            return _apiResponseHandler.Handle(data);
         }
     }
 }

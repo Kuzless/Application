@@ -7,9 +7,11 @@ namespace BookingApp.Infrastructure
     {
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<RoomType> Types { get; set; }
+        public DbSet<RoomType> RoomTypes { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
-        public DbSet<RoomTypeAmenity> TypeAmenties { get; set; }
+        public DbSet<RoomTypeAmenity> RoomTypeAmenties { get; set; }
+        public DbSet<RoomCapacity> RoomCapacities { get; set; }
+        public DbSet<RoomCapacityRoomType> RoomCapacityRoomTypes { get; set; }
         public DatabaseContext() : base() { }
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options){}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,6 +20,7 @@ namespace BookingApp.Infrastructure
 
             modelBuilder.Entity<RoomType>().HasIndex(t => t.Type).IsUnique();
             modelBuilder.Entity<Amenity>().HasIndex(a => a.Name).IsUnique();
+            modelBuilder.Entity<RoomCapacity>().HasIndex(c => c.Capacity).IsUnique();
 
             modelBuilder.Entity<RoomTypeAmenity>().HasKey(ta => new { ta.RoomTypeId, ta.AmenityId });
             modelBuilder.Entity<RoomTypeAmenity>().HasOne(ta => ta.RoomType)
@@ -26,6 +29,14 @@ namespace BookingApp.Infrastructure
             modelBuilder.Entity<RoomTypeAmenity>().HasOne(ta => ta.Amenity)
                 .WithMany(a => a.RoomTypeAmenities)
                 .HasForeignKey(ta => ta.AmenityId);
+
+            modelBuilder.Entity<RoomCapacityRoomType>().HasKey(ct => new { ct.RoomCapacityId, ct.RoomTypeId });
+            modelBuilder.Entity<RoomCapacityRoomType>().HasOne(ct => ct.RoomCapacity)
+                .WithMany(c => c.RoomTypes)
+                .HasForeignKey(ct => ct.RoomCapacityId);
+            modelBuilder.Entity<RoomCapacityRoomType>().HasOne(ct => ct.RoomType)
+                .WithMany(t => t.RoomCapacities)
+                .HasForeignKey(ct => ct.RoomTypeId);
 
             // seed
 
@@ -50,6 +61,15 @@ namespace BookingApp.Infrastructure
                 new RoomCapacity { Id = 3, Capacity = 5 },
                 new RoomCapacity { Id = 4, Capacity = 10 },
                 new RoomCapacity { Id = 5, Capacity = 20 }
+            );
+
+            modelBuilder.Entity<RoomCapacityRoomType>().HasData(
+                new RoomCapacityRoomType { RoomCapacityId = 1, RoomTypeId = 2 },
+                new RoomCapacityRoomType { RoomCapacityId = 2, RoomTypeId = 2 },
+                new RoomCapacityRoomType { RoomCapacityId = 3, RoomTypeId = 2 },
+                new RoomCapacityRoomType { RoomCapacityId = 4, RoomTypeId = 2 },
+                new RoomCapacityRoomType { RoomCapacityId = 4, RoomTypeId = 3 },
+                new RoomCapacityRoomType { RoomCapacityId = 5, RoomTypeId = 3 }
             );
 
             modelBuilder.Entity<RoomTypeAmenity>().HasData(

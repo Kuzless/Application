@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250528144119_AddedEntityChangedNames")]
+    [Migration("20250528151157_AddedEntityChangedNames")]
     partial class AddedEntityChangedNames
     {
         /// <inheritdoc />
@@ -234,7 +234,10 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoomCapacity");
+                    b.HasIndex("Capacity")
+                        .IsUnique();
+
+                    b.ToTable("RoomCapacities");
 
                     b.HasData(
                         new
@@ -264,6 +267,53 @@ namespace BookingApp.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookingApp.Domain.Entities.RoomCapacityRoomType", b =>
+                {
+                    b.Property<int>("RoomCapacityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoomCapacityId", "RoomTypeId");
+
+                    b.HasIndex("RoomTypeId");
+
+                    b.ToTable("RoomCapacityRoomTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            RoomCapacityId = 4,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        });
+                });
+
             modelBuilder.Entity("BookingApp.Domain.Entities.RoomType", b =>
                 {
                     b.Property<int>("Id")
@@ -285,7 +335,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Type")
                         .IsUnique();
 
-                    b.ToTable("Types");
+                    b.ToTable("RoomTypes");
 
                     b.HasData(
                         new
@@ -320,7 +370,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("AmenityId");
 
-                    b.ToTable("TypeAmenties");
+                    b.ToTable("RoomTypeAmenties");
 
                     b.HasData(
                         new
@@ -408,6 +458,25 @@ namespace BookingApp.Infrastructure.Migrations
                     b.Navigation("RoomType");
                 });
 
+            modelBuilder.Entity("BookingApp.Domain.Entities.RoomCapacityRoomType", b =>
+                {
+                    b.HasOne("BookingApp.Domain.Entities.RoomCapacity", "RoomCapacity")
+                        .WithMany("RoomTypes")
+                        .HasForeignKey("RoomCapacityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookingApp.Domain.Entities.RoomType", "RoomType")
+                        .WithMany("RoomCapacities")
+                        .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoomCapacity");
+
+                    b.Navigation("RoomType");
+                });
+
             modelBuilder.Entity("BookingApp.Domain.Entities.RoomTypeAmenity", b =>
                 {
                     b.HasOne("BookingApp.Domain.Entities.Amenity", "Amenity")
@@ -439,11 +508,15 @@ namespace BookingApp.Infrastructure.Migrations
 
             modelBuilder.Entity("BookingApp.Domain.Entities.RoomCapacity", b =>
                 {
+                    b.Navigation("RoomTypes");
+
                     b.Navigation("Rooms");
                 });
 
             modelBuilder.Entity("BookingApp.Domain.Entities.RoomType", b =>
                 {
+                    b.Navigation("RoomCapacities");
+
                     b.Navigation("RoomTypeAmenities");
 
                     b.Navigation("Rooms");

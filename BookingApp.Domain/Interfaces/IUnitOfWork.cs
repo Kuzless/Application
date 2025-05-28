@@ -4,5 +4,6 @@
     {
         Task<int> SaveChangesAsync();
         IBookingRepository BookingRepository { get; }
+        IRoomTypeRepository RoomTypeRepository { get; }
     }
 }
