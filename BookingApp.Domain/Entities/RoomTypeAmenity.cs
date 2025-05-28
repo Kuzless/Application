@@ -1,9 +1,9 @@
 ﻿namespace BookingApp.Domain.Entities
 {
-    public class TypeAmenity
+    public class RoomTypeAmenity
     {
-        public int TypeId { get; set; }
-        public Type Type { get; set; }
+        public int RoomTypeId { get; set; }
+        public RoomType RoomType { get; set; }
         public int AmenityId { get; set; }
         public Amenity Amenity { get; set; }
     }

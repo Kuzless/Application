@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BookingApp.API.Interfaces;
+using BookingApp.API.Services;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.DeleteBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
@@ -12,18 +14,18 @@ namespace BookingApp.API.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private protected readonly IMediator _mediator;
-        private protected readonly IMapper _mapper;
-        public BookingController(IMapper mapper, IMediator mediator)
+        private readonly IMediator _mediator;
+        private readonly IApiResponseHandler _apiResponseHandler;
+        public BookingController(IMediator mediator, IApiResponseHandler apiResponseHandler)
         {
-            _mapper = mapper;
             _mediator = mediator;
+            _apiResponseHandler = apiResponseHandler;
         }
         [HttpGet]
         public async Task<IActionResult> GetBookings()
         {
             var bookings = await _mediator.Send(new GetAllBookingsQuery());
-            return Ok(bookings);
+            return _apiResponseHandler.Handle(bookings);
         }
 
         [HttpPost]
@@ -34,7 +36,7 @@ namespace BookingApp.API.Controllers
             {
                 return Ok(result.Message);
             }
-            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
+            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
         }
 
         [HttpPut]
@@ -45,7 +47,7 @@ namespace BookingApp.API.Controllers
             {
                 return Ok(result.Message);
             }
-            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
+            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
         }
 
         [HttpDelete("{id}")]
@@ -57,7 +59,22 @@ namespace BookingApp.API.Controllers
             {
                 return Ok(result.Message);
             }
-            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
+            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
+        }
+
+        [HttpGet("create")]
+        public async Task<IActionResult> GetDataForNewBooking()
+        {
+            // This endpoint is not implemented in the original code.
+            // You can implement it as needed, for example, to return data for editing bookings.
+            return Ok("Edit booking data endpoint is not implemented yet.");
+        }
+        [HttpGet("edit/{id}")]
+        public async Task<IActionResult> GetBookingForEdit()
+        {
+            // This endpoint is not implemented in the original code.
+            // You can implement it as needed, for example, to return data for editing bookings.
+            return Ok("Edit booking data endpoint is not implemented yet.");
         }
     }
 }

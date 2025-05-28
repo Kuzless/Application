@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookingApp.API.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BookingApp.API.Controllers
+namespace BookingApp.API.Services
 {
-    public static class ResponseErrorHandler
+    public class ApiResponseHandler : IApiResponseHandler
     {
-        public static IActionResult Handle (int errorCode, string message)
+        public IActionResult Handle (int errorCode, string message)
         {
             switch (errorCode)
             {
@@ -19,6 +20,11 @@ namespace BookingApp.API.Controllers
                 default:
                     return new ObjectResult(message) { StatusCode = 500 };
             }
+        }
+
+        public IActionResult Handle<T>(T data)
+        {
+            return new OkObjectResult(data);
         }
     }
 }

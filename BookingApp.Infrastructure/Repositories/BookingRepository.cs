@@ -6,9 +6,7 @@ namespace BookingApp.Infrastructure.Repositories
 {
     public class BookingRepository : GenericRepository<Booking>, IBookingRepository
     {
-        public BookingRepository(DatabaseContext context) : base(context)
-        {
-        }
+        public BookingRepository(DatabaseContext context) : base(context) { }
 
         public async Task<List<Booking>> GetRoomBookingsForTimePeriod(int roomId, DateTime start, DateTime end)
         {
