@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+using BookingApp.Application.CQRS.Booking.Commands.DeleteBooking;
+using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
 using BookingApp.Application.CQRS.Booking.Queries.GetAllBookings;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,11 +30,34 @@ namespace BookingApp.API.Controllers
         public async Task<IActionResult> CreateBooking([FromBody] CreateNewBookingCommand command)
         {
             var result = await _mediator.Send(command);
-            if (result)
+            if (result.IsSuccess)
             {
-                return Ok();
+                return Ok(result.Message);
             }
-            return BadRequest();
+            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateBooking([FromBody] UpdateBookingCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Message);
+            }
+            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            var command = new DeleteBookingCommand { Id = id };
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Message);
+            }
+            return ResponseErrorHandler.Handle(result.ErrorCode, result.Message);
         }
     }
 }

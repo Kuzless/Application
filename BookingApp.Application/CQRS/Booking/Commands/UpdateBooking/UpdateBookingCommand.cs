@@ -1,10 +1,11 @@
 ﻿using BookingApp.Application.DTOs;
 using MediatR;
 
-namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
+namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
 {
-    public class CreateNewBookingCommand : IRequest<OperationResult>
+    public class UpdateBookingCommand : IRequest<OperationResult>
     {
+        public int Id { get; set; }
         public int RoomId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }

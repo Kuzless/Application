@@ -2,7 +2,7 @@
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task SaveChangesAsync();
+        Task<int> SaveChangesAsync();
         IBookingRepository BookingRepository { get; }
     }
 }

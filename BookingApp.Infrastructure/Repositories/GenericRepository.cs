@@ -5,7 +5,7 @@ namespace BookingApp.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DatabaseContext _context;
+        private protected readonly DatabaseContext _context;
         public GenericRepository(DatabaseContext context)
         {
             _context = context;
@@ -21,9 +21,14 @@ namespace BookingApp.Infrastructure.Repositories
             _context.Set<T>().Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<List<T>> GetAll()
         {
             return await _context.Set<T>().ToListAsync();
+        }
+
+        public async Task<T> GetById<TKey>(TKey id)
+        {
+            return await _context.Set<T>().FindAsync(id);
         }
 
         public void Update(T entity)

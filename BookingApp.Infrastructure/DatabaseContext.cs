@@ -30,9 +30,9 @@ namespace BookingApp.Infrastructure
             // seed
 
             modelBuilder.Entity<Domain.Entities.Type>().HasData(
-                new Domain.Entities.Type { Id = 1, Name = "Open Space" },
-                new Domain.Entities.Type { Id = 2, Name = "Private Rooms" },
-                new Domain.Entities.Type { Id = 3, Name = "Meeting Rooms" }
+                new Domain.Entities.Type { Id = 1, Name = "Open Space", Description = "A vibrant shared area perfect for freelancers or small teams who enjoy a collaborative atmosphere. Choose any available desk and get to work with flexibility and ease." },
+                new Domain.Entities.Type { Id = 2, Name = "Private Rooms", Description = "Designed for productive meetings, workshops, or client presentations. Equipped with screens, whiteboards, and comfortable seating to keep your sessions running smoothly." },
+                new Domain.Entities.Type { Id = 3, Name = "Meeting Rooms", Description = "Ideal for focused work, video calls, or small team huddles. These fully enclosed rooms offer privacy and come in a variety of sizes to fit your needs." }
             );
 
             modelBuilder.Entity<Amenity>().HasData(

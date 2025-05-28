@@ -1,5 +1,6 @@
-﻿using System.Reflection;
-using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+﻿using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+using BookingApp.Application.Interfaces;
+using BookingApp.Application.Services.ErrorHandler;
 using BookingApp.Domain.Interfaces;
 using BookingApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ namespace BookingApp.API.Configuration
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddKeyedScoped<IResponseHandlerService, BookingResponseHandlerService>("booking");
         }
     }
 }

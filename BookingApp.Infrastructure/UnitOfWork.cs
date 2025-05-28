@@ -12,9 +12,9 @@ namespace BookingApp.Infrastructure
             _context = context;
             BookingRepository = new BookingRepository(_context);
         }
-        public async Task SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()
