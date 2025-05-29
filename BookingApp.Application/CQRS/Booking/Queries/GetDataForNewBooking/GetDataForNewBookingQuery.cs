@@ -3,5 +3,5 @@ using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking
 {
-    public class GetDataForNewBookingQuery : IRequest<List<RoomTypesForNewBookingDTO>> { }
+    public class GetDataForNewBookingQuery : IRequest<List<RoomTypeWithCapacitiesDTO>> { }
 }

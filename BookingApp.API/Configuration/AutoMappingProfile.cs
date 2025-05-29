@@ -17,8 +17,15 @@ namespace BookingApp.API.Configuration
             CreateMap<RoomCapacityRoomType, RoomCapacityDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoomCapacity.Id))
                 .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.RoomCapacity.Capacity));
-            CreateMap<RoomType, RoomTypesForNewBookingDTO>();
-            CreateMap<Booking, BookingEditDTO>();
+            CreateMap<RoomType, RoomTypeWithCapacitiesDTO>();
+            CreateMap<Booking, BookingWithAllRoomTypesDTO>();
+
+            // booking page
+            CreateMap<RoomTypeAmenity, AmenityDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AmenityId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Amenity.Name));
+            CreateMap<RoomType, RoomTypeInfoWithUserBookedDTO>()
+                .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src => src.RoomTypeAmenities));
         }
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit
 {
-    public class GetBookingForEditQueryHandler : IRequestHandler<GetBookingForEditQuery, BookingEditDTO>
+    public class GetBookingForEditQueryHandler : IRequestHandler<GetBookingForEditQuery, BookingWithAllRoomTypesDTO>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -15,12 +15,12 @@ namespace BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit
             _mapper = mapper;
         }
 
-        public async Task<BookingEditDTO> Handle(GetBookingForEditQuery request, CancellationToken cancellationToken)
+        public async Task<BookingWithAllRoomTypesDTO> Handle(GetBookingForEditQuery request, CancellationToken cancellationToken)
         {
             var data = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithCapacity();
             var booking = await _unitOfWork.BookingRepository.GetById(request.Id);
-            var responseData = _mapper.Map<BookingEditDTO>(booking);
-            responseData.RoomTypes = _mapper.Map<List<RoomTypesForNewBookingDTO>>(data);
+            var responseData = _mapper.Map<BookingWithAllRoomTypesDTO>(booking);
+            responseData.RoomTypes = _mapper.Map<List<RoomTypeWithCapacitiesDTO>>(data);
             return responseData;
         }
     }

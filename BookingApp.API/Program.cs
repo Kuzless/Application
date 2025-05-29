@@ -10,6 +10,17 @@ namespace BookingApp.API
 
             ConfigureApplication.ConfigureServices(builder);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", policy =>
+                {
+                    policy.WithOrigins("https://localhost:4200", "http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddEndpointsApiExplorer();
@@ -20,9 +31,12 @@ namespace BookingApp.API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseHttpsRedirection();
 

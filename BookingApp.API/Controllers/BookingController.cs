@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using BookingApp.API.Interfaces;
-using BookingApp.API.Services;
+﻿using BookingApp.API.Interfaces;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.DeleteBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
@@ -23,10 +21,10 @@ namespace BookingApp.API.Controllers
             _mediator = mediator;
             _apiResponseHandler = apiResponseHandler;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetBookings()
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetBookingsInfo(string email)
         {
-            var bookings = await _mediator.Send(new GetAllBookingsQuery());
+            var bookings = await _mediator.Send(new GetAllBookingsInfoQuery() { Email = email });
             return _apiResponseHandler.Handle(bookings);
         }
 
