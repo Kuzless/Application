@@ -65,25 +65,43 @@
           "
         >
           <h5 class="inter-6">Availability</h5>
-          <div class="d-flex">
+          <div class="d-flex align-items-center gap-3">
             <div
               class="icon rounded-3 d-flex justify-content-center align-items-center"
             >
               <img [src]="iconsUrl + 'areaicon' + iconsFormat" />
             </div>
-            <div>lorem ipsum</div>
+            <div class="inter-5 fs-5">30 desks</div>
           </div>
         </ng-container>
         <!-- or private room -->
         <ng-template #privateRoom>
           <h5 class="inter-6">Capacity options</h5>
-          <div class="d-flex">
+          <div class="d-flex align-items-center gap-3">
             <div
               class="icon rounded-3 d-flex justify-content-center align-items-center"
             >
               <img [src]="iconsUrl + 'roomicon' + iconsFormat" />
             </div>
-            <div>lorem ipsum</div>
+            <div class="inter-5 fs-5">
+              <!-- showing all room capacities -->
+              <span
+                *ngFor="
+                  let roomCapacityInfo of booking?.roomCapacities;
+                  let isLast = last
+                "
+              >
+                <!-- showing ',' or 'or' if >2 capacities -->
+                {{ roomCapacityInfo.roomCapacity.capacity
+                }}<span *ngIf="!isLast && booking?.roomCapacities?.length !== 2"
+                  >,</span
+                >
+                <span *ngIf="!isLast && booking?.roomCapacities?.length === 2">
+                  or
+                </span>
+              </span>
+              {{ booking?.roomCapacities?.length! > 1 ? "people" : "person" }}
+            </div>
           </div>
         </ng-template>
       </div>

@@ -1,15 +1,21 @@
-.inter-4 {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
+.inter-4,
+.inter-5,
 .inter-6 {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 600;
   font-style: normal;
+}
+
+.inter-4 {
+  font-weight: 500;
+}
+
+.inter-5 {
+  font-weight: 500;
+}
+
+.inter-6 {
+  font-weight: 600;
 }
 
 .images {
