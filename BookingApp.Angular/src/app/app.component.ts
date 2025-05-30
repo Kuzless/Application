@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { BookingElementComponent } from './booking/components/booking-element/booking-element.component';
+import { BookingComponent } from './booking/components/booking/booking.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BookingElementComponent],
+  imports: [RouterOutlet, BookingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

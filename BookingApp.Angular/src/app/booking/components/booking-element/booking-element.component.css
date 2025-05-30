@@ -1,3 +1,17 @@
+.inter-4 {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inter-6 {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
 .images {
   width: 340px;
   height: 303px;
@@ -16,4 +30,9 @@
   width: 44px;
   height: 44px;
   background: #f5f3fb;
+}
+
+.booked {
+  background-color: #eaf7ee;
+  height: 44px;
 }

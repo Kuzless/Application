@@ -1,4 +1,4 @@
-<div class="d-flex rounded-3 bg-white">
+<div class="d-flex rounded-3 bg-white inter-4 w-100 bg-success">
   <!--Images-->
   <div class="d-flex flex-column images p-3">
     <img
@@ -25,16 +25,14 @@
     </div>
   </div>
   <!--Block that holds description-->
-  <div class="d-flex flex-column p-3">
+  <div class="d-flex flex-column w-100 p-3">
     <!--Description and button-->
+    <!-- DONE -->
     <div class="d-flex pt-2 mb-2">
       <div class="w-75">
-        <h2>Lorem Ipsum</h2>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
-          voluptatum eos nostrum itaque impedit animi alias modi quam iste
-          provident, nobis corporis aspernatur, ipsum neque et, in nam quisquam
-          accusamus.
+        <h2 class="inter-6">{{ booking?.type }}</h2>
+        <p class="text-muted">
+          {{ booking?.description }}
         </p>
       </div>
       <div class="d-flex flex-row-reverse w-25">
@@ -45,48 +43,105 @@
       </div>
     </div>
     <!--Amenties and stuff-->
-    <div class="d-flex mb-2">
+    <!-- DONE -->
+    <div class="d-flex mb-4">
       <div class="w-50">
-        <h5>Amenities</h5>
-        <div class="d-flex gap-2">
-          <div
+        <h5 class="inter-6">Amenities</h5>
+        <ul class="d-flex gap-3 list-unstyled">
+          <li
+            *ngFor="let amenity of booking?.amenities"
             class="icon rounded-3 d-flex justify-content-center align-items-center"
           >
-            <img src="booking/booking-element/icons/AC.svg" />
-          </div>
-          <div
-            class="icon rounded-3 d-flex justify-content-center align-items-center"
-          >
-            <img src="booking/booking-element/icons/Coffee.svg" />
-          </div>
-          <div
-            class="icon rounded-3 d-flex justify-content-center align-items-center"
-          >
-            <img src="booking/booking-element/icons/Wifi.svg" />
-          </div>
-        </div>
+            <img [src]="iconsUrl + (amenity.name | formatIcon) + iconsFormat" />
+          </li>
+        </ul>
       </div>
       <div class="w-50">
-        <h5>Lorem Ipsum</h5>
-        <div class="d-flex">
-          <div>lorem ipsum</div>
-          <div>lorem ipsum</div>
-        </div>
+        <!-- checking if it's open space -->
+        <ng-container
+          *ngIf="
+            !booking?.roomCapacities || booking?.roomCapacities?.length === 0;
+            else privateRoom
+          "
+        >
+          <h5 class="inter-6">Availability</h5>
+          <div class="d-flex">
+            <div
+              class="icon rounded-3 d-flex justify-content-center align-items-center"
+            >
+              <img [src]="iconsUrl + 'areaicon' + iconsFormat" />
+            </div>
+            <div>lorem ipsum</div>
+          </div>
+        </ng-container>
+        <!-- or private room -->
+        <ng-template #privateRoom>
+          <h5 class="inter-6">Capacity options</h5>
+          <div class="d-flex">
+            <div
+              class="icon rounded-3 d-flex justify-content-center align-items-center"
+            >
+              <img [src]="iconsUrl + 'roomicon' + iconsFormat" />
+            </div>
+            <div>lorem ipsum</div>
+          </div>
+        </ng-template>
       </div>
     </div>
     <!--Availability-->
-    <div class="d-flex flex-column mb-4">
-      <h5>Lorem Ipsum</h5>
-      <div>Lorem ipsum</div>
-      <div>Lorem ipsum</div>
-      <div>Lorem ipsum</div>
-      <div>Lorem ipsum</div>
-    </div>
-    <!--Booked info-->
-    <div class="d-flex flex-column mb-2">
-      <div>Lorem ipsum</div>
-      <div>Lorem ipsum</div>
-      <div>Lorem ipsum</div>
-    </div>
+    <ng-container
+      *ngIf="booking?.roomCapacities && booking?.roomCapacities?.length !== 0"
+    >
+      <div class="mb-4">
+        <h5 class="inter-6">Availability</h5>
+        <ul class="list-unstyled d-flex flex-column gap-1">
+          <li *ngFor="let roomCapacities of booking?.roomCapacities">
+            <span class="fw-semibold">
+              {{ roomCapacities.rooms.length }}
+              {{ roomCapacities.rooms.length > 1 ? "rooms " : "room " }}
+            </span>
+            <span class="text-muted">
+              {{
+                roomCapacities.capacity > 1
+                  ? "for up to " + roomCapacities.capacity + " people"
+                  : "for " + roomCapacities.capacity + " person"
+              }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+    <!--If user booked info-->
+    <ng-container
+      *ngIf="
+        booking?.bookingsWithRoomTypes &&
+        booking?.bookingsWithRoomTypes?.length !== 0
+      "
+    >
+      <div class="mb-2">
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li
+            *ngFor="let booked of booking?.bookingsWithRoomTypes"
+            class="booked d-flex align-items-center px-3"
+          >
+            <!--Finding capacity of booked room-->
+            <span *ngFor="let roomCapacity of booking?.roomCapacities">
+              <span *ngIf="roomCapacity.id == booked.room.roomCapacityId">
+                <img [src]="'done' + iconsFormat" />
+                <span
+                  >This workspace is already booked by you! Room for
+                  {{ roomCapacity.capacity }}
+                  {{ roomCapacity.capacity > 1 ? " people" : " person" }}</span
+                >
+                <span class="fw-semibold">
+                  {{ booked.startDate | date : "MMMM d, y" }} to
+                  {{ booked.endDate | date : "MMMM d, y" }}
+                </span>
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
   </div>
 </div>

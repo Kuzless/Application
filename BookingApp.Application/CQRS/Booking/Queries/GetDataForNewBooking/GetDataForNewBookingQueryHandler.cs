@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BookingApp.Application.DTOs.Booking;
+using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
 using BookingApp.Domain.Interfaces;
 using MediatR;
 

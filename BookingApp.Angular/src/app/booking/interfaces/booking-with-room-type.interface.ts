@@ -1,5 +1,5 @@
-import { BookingInterface } from './booking.interface';
+import { BookingWithRoomInterface } from './booking-with-room.interface';
 
-export interface BookingWithRoomTypeInterface extends BookingInterface {
+export interface BookingWithRoomTypeInterface extends BookingWithRoomInterface {
   typeId: number;
 }

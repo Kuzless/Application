@@ -1,9 +1,9 @@
 import { AmenityInterface } from './amenity.interface';
 import { BookingWithRoomTypeInterface } from './booking-with-room-type.interface';
-import { RoomTypeWithCapacitiesInterface } from './room-type-with-capacities.interface';
+import { RoomTypeWithCapacitiesNRoomsInterface } from './room-type-with-capacities-n-rooms.interface';
 
 export interface RoomTypeInfoWithUserBookedInterface
-  extends RoomTypeWithCapacitiesInterface {
+  extends RoomTypeWithCapacitiesNRoomsInterface {
   amenities: AmenityInterface[];
   bookingsWithRoomTypes: BookingWithRoomTypeInterface[];
 }

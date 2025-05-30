@@ -1,20 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { BookingElementService } from './services/booking-element.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { RoomTypeInfoWithUserBookedInterface } from '../../interfaces/room-type-info-with-user-booked.interface';
+import { CommonModule } from '@angular/common';
+import { FormatIconPipe } from './pipes/format-icon.pipe';
+import { RoomInterface } from '../../interfaces/room.interface';
 
 @Component({
   selector: 'app-booking-element',
-  imports: [],
+  imports: [CommonModule, FormatIconPipe],
   templateUrl: './booking-element.component.html',
   styleUrl: './booking-element.component.css',
 })
 export class BookingElementComponent implements OnInit {
-  bookingService!: BookingElementService;
-
-  constructor(bookingService: BookingElementService) {
-    this.bookingService = bookingService;
-  }
+  @Input() booking?: RoomTypeInfoWithUserBookedInterface;
+  rooms: RoomInterface[] = [];
+  iconsUrl: string = 'booking/booking-element/icons/';
+  iconsFormat: string = '.svg';
   ngOnInit(): void {
-    console.log('Hello. Init triggered');
-    this.bookingService.test();
+    this.booking?.roomCapacities.forEach((capacity) =>
+      capacity.rooms.forEach((room) => this.rooms.push(room))
+    );
   }
 }

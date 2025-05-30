@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BookingApp.Application.DTOs.Booking;
+using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
 using BookingApp.Domain.Interfaces;
 using MediatR;
 
@@ -23,7 +23,14 @@ namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
             // adding user bookings to each type (to show on which types did user book)
             foreach (var dto in fullInfo)
             {
-                dto.BookingsWithRoomTypes = _mapper.Map<List<BookingWithRoomTypeDTO>>(userBookings);
+                dto.BookingsWithRoomTypes = new List<BookingWithRoomTypeDTO>();
+                foreach (var booking in userBookings)
+                {
+                    if (dto.Id == booking.Room.RoomTypeId)
+                    {
+                        dto.BookingsWithRoomTypes.Add(_mapper.Map<BookingWithRoomTypeDTO>(booking));
+                    }
+                }
             }
             return fullInfo;
         }

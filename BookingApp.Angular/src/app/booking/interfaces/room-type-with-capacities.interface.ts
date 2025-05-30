@@ -1,7 +1,6 @@
 import { RoomCapacityInterface } from './room-capacity.interface';
+import { RoomTypeInterface } from './room-type.interface';
 
-export interface RoomTypeWithCapacitiesInterface {
-  id: number;
-  type: string;
+export interface RoomTypeWithCapacitiesInterface extends RoomTypeInterface {
   roomCapacities: RoomCapacityInterface[];
 }

@@ -18,9 +18,9 @@ namespace BookingApp.Infrastructure.Repositories
             return await _context.Set<RoomType>()
                 .Include(rt => rt.RoomCapacities)
                 .ThenInclude(rc => rc.RoomCapacity)
+                .ThenInclude(rc => rc.Rooms)
                 .Include(rt => rt.RoomTypeAmenities)
                 .ThenInclude(ra => ra.Amenity)
-                .Include(rt => rt.Rooms)
                 .ToListAsync();
         }
     }
