@@ -1,5 +1,5 @@
-<ng-container class="bookings" *ngIf="pageData$ | async as bookings">
-  <ul class="bookings list-unstyled">
+<ng-container *ngIf="pageData$ | async as bookings">
+  <ul class="list-unstyled">
     <li class="py-3" *ngFor="let booking of bookings">
       <app-booking-element [booking]="booking"></app-booking-element>
     </li>

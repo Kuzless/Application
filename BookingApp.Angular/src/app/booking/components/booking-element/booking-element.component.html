@@ -1,26 +1,29 @@
-<div class="d-flex rounded-3 bg-white inter-4 w-100 bg-success">
+<div class="d-flex rounded-4 bg-white inter-4 w-100 bg-success">
   <!--Images-->
   <div class="d-flex flex-column images p-3">
     <img
-      class="w-100 h-75 rounded-3 pb-2"
-      src="/booking/booking-element/images/temp.jpg"
+      class="w-100 h-75 rounded-4 pb-2"
+      [src]="
+        imagesUrl +
+        ((booking?.roomType)!.type | formatImg | lowercase) +
+        '/' +
+        mainImageName +
+        imagesFormat
+      "
     />
-    <div class="d-flex w-100 h-25 rounded-3 gap-3">
+    <div class="d-flex w-100 h-25 rounded-3 gap-2">
       <img
-        class="rounded-3 flex-fill object-fit-cover preview-image"
-        src="/booking/booking-element/images/temp.jpg"
-      />
-      <img
-        class="rounded-3 flex-fill object-fit-cover preview-image"
-        src="/booking/booking-element/images/temp.jpg"
-      />
-      <img
-        class="rounded-3 flex-fill object-fit-cover preview-image"
-        src="/booking/booking-element/images/temp.jpg"
-      />
-      <img
-        class="rounded-3 flex-fill object-fit-cover preview-image"
-        src="/booking/booking-element/images/temp.jpg"
+        *ngFor="let item of ['1', '2', '3', '4']"
+        [ngClass]="item !== mainImageName ? 'opacity-50' : 'opacity-100'"
+        class="rounded-4 flex-fill object-fit-cover preview-image"
+        [src]="
+          imagesUrl +
+          ((booking?.roomType)!.type | formatImg | lowercase) +
+          '/' +
+          item +
+          imagesFormat
+        "
+        (click)="mainImageName = item"
       />
     </div>
   </div>
@@ -52,7 +55,11 @@
             *ngFor="let amenity of booking?.amenities"
             class="icon rounded-3 d-flex justify-content-center align-items-center"
           >
-            <img [src]="iconsUrl + (amenity.name | formatIcon) + iconsFormat" />
+            <img
+              [src]="
+                iconsUrl + (amenity.name | formatImg | lowercase) + iconsFormat
+              "
+            />
           </li>
         </ul>
       </div>
@@ -85,7 +92,7 @@
             </div>
             <div class="inter-5 fs-5">
               <!-- showing all room capacities -->
-              <span
+              <ng-container
                 *ngFor="
                   let roomCapacityInfo of booking?.roomCapacities;
                   let isLast = last
@@ -99,7 +106,7 @@
                 <span *ngIf="!isLast && booking?.roomCapacities?.length === 2">
                   or
                 </span>
-              </span>
+              </ng-container>
               {{ booking?.roomCapacities?.length! > 1 ? "people" : "person" }}
             </div>
           </div>
@@ -142,7 +149,9 @@
             class="booked d-flex align-items-center px-3"
           >
             <!--Finding capacity of booked room-->
-            <span *ngFor="let roomCapacityInfo of booking?.roomCapacities">
+            <ng-container
+              *ngFor="let roomCapacityInfo of booking?.roomCapacities"
+            >
               <span
                 *ngIf="
                   roomCapacityInfo.roomCapacity.id ===
@@ -152,15 +161,21 @@
                 <img [src]="'done' + iconsFormat" />
                 <span
                   >This workspace is already booked by you! Room for
-                  {{ roomCapacityInfo.roomCapacity.capacity }}
                   {{ roomCapacityInfo.roomCapacity.capacity }}</span
                 >
+                <span>
+                  {{
+                    roomCapacityInfo.roomCapacity.capacity > 1
+                      ? "people"
+                      : "person"
+                  }}
+                </span>
                 <span class="fw-semibold">
                   {{ bookedInfo.booking.startDate | date : "MMMM d, y" }} to
                   {{ bookedInfo.booking.endDate | date : "MMMM d, y" }}
                 </span>
               </span>
-            </span>
+            </ng-container>
           </li>
         </ul>
       </div>
