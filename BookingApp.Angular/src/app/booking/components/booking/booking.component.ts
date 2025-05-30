@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BookingApiService } from '../../services/booking-api.service';
-import { RoomTypeInfoWithUserBookedInterface } from '../../interfaces/room-type-info-with-user-booked.interface';
+import { RoomTypeInfoInterface } from '../../interfaces/booking-main/room-type-info.interface';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { BookingElementComponent } from '../booking-element/booking-element.component';
@@ -13,15 +13,16 @@ import { BookingElementComponent } from '../booking-element/booking-element.comp
 })
 export class BookingComponent implements OnInit {
   private apiService!: BookingApiService;
-  pageData$?: Observable<RoomTypeInfoWithUserBookedInterface[]>;
+  pageData$?: Observable<RoomTypeInfoInterface[]>;
 
   constructor(apiService: BookingApiService) {
     this.apiService = apiService;
   }
 
   ngOnInit(): void {
-    this.pageData$ = this.apiService.getByEmail<
-      RoomTypeInfoWithUserBookedInterface[]
-    >('Booking', 'qwe');
+    this.pageData$ = this.apiService.getByEmail<RoomTypeInfoInterface[]>(
+      'Booking',
+      'qwe'
+    );
   }
 }

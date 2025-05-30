@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RoomTypeInfoWithUserBookedInterface } from '../../interfaces/room-type-info-with-user-booked.interface';
+import { RoomTypeInfoInterface } from '../../interfaces/booking-main/room-type-info.interface';
 import { CommonModule } from '@angular/common';
 import { FormatIconPipe } from './pipes/format-icon.pipe';
 import { RoomInterface } from '../../interfaces/room.interface';
@@ -11,7 +11,7 @@ import { RoomInterface } from '../../interfaces/room.interface';
   styleUrl: './booking-element.component.css',
 })
 export class BookingElementComponent implements OnInit {
-  @Input() booking?: RoomTypeInfoWithUserBookedInterface;
+  @Input() booking?: RoomTypeInfoInterface;
   rooms: RoomInterface[] = [];
   iconsUrl: string = 'booking/booking-element/icons/';
   iconsFormat: string = '.svg';

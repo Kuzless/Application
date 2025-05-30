@@ -30,9 +30,9 @@
     <!-- DONE -->
     <div class="d-flex pt-2 mb-2">
       <div class="w-75">
-        <h2 class="inter-6">{{ booking?.type }}</h2>
+        <h2 class="inter-6">{{ booking?.roomType?.type }}</h2>
         <p class="text-muted">
-          {{ booking?.description }}
+          {{ booking?.roomType?.description }}
         </p>
       </div>
       <div class="d-flex flex-row-reverse w-25">
@@ -95,16 +95,18 @@
       <div class="mb-4">
         <h5 class="inter-6">Availability</h5>
         <ul class="list-unstyled d-flex flex-column gap-1">
-          <li *ngFor="let roomCapacities of booking?.roomCapacities">
+          <li *ngFor="let roomCapacityInfo of booking?.roomCapacities">
             <span class="fw-semibold">
-              {{ roomCapacities.rooms.length }}
-              {{ roomCapacities.rooms.length > 1 ? "rooms " : "room " }}
+              {{ roomCapacityInfo.rooms.length }}
+              {{ roomCapacityInfo.rooms.length > 1 ? "rooms " : "room " }}
             </span>
             <span class="text-muted">
               {{
-                roomCapacities.capacity > 1
-                  ? "for up to " + roomCapacities.capacity + " people"
-                  : "for " + roomCapacities.capacity + " person"
+                roomCapacityInfo.roomCapacity.capacity > 1
+                  ? "for up to " +
+                    roomCapacityInfo.roomCapacity.capacity +
+                    " people"
+                  : "for " + roomCapacityInfo.roomCapacity.capacity + " person"
               }}
             </span>
           </li>
@@ -113,29 +115,31 @@
     </ng-container>
     <!--If user booked info-->
     <ng-container
-      *ngIf="
-        booking?.bookingsWithRoomTypes &&
-        booking?.bookingsWithRoomTypes?.length !== 0
-      "
+      *ngIf="booking?.bookingInfos && booking?.bookingInfos?.length !== 0"
     >
       <div class="mb-2">
         <ul class="list-unstyled d-flex flex-column gap-2">
           <li
-            *ngFor="let booked of booking?.bookingsWithRoomTypes"
+            *ngFor="let bookedInfo of booking?.bookingInfos"
             class="booked d-flex align-items-center px-3"
           >
             <!--Finding capacity of booked room-->
-            <span *ngFor="let roomCapacity of booking?.roomCapacities">
-              <span *ngIf="roomCapacity.id == booked.room.roomCapacityId">
+            <span *ngFor="let roomCapacityInfo of booking?.roomCapacities">
+              <span
+                *ngIf="
+                  roomCapacityInfo.roomCapacity.id ===
+                  bookedInfo.room.roomCapacityId
+                "
+              >
                 <img [src]="'done' + iconsFormat" />
                 <span
                   >This workspace is already booked by you! Room for
-                  {{ roomCapacity.capacity }}
-                  {{ roomCapacity.capacity > 1 ? " people" : " person" }}</span
+                  {{ roomCapacityInfo.roomCapacity.capacity }}
+                  {{ roomCapacityInfo.roomCapacity.capacity }}</span
                 >
                 <span class="fw-semibold">
-                  {{ booked.startDate | date : "MMMM d, y" }} to
-                  {{ booked.endDate | date : "MMMM d, y" }}
+                  {{ bookedInfo.booking.startDate | date : "MMMM d, y" }} to
+                  {{ bookedInfo.booking.endDate | date : "MMMM d, y" }}
                 </span>
               </span>
             </span>

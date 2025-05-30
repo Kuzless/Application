@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
 {
-    public class GetAllBookingsInfoQueryHandler : IRequestHandler<GetAllBookingsInfoQuery, List<RoomTypeInfoWithUserBookedDTO>>
+    public class GetAllBookingsInfoQueryHandler : IRequestHandler<GetAllBookingsInfoQuery, List<RoomTypeInfoDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -14,21 +14,21 @@ namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public async Task<List<RoomTypeInfoWithUserBookedDTO>> Handle(GetAllBookingsInfoQuery request, CancellationToken cancellationToken)
+        public async Task<List<RoomTypeInfoDTO>> Handle(GetAllBookingsInfoQuery request, CancellationToken cancellationToken)
         {
             var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfo();
             var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomByCustomerEmail(request.Email);
             // mapping full data about 'booking type'
-            var fullInfo = _mapper.Map<List<RoomTypeInfoWithUserBookedDTO>>(typeInfo);
+            var fullInfo = _mapper.Map<List<RoomTypeInfoDTO>>(typeInfo);
             // adding user bookings to each type (to show on which types did user book)
             foreach (var dto in fullInfo)
             {
-                dto.BookingsWithRoomTypes = new List<BookingWithRoomTypeDTO>();
+                dto.BookingInfos = new List<BookingInfoDTO>();
                 foreach (var booking in userBookings)
                 {
-                    if (dto.Id == booking.Room.RoomTypeId)
+                    if (dto.RoomType.Id == booking.Room.RoomTypeId)
                     {
-                        dto.BookingsWithRoomTypes.Add(_mapper.Map<BookingWithRoomTypeDTO>(booking));
+                        dto.BookingInfos.Add(_mapper.Map<BookingInfoDTO>(booking));
                     }
                 }
             }
