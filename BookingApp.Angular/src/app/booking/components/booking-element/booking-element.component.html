@@ -67,7 +67,7 @@
         <!-- checking if it's open space -->
         <ng-container
           *ngIf="
-            !booking?.roomCapacities || booking?.roomCapacities?.length === 0;
+            !capacitiesInfo || capacitiesInfo.length === 0;
             else privateRoom
           "
         >
@@ -94,33 +94,27 @@
               <!-- showing all room capacities -->
               <ng-container
                 *ngFor="
-                  let roomCapacityInfo of booking?.roomCapacities;
+                  let roomCapacityInfo of capacitiesInfo;
                   let isLast = last
                 "
               >
                 <!-- showing ',' or 'or' if >2 capacities -->
                 {{ roomCapacityInfo.roomCapacity.capacity
-                }}<span *ngIf="!isLast && booking?.roomCapacities?.length !== 2"
-                  >,</span
-                >
-                <span *ngIf="!isLast && booking?.roomCapacities?.length === 2">
-                  or
-                </span>
+                }}<span *ngIf="!isLast && capacitiesInfo.length !== 2">,</span>
+                <span *ngIf="!isLast && capacitiesInfo.length === 2"> or </span>
               </ng-container>
-              {{ booking?.roomCapacities?.length! > 1 ? "people" : "person" }}
+              {{ capacitiesInfo.length! > 1 ? "people" : "person" }}
             </div>
           </div>
         </ng-template>
       </div>
     </div>
     <!--Availability-->
-    <ng-container
-      *ngIf="booking?.roomCapacities && booking?.roomCapacities?.length !== 0"
-    >
+    <ng-container *ngIf="capacitiesInfo && capacitiesInfo?.length !== 0">
       <div class="mb-4">
         <h5 class="inter-6">Availability</h5>
         <ul class="list-unstyled d-flex flex-column gap-1">
-          <li *ngFor="let roomCapacityInfo of booking?.roomCapacities">
+          <li *ngFor="let roomCapacityInfo of capacitiesInfo">
             <span class="fw-semibold">
               {{ roomCapacityInfo.rooms.length }}
               {{ roomCapacityInfo.rooms.length > 1 ? "rooms " : "room " }}
@@ -143,41 +137,64 @@
       *ngIf="booking?.bookingInfos && booking?.bookingInfos?.length !== 0"
     >
       <div class="mb-2">
-        <ul class="list-unstyled d-flex flex-column gap-2">
-          <li
-            *ngFor="let bookedInfo of booking?.bookingInfos"
-            class="booked d-flex align-items-center px-3"
-          >
-            <!--Finding capacity of booked room-->
-            <ng-container
-              *ngFor="let roomCapacityInfo of booking?.roomCapacities"
+        <!-- If not open space -->
+        <ng-container
+          *ngIf="
+            capacitiesInfo && capacitiesInfo.length !== 0;
+            else bookedOpenSpace
+          "
+        >
+          <ul class="list-unstyled d-flex flex-column gap-2">
+            <li
+              *ngFor="let bookedInfo of booking?.bookingInfos"
+              class="booked d-flex align-items-center px-3 gap-2"
             >
-              <span
-                *ngIf="
-                  roomCapacityInfo.roomCapacity.id ===
-                  bookedInfo.room.roomCapacityId
-                "
-              >
-                <img [src]="'done' + iconsFormat" />
-                <span
-                  >This workspace is already booked by you! Room for
-                  {{ roomCapacityInfo.roomCapacity.capacity }}</span
+              <!--Finding capacity of booked room-->
+              <ng-container *ngFor="let roomCapacityInfo of capacitiesInfo">
+                <ng-container
+                  *ngIf="
+                    roomCapacityInfo.roomCapacity.id ===
+                    bookedInfo.room.roomCapacityId
+                  "
                 >
-                <span>
-                  {{
-                    roomCapacityInfo.roomCapacity.capacity > 1
-                      ? "people"
-                      : "person"
-                  }}
-                </span>
+                  <img [src]="'done' + iconsFormat" />
+                  <span
+                    >This workspace is already booked by you! Room for
+                    {{ roomCapacityInfo.roomCapacity.capacity }}
+                    <span>
+                      {{
+                        roomCapacityInfo.roomCapacity.capacity > 1
+                          ? "people"
+                          : "person"
+                      }}
+                    </span>
+                    <span class="fw-semibold">
+                      {{ bookedInfo.booking.startDate | date : "MMMM d, y" }} to
+                      {{ bookedInfo.booking.endDate | date : "MMMM d, y" }}
+                    </span>
+                  </span>
+                </ng-container>
+              </ng-container>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-template #bookedOpenSpace>
+          <ul class="list-unstyled d-flex flex-column gap-2">
+            <li
+              *ngFor="let bookedInfo of booking?.bookingInfos"
+              class="booked d-flex align-items-center px-3 gap-2"
+            >
+              <img [src]="'done' + iconsFormat" />
+              <span
+                >This workspace is already booked by you! Area for
                 <span class="fw-semibold">
                   {{ bookedInfo.booking.startDate | date : "MMMM d, y" }} to
                   {{ bookedInfo.booking.endDate | date : "MMMM d, y" }}
-                </span>
-              </span>
-            </ng-container>
-          </li>
-        </ul>
+                </span></span
+              >
+            </li>
+          </ul>
+        </ng-template>
       </div>
     </ng-container>
   </div>

@@ -3,6 +3,7 @@ import { RoomTypeInfoInterface } from '../../interfaces/booking-main/room-type-i
 import { CommonModule } from '@angular/common';
 import { FormatImgPipe } from './pipes/format-img.pipe';
 import { RoomInterface } from '../../interfaces/room.interface';
+import { RoomCapacityInfoInterface } from '../../interfaces/booking-main/room-capacity-info.interface';
 
 @Component({
   selector: 'app-booking-element',
@@ -14,6 +15,8 @@ export class BookingElementComponent implements OnInit {
   @Input() booking?: RoomTypeInfoInterface;
 
   rooms: RoomInterface[] = [];
+  capacitiesInfo: RoomCapacityInfoInterface[] = [];
+
   iconsUrl: string = 'booking/booking-element/icons/';
   imagesUrl: string = 'booking/booking-element/images/';
   iconsFormat: string = '.svg';
@@ -22,8 +25,9 @@ export class BookingElementComponent implements OnInit {
   mainImageName: string = '1';
 
   ngOnInit(): void {
-    this.booking?.roomCapacities.forEach((capacity) =>
-      capacity.rooms.forEach((room) => this.rooms.push(room))
-    );
+    this.booking?.roomCapacities.forEach((capacity) => {
+      this.capacitiesInfo.push(capacity);
+      capacity.rooms.forEach((room) => this.rooms.push(room));
+    });
   }
 }
