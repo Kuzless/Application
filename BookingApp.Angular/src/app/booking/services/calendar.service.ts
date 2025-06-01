@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { DateYearInterface } from '../interfaces/date-year.interface';
+import { DateMonthInterface } from '../interfaces/date-month.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -43,5 +45,111 @@ export class CalendarService {
       availableDays.push(day);
     }
     return availableDays;
+  }
+
+  populateEndDates(
+    year: number,
+    month: number,
+    day: number,
+    maxDays: number
+  ): { [year: number]: DateYearInterface } {
+    const startDate = new Date(year, month, day);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + maxDays);
+    let currentDate = new Date(startDate);
+    let result: { [year: number]: DateYearInterface } = {};
+
+    // Creating initial dates before loop
+    let monthInterface: DateMonthInterface = {
+      currentYear: year,
+      currentMonth: month,
+      days: [],
+    };
+    let dateInterface: DateYearInterface = {
+      currentYear: year,
+      months: { [monthInterface.currentMonth]: monthInterface },
+    };
+
+    let trackingYear = currentDate.getFullYear();
+    let trackingMonth = currentDate.getMonth();
+
+    while (currentDate <= endDate) {
+      const currentDay = currentDate.getDate();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      // if new year, push copy of old year to array, create new year with 1st month assigned. Reset trackers
+      if (trackingYear != currentYear) {
+        result[trackingYear] = this.getDateInterfaceCopy(dateInterface);
+        trackingYear = currentYear;
+        trackingMonth = currentMonth;
+        monthInterface = {
+          currentYear: currentYear,
+          currentMonth: currentMonth,
+          days: [],
+        };
+        dateInterface = {
+          currentYear: currentYear,
+          months: { [currentMonth]: monthInterface },
+        };
+      }
+      // if new month, push copy of old month to array, create new month. Reset trackers
+      if (trackingMonth != currentMonth) {
+        dateInterface.months[trackingMonth] =
+          this.getMonthInterfaceCopy(monthInterface);
+        trackingMonth = currentMonth;
+        monthInterface = {
+          currentYear: currentYear,
+          currentMonth: currentMonth,
+          days: [],
+        };
+        dateInterface.months[currentMonth] = monthInterface;
+      }
+
+      monthInterface.days.push(currentDay);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    result[trackingYear] = this.getDateInterfaceCopy(dateInterface);
+
+    for (const [yearStr, years] of Object.entries(result)) {
+      const year = Number(yearStr);
+
+      for (const [monthStr, months] of Object.entries(years.months)) {
+        const month = Number(monthStr);
+
+        for (const day of months.days) {
+          console.log(`Day: ${day}, Month: ${month}, Year: ${year}`);
+        }
+        console.log('End of month.');
+      }
+      console.log('End of year.');
+    }
+    return result;
+  }
+
+  private getDateInterfaceCopy(date: DateYearInterface): DateYearInterface {
+    let newDateInterface: DateYearInterface = {
+      currentYear: date.currentYear,
+      months: {},
+    };
+    for (let [key, data] of Object.entries(date.months)) {
+      let month = Number(key);
+      let newMonthInterface: DateMonthInterface = {
+        currentYear: date.currentYear,
+        currentMonth: data.currentMonth,
+        days: [...data.days],
+      };
+      newDateInterface.months[month] = newMonthInterface;
+    }
+    return newDateInterface;
+  }
+
+  private getMonthInterfaceCopy(month: DateMonthInterface): DateMonthInterface {
+    let newMonthInterface: DateMonthInterface = {
+      currentYear: month.currentYear,
+      currentMonth: month.currentMonth,
+      days: [...month.days],
+    };
+    return newMonthInterface;
   }
 }

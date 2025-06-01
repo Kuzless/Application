@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BookingApiService } from '../../services/booking-api.service';
-import { RoomTypeInfoInterface } from '../../interfaces/booking-main/room-type-info.interface';
+import { RoomTypeInfoInterface } from '../../interfaces/dto/booking-main/room-type-info.interface';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { BookingElementComponent } from '../booking-element/booking-element.component';

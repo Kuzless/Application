@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RoomTypeInfoInterface } from '../../interfaces/booking-main/room-type-info.interface';
+import { RoomTypeInfoInterface } from '../../interfaces/dto/booking-main/room-type-info.interface';
 import { CommonModule } from '@angular/common';
 import { FormatImgPipe } from './pipes/format-img.pipe';
-import { RoomInterface } from '../../interfaces/room.interface';
-import { RoomCapacityInfoInterface } from '../../interfaces/booking-main/room-capacity-info.interface';
+import { RoomInterface } from '../../interfaces/dto/room.interface';
+import { RoomCapacityInfoInterface } from '../../interfaces/dto/booking-main/room-capacity-info.interface';
 
 @Component({
   selector: 'app-booking-element',
