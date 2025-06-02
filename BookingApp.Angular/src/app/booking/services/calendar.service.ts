@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { DateYearInterface } from '../interfaces/calendar/date-year.interface';
-import { DateMonthInterface } from '../interfaces/calendar/date-month.interface';
 import { TimeInterface } from '../interfaces/calendar/time.interface';
 import { DateSelectInterface } from '../interfaces/calendar/date-select.interface';
 
@@ -36,42 +34,6 @@ export class CalendarService {
     this.currentMonth = date.getMonth();
     this.currentDay = date.getDate();
     this.currentTimeInMinutes = date.getHours() * 60 + date.getMinutes();
-  }
-
-  populateYears(): number[] {
-    let availableYears: number[] = [];
-    for (let year = this.currentYear; year < this.currentYear + 5; year++) {
-      availableYears.push(year);
-    }
-    return availableYears;
-  }
-
-  populateMonths(year: number): number[] {
-    let availableMonths: number[] = [];
-    let month = year === this.currentYear ? this.currentMonth : 0;
-    for (; month <= 11; month++) {
-      availableMonths.push(month);
-    }
-    return availableMonths;
-  }
-
-  populateDays(
-    year: number,
-    month: number,
-    day: number | null = null,
-    lastDay: number = new Date(year, month + 1, 0).getDate()
-  ): number[] {
-    let availableDays: number[] = [];
-    if (day === null) {
-      day =
-        year === this.currentYear && month === this.currentMonth
-          ? this.currentDay
-          : 1;
-    }
-    for (; day <= lastDay; day++) {
-      availableDays.push(day);
-    }
-    return availableDays;
   }
 
   populateTime(
@@ -110,21 +72,17 @@ export class CalendarService {
         formattedTime: `${hours}:${minutes}${additionalZero} ${stamp}`,
       });
     }
-    for (let time of result) {
+    /*for (let time of result) {
       console.log(
         `Stamp: ${time.formattedTime}. Time: ${time.hours}:${time.minutes}`
       );
-    }
+    }*/
     return result;
   }
 
-  populateDates(
-    data: DateSelectInterface,
-    year: number | null = null,
-    month: number | null = null
-  ): DateSelectInterface {
-    if (year === null) {
-      data = { availableYears: [], availableMonths: [], availableDays: [] };
+  populateStartDates(data: DateSelectInterface): DateSelectInterface {
+    if (data.selectedYear === null) {
+      data.availableYears = [];
       for (
         let newYear = this.currentYear;
         newYear < this.currentYear + 5;
@@ -133,19 +91,23 @@ export class CalendarService {
         data.availableYears.push(newYear);
       }
     }
-    if (month === null) {
+    if (data.selectedMonth === null) {
       data.availableMonths = [];
-      data.availableDays = [];
-      let newMonth = year === this.currentYear ? this.currentMonth : 0;
+      let newMonth =
+        data.selectedYear === this.currentYear ? this.currentMonth : 0;
       for (; newMonth <= 11; newMonth++) {
         data.availableMonths.push(newMonth);
       }
     }
     data.availableDays = [];
-    let lastDay = new Date(year!, month! + 1, 0).getDate();
+    let lastDay = new Date(
+      data.selectedYear!,
+      data.selectedMonth! + 1,
+      0
+    ).getDate();
     let day =
-      (year === this.currentYear || !year) &&
-      (month === this.currentMonth || !month)
+      (data.selectedYear === this.currentYear || !data.selectedYear) &&
+      (data.selectedMonth === this.currentMonth || !data.selectedMonth)
         ? this.currentDay
         : 1;
     for (; day <= lastDay; day++) {
@@ -155,94 +117,90 @@ export class CalendarService {
   }
 
   populateEndDates(
-    year: number,
-    month: number,
-    day: number,
+    data: DateSelectInterface,
+    startYear: number,
+    startMonth: number,
+    startDay: number,
     maxDays: number
-  ): { [year: number]: DateYearInterface } {
-    const startDate = new Date(year, month, day);
+  ): DateSelectInterface {
+    let startDate = new Date(startYear, startMonth, startDay);
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + maxDays);
-    let currentDate = new Date(startDate);
-    let result: { [year: number]: DateYearInterface } = {};
-
-    // Creating initial dates before loop
-    let monthInterface: DateMonthInterface = {
-      currentYear: year,
-      currentMonth: month,
-      days: [],
-    };
-    let dateInterface: DateYearInterface = {
-      currentYear: year,
-      months: { [monthInterface.currentMonth]: monthInterface },
-    };
-
-    let trackingYear = currentDate.getFullYear();
-    let trackingMonth = currentDate.getMonth();
-
-    while (currentDate <= endDate) {
-      const currentDay = currentDate.getDate();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-
-      // if new year, push copy of old year to array, create new year with 1st month assigned. Reset trackers
-      if (trackingYear != currentYear) {
-        result[trackingYear] = this.getDateInterfaceCopy(dateInterface);
-        trackingYear = currentYear;
-        trackingMonth = currentMonth;
-        monthInterface = {
-          currentYear: currentYear,
-          currentMonth: currentMonth,
-          days: [],
-        };
-        dateInterface = {
-          currentYear: currentYear,
-          months: { [currentMonth]: monthInterface },
-        };
-      }
-      // if new month, push copy of old month to array, create new month. Reset trackers
-      if (trackingMonth != currentMonth) {
-        dateInterface.months[trackingMonth] =
-          this.getMonthInterfaceCopy(monthInterface);
-        trackingMonth = currentMonth;
-        monthInterface = {
-          currentYear: currentYear,
-          currentMonth: currentMonth,
-          days: [],
-        };
-        dateInterface.months[currentMonth] = monthInterface;
-      }
-
-      monthInterface.days.push(currentDay);
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    result[trackingYear] = this.getDateInterfaceCopy(dateInterface);
-    return result;
-  }
-
-  private getDateInterfaceCopy(date: DateYearInterface): DateYearInterface {
-    let newDateInterface: DateYearInterface = {
-      currentYear: date.currentYear,
-      months: {},
-    };
-    for (let [key, data] of Object.entries(date.months)) {
-      let month = Number(key);
-      let newMonthInterface: DateMonthInterface = {
-        currentYear: date.currentYear,
-        currentMonth: data.currentMonth,
-        days: [...data.days],
+    let newStartDate: Date;
+    let hasYears = false;
+    let hasMonths = false;
+    if (data.selectedYear === null) {
+      data = {
+        selectedYear: startYear,
+        selectedMonth: startMonth,
+        availableYears: [],
+        availableMonths: [],
+        availableDays: [],
       };
-      newDateInterface.months[month] = newMonthInterface;
+      newStartDate = new Date(startDate);
+    } else if (data.selectedMonth === null) {
+      data.availableMonths = [];
+      data.availableDays = [];
+      if (data.selectedYear === startYear) {
+        data.selectedMonth = startMonth;
+        newStartDate = new Date(data.selectedYear, startMonth, startDay);
+      } else {
+        data.selectedMonth = 0;
+        newStartDate = new Date(data.selectedYear, 0, 1);
+      }
+      hasYears = true;
+    } else {
+      data.availableDays = [];
+      if (
+        data.selectedYear === startYear &&
+        data.selectedMonth === startMonth
+      ) {
+        newStartDate = new Date(
+          data.selectedYear,
+          data.selectedMonth,
+          startDay
+        );
+      } else {
+        newStartDate = new Date(data.selectedYear, data.selectedMonth, 1);
+      }
+      hasYears = true;
+      hasMonths = true;
     }
-    return newDateInterface;
-  }
 
-  private getMonthInterfaceCopy(month: DateMonthInterface): DateMonthInterface {
-    let newMonthInterface: DateMonthInterface = {
-      currentYear: month.currentYear,
-      currentMonth: month.currentMonth,
-      days: [...month.days],
-    };
-    return newMonthInterface;
+    if (!hasYears) {
+      let year = startYear;
+      for (; year <= endDate.getFullYear(); year++) {
+        data.availableYears.push(year);
+      }
+    }
+    if (!hasMonths) {
+      let month = data.selectedYear === startYear ? startMonth : 0;
+      if (endDate.getFullYear() !== data.selectedYear) {
+        for (; month <= 11; month++) {
+          data.availableMonths.push(month);
+        }
+      } else {
+        for (; month <= endDate.getMonth(); month++) {
+          data.availableMonths.push(month);
+        }
+      }
+    }
+
+    let yearTracker = data.selectedYear;
+    let monthTracker = data.selectedMonth;
+
+    while (
+      yearTracker == data.selectedYear &&
+      monthTracker == data.selectedMonth
+    ) {
+      if (newStartDate > endDate) {
+        break;
+      }
+      data.availableDays.push(newStartDate.getDate());
+      newStartDate.setDate(newStartDate.getDate() + 1);
+      yearTracker = newStartDate.getFullYear();
+      monthTracker = newStartDate.getMonth();
+    }
+    return data;
   }
 }
