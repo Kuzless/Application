@@ -47,26 +47,32 @@
           (change)="onDayChange()"
           class="rounded-3 input w-33"
         >
-          <option *ngFor="let day of availableDays" [value]="day">
+          <option *ngFor="let day of startDates.availableDays" [ngValue]="day">
             {{ day }}
           </option>
         </select>
         <select
           formControlName="month"
-          (change)="onMonthChange($event)"
+          (change)="onMonthChange()"
           class="rounded-3 input w-33"
           name="month"
         >
-          <option *ngFor="let month of availableMonths" [value]="month">
+          <option
+            *ngFor="let month of startDates.availableMonths"
+            [ngValue]="month"
+          >
             {{ getMonthName(month) }}
           </option>
         </select>
         <select
           formControlName="year"
-          (change)="onYearChange($event)"
+          (change)="onYearChange()"
           class="rounded-3 input w-33"
         >
-          <option *ngFor="let year of availableYears" [value]="year">
+          <option
+            *ngFor="let year of startDates.availableYears"
+            [ngValue]="year"
+          >
             {{ year }}
           </option>
         </select>
@@ -79,7 +85,7 @@
         class="d-flex flex-row justify-content-between gap-3"
       >
         <select formControlName="day" class="rounded-3 input w-33">
-          <option *ngFor="let day of availableEndDays" [value]="day">
+          <option *ngFor="let day of endDates.availableDays" [ngValue]="day">
             {{ day }}
           </option>
         </select>
@@ -88,7 +94,10 @@
           class="rounded-3 input w-33"
           (change)="onEndMonthChange()"
         >
-          <option *ngFor="let month of availableEndMonths" [value]="month">
+          <option
+            *ngFor="let month of endDates.availableMonths"
+            [ngValue]="month"
+          >
             {{ getMonthName(month) }}
           </option>
         </select>
@@ -97,28 +106,34 @@
           class="rounded-3 input w-33"
           (change)="onEndYearChange()"
         >
-          <option *ngFor="let year of availableEndYears" [value]="year">
+          <option *ngFor="let year of endDates.availableYears" [ngValue]="year">
             {{ year }}
           </option>
         </select>
       </div>
     </div>
-    <div class="d-flex flex-column gap-1 mb-3">
+    <div [formGroup]="startTimeForm" class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">Start time</h4>
-      <select class="rounded-3 input">
-        <option value="id">Option</option>
-        <option value="id2">Option</option>
-        <option value="id3">Option</option>
-        <option value="id4">Option</option>
+      <select
+        formControlName="time"
+        class="rounded-3 input"
+        (change)="onTimeChange()"
+      >
+        <option *ngFor="let time of availabeTime" [ngValue]="time">
+          {{ time.formattedTime }}
+        </option>
       </select>
     </div>
-    <div class="d-flex flex-column gap-1 mb-3">
+    <div [formGroup]="endTimeForm" class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">End time</h4>
-      <select class="rounded-3 input">
-        <option value="id">Option</option>
-        <option value="id2">Option</option>
-        <option value="id3">Option</option>
-        <option value="id4">Option</option>
+      <select
+        formControlName="time"
+        class="rounded-3 input"
+        (change)="onEndTimeChange()"
+      >
+        <option *ngFor="let time of availableEndTime" [ngValue]="time">
+          {{ time.formattedTime }}
+        </option>
       </select>
     </div>
   </div>

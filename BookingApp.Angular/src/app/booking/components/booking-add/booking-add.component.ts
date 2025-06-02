@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CalendarService } from '../../services/calendar.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Time } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DateYearInterface } from '../../interfaces/calendar/date-year.interface';
+import { TimeInterface } from '../../interfaces/calendar/time.interface';
+import { DateSelectInterface } from '../../interfaces/calendar/date-select.interface';
 
 @Component({
   selector: 'app-booking-add',
@@ -11,15 +13,24 @@ import { DateYearInterface } from '../../interfaces/calendar/date-year.interface
   styleUrl: './booking-add.component.css',
 })
 export class BookingAddComponent implements OnInit {
-  startDateForm!: FormGroup;
-  endDateForm!: FormGroup;
+  startDateForm: FormGroup;
+  endDateForm: FormGroup;
+  startTimeForm: FormGroup;
+  endTimeForm: FormGroup;
 
-  availableYears: number[] = [];
-  availableMonths: number[] = [];
-  availableDays: number[] = [];
-  availableEndYears: number[] = [];
-  availableEndMonths: number[] = [];
-  availableEndDays: number[] = [];
+  startDates: DateSelectInterface = {
+    availableYears: [],
+    availableMonths: [],
+    availableDays: [],
+  };
+  endDates: DateSelectInterface = {
+    availableYears: [],
+    availableMonths: [],
+    availableDays: [],
+  };
+
+  availabeTime: TimeInterface[] = [];
+  availableEndTime: TimeInterface[] = [];
 
   availableEndDatesDictionary: { [year: number]: DateYearInterface } = {};
 
@@ -47,11 +58,16 @@ export class BookingAddComponent implements OnInit {
     return this.endDateForm.get('day')?.value;
   }
 
-  constructor(private calendarService: CalendarService) {
-    this.calendarService = calendarService;
+  get chosenTime(): TimeInterface {
+    return this.startTimeForm.get('time')?.value;
   }
 
-  ngOnInit(): void {
+  get chosenEndTime(): TimeInterface {
+    return this.endTimeForm.get('time')?.value;
+  }
+
+  constructor(private calendarService: CalendarService) {
+    this.calendarService = calendarService;
     this.startDateForm = new FormGroup({
       year: new FormControl(this.calendarService.currentYear),
       month: new FormControl(this.calendarService.currentMonth),
@@ -62,44 +78,44 @@ export class BookingAddComponent implements OnInit {
       month: new FormControl(this.calendarService.currentMonth),
       day: new FormControl(this.calendarService.currentDay),
     });
+    this.startTimeForm = new FormGroup({
+      time: new FormControl(),
+    });
+    this.endTimeForm = new FormGroup({
+      time: new FormControl(),
+    });
+  }
 
-    this.availableYears = this.calendarService.populateYears();
-    this.availableMonths = this.calendarService.populateMonths(this.chosenYear);
-    this.availableDays = this.calendarService.populateDays(
-      this.chosenYear,
-      this.chosenMonth
-    );
+  ngOnInit(): void {
+    this.repopulateDates();
+    this.repopulateTime();
+    this.startTimeForm.patchValue({
+      time: this.availabeTime[0],
+    });
+    this.repopulateEndTime();
+    this.endTimeForm.patchValue({
+      time: this.availableEndTime[0],
+    });
     this.repopulateEndDates();
     this.loadAvailableEndYears();
   }
 
   // if start year changes load all available months/days + end years/months/days
-  onYearChange(event: Event) {
-    const element = event.target as HTMLSelectElement;
-    const year = Number(element.value);
-    this.availableMonths = this.calendarService.populateMonths(year);
-    const month = this.availableMonths[0];
-    this.availableDays = this.calendarService.populateDays(year, month);
-    const day = this.availableDays[0];
+  onYearChange() {
+    this.repopulateDates(this.chosenYear);
     this.startDateForm.patchValue({
-      month: month,
-      day: day,
+      month: this.startDates.availableMonths[0],
+      day: this.startDates.availableDays[0],
     });
     this.repopulateEndDates();
     this.loadAvailableEndYears();
   }
 
   // if start month changes load all available days + end years/months/days
-  onMonthChange(event: Event) {
-    const element = event.target as HTMLSelectElement;
-    const month = Number(element.value);
-    this.availableDays = this.calendarService.populateDays(
-      this.chosenYear,
-      month
-    );
-    const day = this.availableDays[0];
+  onMonthChange() {
+    this.repopulateDates(this.chosenYear, this.chosenMonth);
     this.startDateForm.patchValue({
-      day: day,
+      day: this.startDates.availableDays[0],
     });
     this.repopulateEndDates();
     this.loadAvailableEndYears();
@@ -123,39 +139,59 @@ export class BookingAddComponent implements OnInit {
     return this.calendarService.monthNames[month];
   }
 
+  onTimeChange() {
+    this.repopulateEndTime();
+    this.endTimeForm.patchValue({
+      time: this.availableEndTime[0],
+    });
+  }
+
+  onEndTimeChange() {}
+
   // converting all available years from dictionary to array
   private loadAvailableEndYears() {
-    this.availableEndYears = Object.keys(this.availableEndDatesDictionary).map(
-      (year) => Number(year)
-    );
+    this.endDates.availableYears = Object.keys(
+      this.availableEndDatesDictionary
+    ).map((year) => Number(year));
     this.endDateForm.patchValue({
-      year: this.availableEndYears[0],
+      year: this.endDates.availableYears[0],
     });
     this.loadAvailableEndMonths();
   }
 
   // converting all available months from dictionary to array
   private loadAvailableEndMonths() {
-    this.availableEndMonths = Object.keys(
+    this.endDates.availableMonths = Object.keys(
       this.availableEndDatesDictionary[this.chosenEndYear].months
     ).map((month) => Number(month));
 
     this.endDateForm.patchValue({
-      month: this.availableEndMonths[0],
+      month: this.endDates.availableMonths[0],
     });
     this.loadAvailableEndDays();
   }
 
   // converting all available days from dictionary to array
   private loadAvailableEndDays() {
-    this.availableEndDays =
+    this.endDates.availableDays =
       this.availableEndDatesDictionary[this.chosenEndYear].months[
         this.chosenEndMonth
       ].days;
 
     this.endDateForm.patchValue({
-      day: this.availableEndDays[0],
+      day: this.endDates.availableDays[0],
     });
+  }
+
+  private repopulateDates(
+    year: number | null = null,
+    month: number | null = null
+  ) {
+    this.startDates = this.calendarService.populateDates(
+      this.startDates,
+      year,
+      month
+    );
   }
 
   private repopulateEndDates() {
@@ -164,6 +200,27 @@ export class BookingAddComponent implements OnInit {
       this.chosenMonth,
       this.chosenDay,
       30
+    );
+  }
+
+  private repopulateTime() {
+    let sameDay: boolean =
+      this.chosenDay === this.chosenEndDay &&
+      this.chosenMonth === this.chosenEndMonth &&
+      this.chosenYear === this.chosenEndYear;
+
+    this.availabeTime = this.calendarService.populateTime(sameDay);
+  }
+
+  private repopulateEndTime() {
+    let sameDay: boolean =
+      this.chosenDay === this.chosenEndDay &&
+      this.chosenMonth === this.chosenEndMonth &&
+      this.chosenYear === this.chosenEndYear;
+
+    this.availableEndTime = this.calendarService.populateTime(
+      sameDay,
+      this.chosenTime.timeInMinutes
     );
   }
 }

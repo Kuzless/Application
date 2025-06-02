@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { DateYearInterface } from '../interfaces/calendar/date-year.interface';
 import { DateMonthInterface } from '../interfaces/calendar/date-month.interface';
+import { TimeInterface } from '../interfaces/calendar/time.interface';
+import { DateSelectInterface } from '../interfaces/calendar/date-select.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CalendarService {
-  readonly currentYear: number = new Date().getFullYear();
-  readonly currentMonth: number = new Date().getMonth();
-  readonly currentDay: number = new Date().getDate();
+  readonly currentYear: number;
+  readonly currentMonth: number;
+  readonly currentDay: number;
+  readonly currentTimeInMinutes: number;
+  readonly lastMinuteOfDay = 1410;
+  readonly firstMinuteOfSecondHalf = 720;
 
   readonly monthNames = [
     'January',
@@ -25,7 +30,13 @@ export class CalendarService {
     'December',
   ];
 
-  constructor() {}
+  constructor() {
+    const date = new Date();
+    this.currentYear = date.getFullYear();
+    this.currentMonth = date.getMonth();
+    this.currentDay = date.getDate();
+    this.currentTimeInMinutes = date.getHours() * 60 + date.getMinutes();
+  }
 
   populateYears(): number[] {
     let availableYears: number[] = [];
@@ -61,6 +72,86 @@ export class CalendarService {
       availableDays.push(day);
     }
     return availableDays;
+  }
+
+  populateTime(
+    sameDay: boolean,
+    startTime: number | null = null
+  ): TimeInterface[] {
+    let result: TimeInterface[] = [];
+    let time = 0;
+    if (sameDay) {
+      if (startTime === null) {
+        let temp = this.currentTimeInMinutes % 30;
+        time = this.currentTimeInMinutes - temp;
+        if (temp !== 0) {
+          time += 30;
+        }
+      } else {
+        time = startTime + 30;
+        let temp = time % 30;
+        time -= temp;
+        if (temp !== 0) {
+          time += 30;
+        }
+      }
+    }
+
+    for (; time <= this.lastMinuteOfDay; time += 30) {
+      let hours = Math.floor(time / 60) % 12;
+      let minutes = time % 60;
+      if (hours === 0) hours = 12;
+      let stamp = time < this.firstMinuteOfSecondHalf ? 'AM' : 'PM';
+      let additionalZero = minutes === 0 ? '0' : '';
+      result.push({
+        hours: Math.floor(time / 60),
+        minutes: time % 60,
+        timeInMinutes: time,
+        formattedTime: `${hours}:${minutes}${additionalZero} ${stamp}`,
+      });
+    }
+    for (let time of result) {
+      console.log(
+        `Stamp: ${time.formattedTime}. Time: ${time.hours}:${time.minutes}`
+      );
+    }
+    return result;
+  }
+
+  populateDates(
+    data: DateSelectInterface,
+    year: number | null = null,
+    month: number | null = null
+  ): DateSelectInterface {
+    if (year === null) {
+      data = { availableYears: [], availableMonths: [], availableDays: [] };
+      for (
+        let newYear = this.currentYear;
+        newYear < this.currentYear + 5;
+        newYear++
+      ) {
+        data.availableYears.push(newYear);
+      }
+    }
+    if (month === null) {
+      data.availableMonths = [];
+      data.availableDays = [];
+      let newMonth = year === this.currentYear ? this.currentMonth : 0;
+      for (; newMonth <= 11; newMonth++) {
+        data.availableMonths.push(newMonth);
+      }
+    }
+    data.availableDays = [];
+    let lastDay = new Date(year!, month! + 1, 0).getDate();
+    let day =
+      (year === this.currentYear || !year) &&
+      (month === this.currentMonth || !month)
+        ? this.currentDay
+        : 1;
+    for (; day <= lastDay; day++) {
+      data.availableDays.push(day);
+    }
+    return data;
   }
 
   populateEndDates(
