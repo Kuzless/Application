@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarService } from '../../services/calendar.service';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DateYearInterface } from '../../interfaces/date-year.interface';
+import { DateYearInterface } from '../../interfaces/calendar/date-year.interface';
 
 @Component({
   selector: 'app-booking-add',
@@ -11,22 +11,6 @@ import { DateYearInterface } from '../../interfaces/date-year.interface';
   styleUrl: './booking-add.component.css',
 })
 export class BookingAddComponent implements OnInit {
-  readonly monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-  calendarService!: CalendarService;
-
   startDateForm!: FormGroup;
   endDateForm!: FormGroup;
 
@@ -37,7 +21,7 @@ export class BookingAddComponent implements OnInit {
   availableEndMonths: number[] = [];
   availableEndDays: number[] = [];
 
-  availableEndDatesDictionary: { [year: number]: DateYearInterface } = [];
+  availableEndDatesDictionary: { [year: number]: DateYearInterface } = {};
 
   get chosenYear(): number {
     return this.startDateForm.get('year')?.value;
@@ -63,7 +47,7 @@ export class BookingAddComponent implements OnInit {
     return this.endDateForm.get('day')?.value;
   }
 
-  constructor(calendarService: CalendarService) {
+  constructor(private calendarService: CalendarService) {
     this.calendarService = calendarService;
   }
 
@@ -127,7 +111,20 @@ export class BookingAddComponent implements OnInit {
     this.loadAvailableEndYears();
   }
 
-  loadAvailableEndYears() {
+  onEndYearChange() {
+    this.loadAvailableEndMonths();
+  }
+
+  onEndMonthChange() {
+    this.loadAvailableEndDays();
+  }
+
+  getMonthName(month: number): string {
+    return this.calendarService.monthNames[month];
+  }
+
+  // converting all available years from dictionary to array
+  private loadAvailableEndYears() {
     this.availableEndYears = Object.keys(this.availableEndDatesDictionary).map(
       (year) => Number(year)
     );
@@ -137,40 +134,28 @@ export class BookingAddComponent implements OnInit {
     this.loadAvailableEndMonths();
   }
 
-  loadAvailableEndMonths() {
-    const selectedYear = this.chosenEndYear;
+  // converting all available months from dictionary to array
+  private loadAvailableEndMonths() {
     this.availableEndMonths = Object.keys(
-      this.availableEndDatesDictionary[selectedYear].months
+      this.availableEndDatesDictionary[this.chosenEndYear].months
     ).map((month) => Number(month));
+
     this.endDateForm.patchValue({
       month: this.availableEndMonths[0],
     });
     this.loadAvailableEndDays();
   }
 
-  loadAvailableEndDays() {
-    const selectedYear = this.endDateForm.get('year')?.value;
-    const selectedMonth = this.endDateForm.get('month')?.value;
-
+  // converting all available days from dictionary to array
+  private loadAvailableEndDays() {
     this.availableEndDays =
-      this.availableEndDatesDictionary[selectedYear].months[selectedMonth].days;
+      this.availableEndDatesDictionary[this.chosenEndYear].months[
+        this.chosenEndMonth
+      ].days;
 
     this.endDateForm.patchValue({
       day: this.availableEndDays[0],
     });
-  }
-
-  onEndYearChange() {
-    this.loadAvailableEndMonths();
-    this.endDateForm.patchValue({
-      month: this.availableEndMonths[0],
-      day: this.availableEndDays[0],
-    });
-  }
-
-  onEndMonthChange() {
-    this.loadAvailableEndDays();
-    this.endDateForm.patchValue({ day: this.availableEndDays[0] });
   }
 
   private repopulateEndDates() {

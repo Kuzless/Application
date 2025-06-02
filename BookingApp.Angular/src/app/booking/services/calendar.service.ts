@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DateYearInterface } from '../interfaces/date-year.interface';
-import { DateMonthInterface } from '../interfaces/date-month.interface';
+import { DateYearInterface } from '../interfaces/calendar/date-year.interface';
+import { DateMonthInterface } from '../interfaces/calendar/date-month.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +9,22 @@ export class CalendarService {
   readonly currentYear: number = new Date().getFullYear();
   readonly currentMonth: number = new Date().getMonth();
   readonly currentDay: number = new Date().getDate();
+
+  readonly monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   constructor() {}
 
   populateYears(): number[] {
@@ -110,20 +126,6 @@ export class CalendarService {
       currentDate.setDate(currentDate.getDate() + 1);
     }
     result[trackingYear] = this.getDateInterfaceCopy(dateInterface);
-
-    for (const [yearStr, years] of Object.entries(result)) {
-      const year = Number(yearStr);
-
-      for (const [monthStr, months] of Object.entries(years.months)) {
-        const month = Number(monthStr);
-
-        for (const day of months.days) {
-          console.log(`Day: ${day}, Month: ${month}, Year: ${year}`);
-        }
-        console.log('End of month.');
-      }
-      console.log('End of year.');
-    }
     return result;
   }
 

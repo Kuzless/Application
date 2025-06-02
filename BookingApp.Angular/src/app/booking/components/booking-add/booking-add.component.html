@@ -58,7 +58,7 @@
           name="month"
         >
           <option *ngFor="let month of availableMonths" [value]="month">
-            {{ monthNames[month] }}
+            {{ getMonthName(month) }}
           </option>
         </select>
         <select
@@ -89,7 +89,7 @@
           (change)="onEndMonthChange()"
         >
           <option *ngFor="let month of availableEndMonths" [value]="month">
-            {{ monthNames[month] }}
+            {{ getMonthName(month) }}
           </option>
         </select>
         <select
