@@ -61,7 +61,7 @@
             *ngFor="let month of startDates.availableMonths"
             [ngValue]="month"
           >
-            {{ getMonthName(month) }}
+            {{ getMonthNameByNumber(month) }}
           </option>
         </select>
         <select
@@ -99,7 +99,7 @@
             *ngFor="let month of endDates.availableMonths"
             [ngValue]="month"
           >
-            {{ getMonthName(month) }}
+            {{ getMonthNameByNumber(month) }}
           </option>
         </select>
         <select
@@ -120,7 +120,7 @@
         class="rounded-3 input"
         (change)="onTimeChange()"
       >
-        <option *ngFor="let time of availabeTime" [ngValue]="time">
+        <option *ngFor="let time of availableTime" [ngValue]="time">
           {{ time.formattedTime }}
         </option>
       </select>

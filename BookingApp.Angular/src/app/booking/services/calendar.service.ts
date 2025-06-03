@@ -60,9 +60,6 @@ export class CalendarService {
     }
 
     for (; time <= this.lastMinuteOfDay; time += 30) {
-      if (startTime === null && sameDay && time === this.lastMinuteOfDay) {
-        break;
-      }
       let hours = Math.floor(time / 60) % 12;
       let minutes = time % 60;
       if (hours === 0) hours = 12;
@@ -129,8 +126,16 @@ export class CalendarService {
     startYear: number,
     startMonth: number,
     startDay: number,
+    startTime: number,
     maxDays: number
   ): DateSelectInterface {
+    if (
+      (data.selectedYear === startYear || !data.selectedYear) &&
+      (data.selectedMonth === startMonth || !data.selectedMonth) &&
+      startTime >= this.lastMinuteOfDay
+    ) {
+      startDay++;
+    }
     let startDate = new Date(startYear, startMonth, startDay);
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + maxDays);

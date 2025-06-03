@@ -35,7 +35,7 @@ export class BookingAddComponent implements OnInit {
   availableTime: TimeInterface[] = [];
   availableEndTime: TimeInterface[] = [];
 
-  private isToday: boolean = true;
+  private lastMinuteFlag = false;
 
   get chosenYear(): number {
     return this.startDateForm.get('year')?.value;
@@ -91,206 +91,61 @@ export class BookingAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.repopulateDates();
-    this.startDateForm.patchValue({
-      year: this.startDates.availableYears[0],
-      month: this.startDates.availableMonths[0],
-      day: this.startDates.availableDays[0],
-    });
     this.repopulateTime();
-    this.startTimeForm.patchValue({
-      time: this.availableTime[0],
-    });
+    if (this.chosenTime.timeInMinutes >= this.calendarService.lastMinuteOfDay) {
+      this.lastMinuteFlag = true;
+    }
     this.repopulateEndDates();
-    this.endDateForm.patchValue({
-      year: this.startDates.availableYears[0],
-      month: this.startDates.availableMonths[0],
-      day: this.startDates.availableDays[0],
-    });
     this.repopulateEndTime();
-    this.endTimeForm.patchValue({
-      time: this.availableEndTime[0],
-    });
+  }
+
+  getMonthNameByNumber(month: number): string {
+    return this.calendarService.monthNames[month];
   }
 
   onYearChange() {
     this.repopulateDates(this.chosenYear);
-    this.startDateForm.patchValue({
-      month: this.startDates.availableMonths[0],
-      day: this.startDates.availableDays[0],
-    });
-    if (
-      this.isDayChangedFromToday(
-        this.chosenYear,
-        this.chosenMonth,
-        this.chosenDay
-      )
-    ) {
-      this.repopulateTime();
-      this.startTimeForm.patchValue({
-        time: this.availableTime[0],
-      });
-    }
+    this.repopulateTime();
     this.repopulateEndDates();
-    this.endDateForm.patchValue({
-      year: this.endDates.availableYears[0],
-      month: this.endDates.availableMonths[0],
-      day: this.endDates.availableDays[0],
-    });
     this.repopulateEndTime();
-    this.endTimeForm.patchValue({
-      time: this.availableEndTime[0],
-    });
   }
 
   onMonthChange() {
     this.repopulateDates(this.chosenYear, this.chosenMonth);
-    this.startDateForm.patchValue({
-      day: this.startDates.availableDays[0],
-    });
-    if (
-      this.isDayChangedFromToday(
-        this.chosenYear,
-        this.chosenMonth,
-        this.chosenDay
-      )
-    ) {
-      this.repopulateTime();
-      this.startTimeForm.patchValue({
-        time: this.availableTime[0],
-      });
-    }
+    this.repopulateTime();
     this.repopulateEndDates();
-    this.endDateForm.patchValue({
-      year: this.endDates.availableYears[0],
-      month: this.endDates.availableMonths[0],
-      day: this.endDates.availableDays[0],
-    });
     this.repopulateEndTime();
-    this.endTimeForm.patchValue({
-      time: this.availableEndTime[0],
-    });
   }
 
   onDayChange() {
-    if (
-      this.isDayChangedFromToday(
-        this.chosenYear,
-        this.chosenMonth,
-        this.chosenDay
-      )
-    ) {
-      this.repopulateTime();
-      this.startTimeForm.patchValue({
-        time: this.availableTime[0],
-      });
-    }
+    this.repopulateTime();
     this.repopulateEndDates();
-    this.endDateForm.patchValue({
-      year: this.endDates.availableYears[0],
-      month: this.endDates.availableMonths[0],
-      day: this.endDates.availableDays[0],
-    });
     this.repopulateEndTime();
-    this.endTimeForm.patchValue({
-      time: this.availableEndTime[0],
-    });
   }
 
   onEndYearChange() {
     this.repopulateEndDates(this.chosenEndYear);
-    this.endDateForm.patchValue({
-      month: this.endDates.availableMonths[0],
-      day: this.endDates.availableDays[0],
-    });
-    if (
-      this.isDayChangedFromToday(
-        this.chosenEndYear,
-        this.chosenEndMonth,
-        this.chosenEndDay
-      )
-    ) {
-      this.repopulateEndTime();
-      this.endTimeForm.patchValue({
-        time: this.availableEndTime[0],
-      });
-    }
+    this.repopulateEndTime();
   }
 
   onEndMonthChange() {
     this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
-    this.endDateForm.patchValue({
-      day: this.endDates.availableDays[0],
-    });
-    if (
-      this.isDayChangedFromToday(
-        this.chosenEndYear,
-        this.chosenEndMonth,
-        this.chosenEndDay
-      )
-    ) {
-      this.repopulateEndTime();
-      this.endTimeForm.patchValue({
-        time: this.availableEndTime[0],
-      });
-    }
+    this.repopulateEndTime();
   }
 
   onEndDayChange() {
-    if (
-      this.isDayChangedFromToday(
-        this.chosenEndYear,
-        this.chosenEndMonth,
-        this.chosenEndDay
-      )
-    ) {
-      this.repopulateEndTime();
-      this.endTimeForm.patchValue({
-        time: this.availableEndTime[0],
-      });
-    }
-  }
-
-  getMonthName(month: number): string {
-    return this.calendarService.monthNames[month];
+    this.repopulateEndTime();
   }
 
   onTimeChange() {
-    this.repopulateEndTime();
-    this.endTimeForm.patchValue({
-      time: this.availableEndTime[0],
-    });
-  }
-
-  private isDayChangedFromToday(
-    year: number,
-    month: number,
-    day: number
-  ): boolean {
-    let today =
-      day === this.calendarService.currentDay &&
-      month === this.calendarService.currentMonth &&
-      year === this.calendarService.currentYear;
-    if (this.isToday) {
-      if (today) {
-        return false;
-      }
-      this.isToday = false;
-      return true;
-    } else {
-      if (today) {
-        this.isToday = true;
-        return true;
-      }
-      return false;
+    if (this.chosenTime.timeInMinutes >= this.calendarService.lastMinuteOfDay) {
+      this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
+      this.lastMinuteFlag = true;
+    } else if (this.lastMinuteFlag) {
+      this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
+      this.lastMinuteFlag = false;
     }
-  }
-
-  private get isStartDateSameAsEndDate(): boolean {
-    return (
-      this.chosenDay === this.chosenEndDay &&
-      this.chosenMonth === this.chosenEndMonth &&
-      this.chosenYear === this.chosenEndYear
-    );
+    this.repopulateEndTime();
   }
 
   private repopulateDates(
@@ -300,6 +155,19 @@ export class BookingAddComponent implements OnInit {
     this.startDates.selectedYear = year;
     this.startDates.selectedMonth = month;
     this.startDates = this.calendarService.populateStartDates(this.startDates);
+    if (year === null) {
+      this.startDateForm.patchValue({
+        year: this.startDates.availableYears[0],
+      });
+    }
+    if (month === null) {
+      this.startDateForm.patchValue({
+        month: this.startDates.availableMonths[0],
+      });
+    }
+    this.startDateForm.patchValue({
+      day: this.startDates.availableDays[0],
+    });
   }
 
   private repopulateEndDates(
@@ -313,18 +181,46 @@ export class BookingAddComponent implements OnInit {
       this.chosenYear,
       this.chosenMonth,
       this.chosenDay,
+      this.chosenTime.timeInMinutes,
       30
     );
+    if (year === null) {
+      this.endDateForm.patchValue({
+        year: this.endDates.availableYears[0],
+      });
+    }
+    if (month === null) {
+      this.endDateForm.patchValue({
+        month: this.endDates.availableMonths[0],
+      });
+    }
+    this.endDateForm.patchValue({
+      day: this.endDates.availableDays[0],
+    });
   }
 
   private repopulateTime() {
-    this.availableTime = this.calendarService.populateTime(this.isToday);
+    let isToday =
+      this.chosenDay === this.calendarService.currentDay &&
+      this.chosenMonth === this.calendarService.currentMonth &&
+      this.chosenYear === this.calendarService.currentYear;
+    this.availableTime = this.calendarService.populateTime(isToday);
+    this.startTimeForm.patchValue({
+      time: this.availableTime[0],
+    });
   }
 
   private repopulateEndTime() {
+    let isToday =
+      this.chosenDay === this.chosenEndDay &&
+      this.chosenMonth === this.chosenEndMonth &&
+      this.chosenYear === this.chosenEndYear;
     this.availableEndTime = this.calendarService.populateTime(
-      this.isStartDateSameAsEndDate,
+      isToday,
       this.chosenTime.timeInMinutes
     );
+    this.endTimeForm.patchValue({
+      time: this.availableEndTime[0],
+    });
   }
 }
