@@ -83,6 +83,7 @@
       <div
         [formGroup]="endDateForm"
         class="d-flex flex-row justify-content-between gap-3"
+        (change)="onEndDayChange()"
       >
         <select formControlName="day" class="rounded-3 input w-33">
           <option *ngFor="let day of endDates.availableDays" [ngValue]="day">
@@ -126,11 +127,7 @@
     </div>
     <div [formGroup]="endTimeForm" class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">End time</h4>
-      <select
-        formControlName="time"
-        class="rounded-3 input"
-        (change)="onEndTimeChange()"
-      >
+      <select formControlName="time" class="rounded-3 input">
         <option *ngFor="let time of availableEndTime" [ngValue]="time">
           {{ time.formattedTime }}
         </option>

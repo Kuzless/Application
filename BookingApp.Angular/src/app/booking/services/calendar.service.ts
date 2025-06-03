@@ -60,6 +60,9 @@ export class CalendarService {
     }
 
     for (; time <= this.lastMinuteOfDay; time += 30) {
+      if (startTime === null && sameDay && time === this.lastMinuteOfDay) {
+        break;
+      }
       let hours = Math.floor(time / 60) % 12;
       let minutes = time % 60;
       if (hours === 0) hours = 12;
@@ -90,6 +93,7 @@ export class CalendarService {
       ) {
         data.availableYears.push(newYear);
       }
+      data.selectedYear = data.availableYears[0];
     }
     if (data.selectedMonth === null) {
       data.availableMonths = [];
@@ -98,6 +102,7 @@ export class CalendarService {
       for (; newMonth <= 11; newMonth++) {
         data.availableMonths.push(newMonth);
       }
+      data.selectedMonth = data.availableMonths[0];
     }
     data.availableDays = [];
     let lastDay = new Date(
@@ -110,6 +115,9 @@ export class CalendarService {
       (data.selectedMonth === this.currentMonth || !data.selectedMonth)
         ? this.currentDay
         : 1;
+    if (this.lastMinuteOfDay - 30 <= this.currentTimeInMinutes - 30) {
+      day++;
+    }
     for (; day <= lastDay; day++) {
       data.availableDays.push(day);
     }
