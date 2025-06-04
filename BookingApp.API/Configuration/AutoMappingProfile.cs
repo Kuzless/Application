@@ -3,6 +3,7 @@ using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.DTOs.Booking;
 using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
+using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
 using BookingApp.Domain.Entities;
 
 namespace BookingApp.API.Configuration
@@ -26,8 +27,15 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoomCapacity.Id))
                 .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.RoomCapacity.Capacity));
 
-            // booking commands
-            CreateMap<CreateNewBookingCommand, Booking>();
+            // booking add commands
+            CreateMap<CreateNewBookingCommand, Booking>()
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => DateTime.Parse(src.StartDate)))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => DateTime.Parse(src.EndDate)));
+
+            // booking add queries
+            CreateMap<RoomType, NewBookingStructureDTO>()
+                .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
 
             // booking editing queries
             CreateMap<RoomType, RoomTypeWithCapacitiesDTO>();

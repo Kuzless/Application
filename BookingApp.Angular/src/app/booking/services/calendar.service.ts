@@ -6,11 +6,16 @@ import { DateSelectInterface } from '../interfaces/calendar/date-select.interfac
   providedIn: 'root',
 })
 export class CalendarService {
+  // represent info on on today's date
   readonly currentYear: number;
   readonly currentMonth: number;
   readonly currentDay: number;
   readonly currentTimeInMinutes: number;
+
+  // 23:30 in minutes. Used to indicate last available minute for day
   readonly lastMinuteOfDay = 1410;
+
+  // 12:00 in minutes. Used to move from AM to PM
   readonly firstMinuteOfSecondHalf = 720;
 
   readonly monthNames = [
@@ -36,9 +41,14 @@ export class CalendarService {
     this.currentTimeInMinutes = date.getHours() * 60 + date.getMinutes();
   }
 
+  // returns TimeInterface[] containing all available time.
+  // takes boolean sameDay that indicates if startDate and endDate are the same day
+  // startTime is used for populating availableEndTimes. It is basically floor that is not included if both startDate and endDate are the same day
+  // endTime is used to set ceiling that is included for availableTime
   populateTime(
     sameDay: boolean,
-    startTime: number | null = null
+    startTime: number | null = null,
+    endTime: number | null = null
   ): TimeInterface[] {
     let result: TimeInterface[] = [];
     let time = 0;
@@ -59,7 +69,9 @@ export class CalendarService {
       }
     }
 
-    for (; time <= this.lastMinuteOfDay; time += 30) {
+    endTime = endTime ? endTime : this.lastMinuteOfDay;
+
+    for (; time <= endTime; time += 30) {
       let hours = Math.floor(time / 60) % 12;
       let minutes = time % 60;
       if (hours === 0) hours = 12;
@@ -72,20 +84,20 @@ export class CalendarService {
         formattedTime: `${hours}:${minutes}${additionalZero} ${stamp}`,
       });
     }
-    /*for (let time of result) {
-      console.log(
-        `Stamp: ${time.formattedTime}. Time: ${time.hours}:${time.minutes}`
-      );
-    }*/
     return result;
   }
 
-  populateStartDates(data: DateSelectInterface): DateSelectInterface {
+  // returns DateSelectInterface containing all available years, months for chosen year and days for chosen month
+  // doesn't repopulate years if there's chosen year, months if there's chosen month. always repopulates days
+  populateStartDates(
+    data: DateSelectInterface,
+    numberOfYears: number
+  ): DateSelectInterface {
     if (data.selectedYear === null) {
       data.availableYears = [];
       for (
         let newYear = this.currentYear;
-        newYear < this.currentYear + 5;
+        newYear < this.currentYear + numberOfYears;
         newYear++
       ) {
         data.availableYears.push(newYear);
@@ -121,6 +133,9 @@ export class CalendarService {
     return data;
   }
 
+  // returns DateSelectInterface containing all available end years, months for chosen year and days for chosen month
+  // takes into account how many days since initial date have to be available
+  // doesn't repopulate years if there's chosen year, months if there's chosen month. always repopulates days
   populateEndDates(
     data: DateSelectInterface,
     startYear: number,

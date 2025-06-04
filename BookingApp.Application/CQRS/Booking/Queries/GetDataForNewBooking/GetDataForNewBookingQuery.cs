@@ -1,7 +1,7 @@
-﻿using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
+﻿using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
 using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking
 {
-    public class GetDataForNewBookingQuery : IRequest<List<RoomTypeWithCapacitiesDTO>> { }
+    public class GetDataForNewBookingQuery : IRequest<List<NewBookingStructureDTO>> { }
 }

@@ -8,11 +8,13 @@ namespace BookingApp.Infrastructure
         private readonly DatabaseContext _context;
         public IRoomTypeRepository RoomTypeRepository { get; }
         public IBookingRepository BookingRepository { get; }
+        public IRoomRepository RoomRepository { get; }
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
             BookingRepository = new BookingRepository(_context);
             RoomTypeRepository = new RoomTypeRepository(_context);
+            RoomRepository = new RoomRepository(_context);
         }
         public async Task<int> SaveChangesAsync()
         {

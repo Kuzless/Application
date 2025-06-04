@@ -22,6 +22,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
         {
             try
             {
+                /*
                 var bookings = await _unitOfWork.BookingRepository.GetRoomBookingsForTimePeriod(request.RoomId, request.StartDate, request.EndDate);
                 switch (bookings.Count)
                 {
@@ -41,7 +42,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
                         break;
                     default:
                         return _responseHandler.Handle(409);
-                }
+                }*/
                 throw new Exception("An unexpected error occurred");
             }
             catch (Exception ex)

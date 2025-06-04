@@ -1,45 +1,91 @@
-<form class="d-flex inter-4 w-100 gap-4">
+<h1 class="inter-7">Book your workspace</h1>
+<form
+  [formGroup]="bookingForm"
+  class="d-flex align-items-start inter-4 w-100 gap-4"
+  (ngSubmit)="onSubmit()"
+>
   <div class="d-flex flex-column bg-white rounded-4 w-60 p-4 px-5 gap-4">
     <h2 class="inter-7">Reservation details</h2>
-    <div class="d-flex flex-column gap-1 mb-3">
-      <label class="inter-5">Name</label>
-      <input class="rounded-2 input" />
-    </div>
-    <div class="d-flex flex-column gap-1 mb-3">
-      <label class="inter-5">Email</label>
-      <input class="rounded-2 input" />
-    </div>
-    <div class="d-flex flex-column gap-1 mb-3">
-      <label class="inter-5">Workspace Type</label>
-      <select class="rounded-2 input">
-        <option value="id">Option</option>
-        <option value="id2">Option</option>
-        <option value="id3">Option</option>
-        <option value="id4">Option</option>
-      </select>
-    </div>
-    <fieldset class="d-flex justify-content-start flex-column gap-3">
-      <label class="inter-5 mb-3">What room size do you need?</label>
-      <div class="d-flex gap-2">
-        <input class="radio" id="temp1" name="size" type="radio" checked />
-        <label for="temp1">Hello</label>
+    <div formGroupName="userDataGroup" class="d-flex flex-column gap-4">
+      <div class="d-flex flex-column gap-1 mb-3">
+        <label class="inter-5">Name</label>
+        <input
+          formControlName="name"
+          (focus)="nameFocus = true"
+          (blur)="nameFocus = false"
+          class="rounded-2 input"
+        />
+        <div
+          *ngIf="
+            userDataGroup.get('name')?.invalid &&
+            userDataGroup.get('name')?.touched &&
+            !nameFocus
+          "
+          class="inter-4"
+        >
+          Name field is required.
+        </div>
       </div>
-      <div class="d-flex gap-2">
-        <input class="radio" id="temp2" name="size" type="radio" />
-        <label for="temp2">Hello</label>
+      <div class="d-flex flex-column gap-1 mb-3">
+        <label class="inter-5">Email</label>
+        <input
+          formControlName="email"
+          (focus)="emailFocus = true"
+          (blur)="emailFocus = false"
+          class="rounded-2 input"
+        />
+        <div
+          *ngIf="
+            userDataGroup.get('email')?.invalid &&
+            userDataGroup.get('email')?.touched &&
+            !emailFocus
+          "
+          class="inter-4"
+        >
+          Please enter valid email.
+        </div>
       </div>
-      <div class="d-flex gap-2">
-        <input class="radio" id="temp3" name="size" type="radio" />
-        <label for="temp3">Hello</label>
+    </div>
+    <ng-container
+      *ngIf="(roomTypes | async) || [] as typesData"
+      formGroupName="roomInfoGroup"
+      class="d-flex flex-column gap-4"
+    >
+      <div class="d-flex flex-column gap-1 mb-3">
+        <label class="inter-5">Workspace Type</label>
+        <select
+          formControlName="roomInfo"
+          class="rounded-2 input"
+          (change)="onRoomTypeChange()"
+        >
+          <option *ngFor="let roomInfo of typesData" [ngValue]="roomInfo">
+            {{ roomInfo.roomType.type }}
+          </option>
+        </select>
       </div>
-    </fieldset>
+      <ng-container formGroupName="roomCapacityGroup" *ngIf="hasRooms">
+        <fieldset class="d-flex justify-content-start flex-column gap-3">
+          <label class="inter-5 mb-3">What room size do you need?</label>
+          <div *ngFor="let capacity of roomCapacities" class="d-flex gap-2">
+            <input
+              formControlName="roomChosenCapacityId"
+              class="radio"
+              [id]="capacity.id"
+              [value]="capacity.id"
+              type="radio"
+            />
+            <label [for]="capacity.id">Room for {{ capacity.capacity }}</label>
+          </div>
+        </fieldset>
+      </ng-container>
+    </ng-container>
   </div>
   <div class="d-flex flex-column bg-white rounded-4 w-40 p-4 px-5 gap-4">
     <h2 class="inter-7">Choose date and time</h2>
     <div class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">Start date</h4>
       <div
-        [formGroup]="startDateForm"
+        formGroupName="startDateGroup"
         class="d-flex flex-row justify-content-between gap-3"
       >
         <select
@@ -81,7 +127,7 @@
     <div class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">End date</h4>
       <div
-        [formGroup]="endDateForm"
+        formGroupName="endDateGroup"
         class="d-flex flex-row justify-content-between gap-3"
         (change)="onEndDayChange()"
       >
@@ -113,10 +159,10 @@
         </select>
       </div>
     </div>
-    <div [formGroup]="startTimeForm" class="d-flex flex-column gap-1 mb-3">
+    <div class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">Start time</h4>
       <select
-        formControlName="time"
+        formControlName="startTime"
         class="rounded-3 input"
         (change)="onTimeChange()"
       >
@@ -125,13 +171,14 @@
         </option>
       </select>
     </div>
-    <div [formGroup]="endTimeForm" class="d-flex flex-column gap-1 mb-3">
+    <div class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">End time</h4>
-      <select formControlName="time" class="rounded-3 input">
+      <select formControlName="endTime" class="rounded-3 input">
         <option *ngFor="let time of availableEndTime" [ngValue]="time">
           {{ time.formattedTime }}
         </option>
       </select>
     </div>
+    <button type="submit" class="btn btn-primary inter-6 input">Submit</button>
   </div>
 </form>

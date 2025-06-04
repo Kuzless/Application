@@ -4,7 +4,7 @@ namespace BookingApp.Domain.Interfaces
 {
     public interface IBookingRepository : IGenericRepository<Booking>
     {
-        Task<List<Booking>> GetRoomBookingsForTimePeriod(int roomId, DateTime start, DateTime end);
+        Task<bool> IsRoomBookedForTimePeriod(int roomId, DateTime start, DateTime end);
         Task<List<Booking>> GetBookingsWithRoomByCustomerEmail(string email);
     }
 }

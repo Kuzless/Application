@@ -17,4 +17,16 @@ export class BookingApiService {
   getByEmail<T>(endpoint: string, email: string): Observable<T> {
     return this.httpClient.get<T>(`${this.baseUrl}/${endpoint}/${email}`);
   }
+
+  get<T>(endpoint: string): Observable<T> {
+    return this.httpClient.get<T>(`${this.baseUrl}/${endpoint}`);
+  }
+
+  post<T>(endpoint: string, body: T) {
+    this.httpClient
+      .post<T>(`${this.baseUrl}/${endpoint}`, body)
+      .subscribe((response) => {
+        console.log('Response:', response);
+      });
+  }
 }

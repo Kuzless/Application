@@ -16,9 +16,9 @@ namespace BookingApp.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Booking>> GetRoomBookingsForTimePeriod(int roomId, DateTime start, DateTime end)
+        public async Task<bool> IsRoomBookedForTimePeriod(int roomId, DateTime start, DateTime end)
         {
-            var rooms = await _context.Set<Booking>().Where(b => (b.RoomId == roomId) && (b.StartDate <= end && b.EndDate >= start)).ToListAsync();
+            var rooms = await _context.Set<Booking>().Where(b => (b.RoomId == roomId) && (b.StartDate <= end && b.EndDate >= start)).AnyAsync();
             return rooms;
         }
     }

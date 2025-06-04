@@ -28,7 +28,7 @@ namespace BookingApp.API.Controllers
             return _apiResponseHandler.Handle(bookings);
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateNewBookingCommand command)
         {
             var result = await _mediator.Send(command);
@@ -62,7 +62,7 @@ namespace BookingApp.API.Controllers
             return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
         }
 
-        [HttpGet("create")]
+        [HttpGet("add")]
         public async Task<IActionResult> GetDataForNewBooking()
         {
             var data = await _mediator.Send(new GetDataForNewBookingQuery());
