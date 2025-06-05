@@ -26,11 +26,20 @@ namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
             {
                 var availableRooms = await _unitOfWork.RoomRepository.GetRoomsByTypeAndCapacity(request.RoomTypeId, request.RoomCapacityId);
                 var freeRooms = new List<Room>();
-                var startDate = DateTime.Parse(request.StartDate);
-                var endDate = DateTime.Parse(request.EndDate);
+                var startDate = DateOnly.Parse(request.StartDate);
+                var endDate = DateOnly.Parse(request.EndDate);
+                var startTime = TimeOnly.Parse(request.StartTime);
+                
+                if (request.EndTime == "24:00")
+                {
+                    request.EndTime = "00:00";
+                    endDate = endDate.AddDays(1);
+                    request.EndDate = endDate.ToString("yyyy-MM-dd");
+                }
+                var endTime = TimeOnly.Parse(request.EndTime);
                 foreach (Room room in availableRooms)
                 {
-                    var isBooked = await _unitOfWork.BookingRepository.IsRoomBookedForTimePeriod(room.Id, startDate, endDate);
+                    var isBooked = await _unitOfWork.BookingRepository.IsRoomBookedForTimePeriod(room.Id, startDate, endDate, startTime, endTime);
                     if (!isBooked)
                     {
                         freeRooms.Add(room);

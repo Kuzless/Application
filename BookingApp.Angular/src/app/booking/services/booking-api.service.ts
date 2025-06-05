@@ -14,8 +14,8 @@ export class BookingApiService {
     this.httpClient = httpclient;
   }
 
-  getByEmail<T>(endpoint: string, email: string): Observable<T> {
-    return this.httpClient.get<T>(`${this.baseUrl}/${endpoint}/${email}`);
+  getByUserId<T>(endpoint: string, userId: string): Observable<T> {
+    return this.httpClient.get<T>(`${this.baseUrl}/${endpoint}/${userId}`);
   }
 
   get<T>(endpoint: string): Observable<T> {

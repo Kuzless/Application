@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BookingApiService } from '../../services/booking-api.service';
-import { RoomTypeInfoInterface } from './interfaces/room-type-info.interface';
+import { BookingTypeInfoInterface } from './interfaces/room-type-info.interface';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { BookingElementComponent } from './booking-element/booking-element.component';
@@ -12,16 +12,17 @@ import { BookingElementComponent } from './booking-element/booking-element.compo
   styleUrl: './booking.component.css',
 })
 export class BookingComponent implements OnInit {
-  pageData$?: Observable<RoomTypeInfoInterface[]>;
+  private readonly userId: string = localStorage.getItem('uniqueId')!;
+  pageData$?: Observable<BookingTypeInfoInterface[]>;
 
   private endpoint: string = 'Booking';
 
   constructor(private apiService: BookingApiService) {}
 
   ngOnInit(): void {
-    this.pageData$ = this.apiService.getByEmail<RoomTypeInfoInterface[]>(
+    this.pageData$ = this.apiService.getByUserId<BookingTypeInfoInterface[]>(
       this.endpoint,
-      'qwe'
+      this.userId
     );
   }
 }

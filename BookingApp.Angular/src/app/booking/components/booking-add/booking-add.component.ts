@@ -23,6 +23,7 @@ import { AddBookingCommandInterface } from './interfaces/add-booking-command.int
   styleUrl: './booking-add.component.css',
 })
 export class BookingAddComponent implements OnInit {
+  private readonly userId: string = localStorage.getItem('uniqueId')!;
   private readonly endpoint: string = 'Booking/add';
 
   // how many years should be populated into startDate
@@ -56,10 +57,6 @@ export class BookingAddComponent implements OnInit {
 
   availableTime: TimeInterface[] = [];
   availableEndTime: TimeInterface[] = [];
-
-  // flag that indicates if startTime is last available time
-  // used to populate endDate from next day
-  private lastMinuteFlag = false;
 
   // max amount of days allowed to book
   private maxDays = 30;
@@ -181,12 +178,8 @@ export class BookingAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.repopulateDates();
-    this.repopulateTime();
-    if (this.chosenTime.timeInMinutes >= this.calendarService.lastMinuteOfDay) {
-      this.lastMinuteFlag = true;
-    }
     this.repopulateEndDates();
-    this.repopulateEndTime();
+    this.repopulateTime();
   }
 
   // gets month name from calendarService depending on month number -1
@@ -197,7 +190,6 @@ export class BookingAddComponent implements OnInit {
   // submit form event handler
   onSubmit() {
     console.clear();
-    console.log(`Form validation: ${this.bookingForm.valid}`);
     console.log(`User's name: ${this.userName}`);
     console.log(`User's email: ${this.userEmail}`);
     console.log(
@@ -218,36 +210,40 @@ export class BookingAddComponent implements OnInit {
         this.chosenEndTime.minutes
       )}`
     );
+    console.log(`${this.chosenTime.hours}:${this.chosenTime.minutes}0`);
+    console.log(`${this.chosenEndTime.hours}:${this.chosenEndTime.minutes}0`);
     if (this.hasRooms) {
       if (!this.roomChosenCapacityId) {
         console.log('PLEASE CHOOSE ROOM CAPACITY');
-      } else {
-        if (this.bookingForm.valid) {
-          let data: AddBookingCommandInterface = {
-            roomTypeId: this.roomInfo.roomType.id,
-            roomCapacityId: this.roomChosenCapacityId,
-            customerName: this.userName,
-            customerEmail: this.userEmail,
-            startDate: `${this.chosenYear}-${this.chosenMonth + 1}-${
-              this.chosenDay
-            }T${this.chosenTime.hours
-              .toString()
-              .padStart(2, '0')}:${this.chosenTime.minutes
-              .toString()
-              .padStart(2, '0')}:00`,
-
-            endDate: `${this.chosenEndYear}-${this.chosenEndMonth + 1}-${
-              this.chosenEndDay
-            }T${this.chosenEndTime.hours
-              .toString()
-              .padStart(2, '0')}:${this.chosenEndTime.minutes
-              .toString()
-              .padStart(2, '0')}:00`,
-          };
-          this.apiService.post<AddBookingCommandInterface>(this.endpoint, data);
-        }
-        console.log(`Chosen capacity id: ${this.roomChosenCapacityId}`);
+        this.bookingForm.setErrors({ invalidForm: true });
       }
+    }
+    console.log(`Form validation: ${this.bookingForm.valid}`);
+    if (this.bookingForm.valid) {
+      const formattedStartMinutes =
+        this.chosenTime.minutes > 9
+          ? `${this.chosenTime.minutes}`
+          : `${this.chosenTime.minutes}0`;
+      const formattedEndMinutes =
+        this.chosenEndTime.minutes > 9
+          ? `${this.chosenEndTime.minutes}`
+          : `${this.chosenEndTime.minutes}0`;
+      let data: AddBookingCommandInterface = {
+        roomTypeId: this.roomInfo.roomType.id,
+        roomCapacityId: Number(this.roomChosenCapacityId) || null,
+        customerId: this.userId,
+        customerName: this.userName,
+        customerEmail: this.userEmail,
+        startDate: `${this.chosenYear}-${this.chosenMonth + 1}-${
+          this.chosenDay
+        }`,
+        endDate: `${this.chosenEndYear}-${this.chosenEndMonth + 1}-${
+          this.chosenEndDay
+        }`,
+        startTime: `${this.chosenTime.hours}:${formattedStartMinutes}`,
+        endTime: `${this.chosenEndTime.hours}:${formattedEndMinutes}`,
+      };
+      this.apiService.post<AddBookingCommandInterface>(this.endpoint, data);
     }
   }
 
@@ -261,51 +257,35 @@ export class BookingAddComponent implements OnInit {
 
   onYearChange() {
     this.repopulateDates(this.chosenYear);
-    this.repopulateTime();
     this.repopulateEndDates();
-    this.repopulateEndTime();
+    this.repopulateTime();
   }
 
   onMonthChange() {
     this.repopulateDates(this.chosenYear, this.chosenMonth);
-    this.repopulateTime();
     this.repopulateEndDates();
-    this.repopulateEndTime();
+    this.repopulateTime();
   }
 
   onDayChange() {
-    this.repopulateTime();
     this.repopulateEndDates();
-    this.repopulateEndTime();
+    this.repopulateTime();
   }
 
   onEndYearChange() {
     this.repopulateEndDates(this.chosenEndYear);
-    this.repopulateEndTime();
   }
 
   onEndMonthChange() {
     this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
-    this.repopulateEndTime();
-  }
-
-  onEndDayChange() {
-    this.repopulateEndTime();
   }
 
   onTimeChange() {
-    if (this.chosenTime.timeInMinutes >= this.calendarService.lastMinuteOfDay) {
-      this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
-      this.lastMinuteFlag = true;
-    } else if (this.lastMinuteFlag) {
-      this.repopulateEndDates(this.chosenEndYear, this.chosenEndMonth);
-      this.lastMinuteFlag = false;
-    }
     this.repopulateEndTime();
   }
 
   // configures rules for room types, repopulates roomCapacities, repopulates end time/date if maxDays available for booking has changed
-  // all room types with unique maxDays/ types without rooms should be added here
+  // all room types with unique maxDays / types without rooms should be added here
   private configureRoomType() {
     const roomInfo = this.roomInfoGroup.get('roomInfo')
       ?.value as NewBookingStructureInterface;
@@ -319,7 +299,6 @@ export class BookingAddComponent implements OnInit {
       this.maxDays = 1;
       if (temp !== this.maxDays) {
         this.repopulateEndDates();
-        this.repopulateEndTime();
       }
     } else {
       this.roomCapacityGroup
@@ -330,7 +309,6 @@ export class BookingAddComponent implements OnInit {
       this.maxDays = 30;
       if (temp !== this.maxDays) {
         this.repopulateEndDates();
-        this.repopulateEndTime();
       }
     }
   }
@@ -371,7 +349,6 @@ export class BookingAddComponent implements OnInit {
       this.chosenYear,
       this.chosenMonth,
       this.chosenDay,
-      this.chosenTime.timeInMinutes,
       this.maxDays
     );
     if (year === null) {
@@ -386,38 +363,22 @@ export class BookingAddComponent implements OnInit {
   }
 
   // repopulates startTime arrays and changes currently chosen start time
-  private repopulateTime() {
-    let isToday =
-      this.chosenDay === this.calendarService.currentDay &&
-      this.chosenMonth === this.calendarService.currentMonth &&
-      this.chosenYear === this.calendarService.currentYear;
-    this.availableTime = this.calendarService.populateTime(isToday);
+  private repopulateStartTime() {
+    this.availableTime = this.calendarService.populateTime(this.chosenDay);
     this.bookingForm.get('startTime')?.setValue(this.availableTime[0]);
   }
 
   // repopulates endTime arrays and changes currently chosen end time
   private repopulateEndTime() {
-    let isToday =
-      this.chosenDay === this.chosenEndDay &&
-      this.chosenMonth === this.chosenEndMonth &&
-      this.chosenYear === this.chosenEndYear;
-    if (
-      this.endDates.availableDays.at(-1) === this.chosenEndDay &&
-      this.endDates.availableMonths.at(-1) === this.chosenEndMonth &&
-      this.endDates.availableYears.at(-1) === this.chosenEndYear
-    ) {
-      this.availableEndTime = this.calendarService.populateTime(
-        isToday,
-        this.chosenTime.timeInMinutes,
-        this.chosenTime.timeInMinutes
-      );
-    } else {
-      this.availableEndTime = this.calendarService.populateTime(
-        isToday,
-        this.chosenTime.timeInMinutes
-      );
-    }
-
+    this.availableEndTime = this.calendarService.populateTime(
+      this.chosenDay,
+      this.chosenTime.timeInMinutes
+    );
     this.bookingForm.get('endTime')?.setValue(this.availableEndTime[0]);
+  }
+
+  private repopulateTime() {
+    this.repopulateStartTime();
+    this.repopulateEndTime();
   }
 }

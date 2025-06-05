@@ -7,13 +7,13 @@ import { DateSelectInterface } from '../interfaces/calendar/date-select.interfac
 })
 export class CalendarService {
   // represent info on on today's date
-  readonly currentYear: number;
-  readonly currentMonth: number;
-  readonly currentDay: number;
-  readonly currentTimeInMinutes: number;
+  firstAvailableYear!: number;
+  firstAvailableMonth!: number;
+  firstAvailableDay!: number;
+  firstAvailableTimeInMinutes!: number;
 
-  // 23:30 in minutes. Used to indicate last available minute for day
-  readonly lastMinuteOfDay = 1410;
+  // 24:00 in minutes. Used to indicate last available minute for day
+  readonly lastMinuteOfDay = 1440;
 
   // 12:00 in minutes. Used to move from AM to PM
   readonly firstMinuteOfSecondHalf = 720;
@@ -34,48 +34,42 @@ export class CalendarService {
   ];
 
   constructor() {
-    const date = new Date();
-    this.currentYear = date.getFullYear();
-    this.currentMonth = date.getMonth();
-    this.currentDay = date.getDate();
-    this.currentTimeInMinutes = date.getHours() * 60 + date.getMinutes();
+    this.setInitialData();
   }
 
   // returns TimeInterface[] containing all available time.
-  // takes boolean sameDay that indicates if startDate and endDate are the same day
-  // startTime is used for populating availableEndTimes. It is basically floor that is not included if both startDate and endDate are the same day
-  // endTime is used to set ceiling that is included for availableTime
+  // startTime sets floor value that is not included
+  // if startTime isn't specified - last minute option will not be added to array
+  // this prohibits setting startTime to last minute and leaves space for endTime
   populateTime(
-    sameDay: boolean,
-    startTime: number | null = null,
-    endTime: number | null = null
+    chosenDay: number,
+    startTime: number | null = null
   ): TimeInterface[] {
     let result: TimeInterface[] = [];
     let time = 0;
-    if (sameDay) {
-      if (startTime === null) {
-        let temp = this.currentTimeInMinutes % 30;
-        time = this.currentTimeInMinutes - temp;
-        if (temp !== 0) {
-          time += 30;
-        }
-      } else {
-        time = startTime + 30;
-        let temp = time % 30;
-        time -= temp;
-        if (temp !== 0) {
-          time += 30;
-        }
+    let lastMinute = this.lastMinuteOfDay;
+    if (chosenDay === this.firstAvailableDay) {
+      if (!startTime) {
+        time = this.firstAvailableTimeInMinutes;
+        lastMinute = this.lastMinuteOfDay - 30;
       }
     }
-
-    endTime = endTime ? endTime : this.lastMinuteOfDay;
-
-    for (; time <= endTime; time += 30) {
+    if (startTime !== null) {
+      time = startTime + 30;
+      let temp = time % 30;
+      time -= temp;
+      if (temp !== 0) {
+        time += 30;
+      }
+    }
+    for (; time <= lastMinute; time += 30) {
       let hours = Math.floor(time / 60) % 12;
       let minutes = time % 60;
       if (hours === 0) hours = 12;
-      let stamp = time < this.firstMinuteOfSecondHalf ? 'AM' : 'PM';
+      let stamp =
+        time < this.firstMinuteOfSecondHalf || time === this.lastMinuteOfDay
+          ? 'AM'
+          : 'PM';
       let additionalZero = minutes === 0 ? '0' : '';
       result.push({
         hours: Math.floor(time / 60),
@@ -96,8 +90,8 @@ export class CalendarService {
     if (data.selectedYear === null) {
       data.availableYears = [];
       for (
-        let newYear = this.currentYear;
-        newYear < this.currentYear + numberOfYears;
+        let newYear = this.firstAvailableYear;
+        newYear < this.firstAvailableYear + numberOfYears;
         newYear++
       ) {
         data.availableYears.push(newYear);
@@ -107,7 +101,9 @@ export class CalendarService {
     if (data.selectedMonth === null) {
       data.availableMonths = [];
       let newMonth =
-        data.selectedYear === this.currentYear ? this.currentMonth : 0;
+        data.selectedYear === this.firstAvailableYear
+          ? this.firstAvailableMonth
+          : 0;
       for (; newMonth <= 11; newMonth++) {
         data.availableMonths.push(newMonth);
       }
@@ -120,13 +116,10 @@ export class CalendarService {
       0
     ).getDate();
     let day =
-      (data.selectedYear === this.currentYear || !data.selectedYear) &&
-      (data.selectedMonth === this.currentMonth || !data.selectedMonth)
-        ? this.currentDay
+      (data.selectedYear === this.firstAvailableYear || !data.selectedYear) &&
+      (data.selectedMonth === this.firstAvailableMonth || !data.selectedMonth)
+        ? this.firstAvailableDay
         : 1;
-    if (this.lastMinuteOfDay - 30 <= this.currentTimeInMinutes - 30) {
-      day++;
-    }
     for (; day <= lastDay; day++) {
       data.availableDays.push(day);
     }
@@ -141,19 +134,11 @@ export class CalendarService {
     startYear: number,
     startMonth: number,
     startDay: number,
-    startTime: number,
     maxDays: number
   ): DateSelectInterface {
-    if (
-      (data.selectedYear === startYear || !data.selectedYear) &&
-      (data.selectedMonth === startMonth || !data.selectedMonth) &&
-      startTime >= this.lastMinuteOfDay
-    ) {
-      startDay++;
-    }
     let startDate = new Date(startYear, startMonth, startDay);
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + maxDays);
+    endDate.setDate(startDate.getDate() + maxDays - 1);
     let newStartDate: Date;
     let hasYears = false;
     let hasMonths = false;
@@ -230,5 +215,22 @@ export class CalendarService {
       monthTracker = newStartDate.getMonth();
     }
     return data;
+  }
+
+  private setInitialData() {
+    const today = new Date();
+    let curTime = today.getHours() * 60 + today.getMinutes();
+    let temp = curTime % 30;
+    this.firstAvailableTimeInMinutes = curTime - temp;
+    if (temp !== 0) {
+      this.firstAvailableTimeInMinutes += 30;
+    }
+    if (this.firstAvailableTimeInMinutes >= this.lastMinuteOfDay - 30) {
+      today.setDate(today.getDate() + 1);
+      this.firstAvailableTimeInMinutes = 0;
+    }
+    this.firstAvailableYear = today.getFullYear();
+    this.firstAvailableMonth = today.getMonth();
+    this.firstAvailableDay = today.getDate();
   }
 }

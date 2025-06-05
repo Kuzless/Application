@@ -5,7 +5,7 @@
       class="w-100 h-75 rounded-4 pb-2"
       [src]="
         imagesUrl +
-        ((booking?.roomType)!.type | formatImg | lowercase) +
+        ((bookingType?.roomType)!.type | formatImg | lowercase) +
         '/' +
         mainImageName +
         imagesFormat
@@ -18,7 +18,7 @@
         class="rounded-4 flex-fill object-fit-cover preview-image"
         [src]="
           imagesUrl +
-          ((booking?.roomType)!.type | formatImg | lowercase) +
+          ((bookingType?.roomType)!.type | formatImg | lowercase) +
           '/' +
           item +
           imagesFormat
@@ -32,13 +32,14 @@
     <!--Description and button-->
     <div class="d-flex pt-2 mb-2">
       <div class="w-75">
-        <h2 class="inter-6">{{ booking?.roomType?.type }}</h2>
+        <h2 class="inter-6">{{ bookingType?.roomType?.type }}</h2>
         <p class="text-muted">
-          {{ booking?.roomType?.description }}
+          {{ bookingType?.roomType?.description }}
         </p>
       </div>
       <div class="d-flex flex-row-reverse w-25">
         <a
+          [routerLink]="addBookingRoute"
           class="btn btn-primary button d-flex align-items-center justify-content-center"
           >Book now</a
         >
@@ -50,7 +51,7 @@
         <h5 class="inter-6">Amenities</h5>
         <ul class="d-flex gap-3 list-unstyled">
           <li
-            *ngFor="let amenity of booking?.amenities"
+            *ngFor="let amenity of bookingType?.amenities"
             class="icon rounded-3 d-flex justify-content-center align-items-center"
           >
             <img
@@ -63,12 +64,7 @@
       </div>
       <div class="w-50">
         <!-- checking if it's open space -->
-        <ng-container
-          *ngIf="
-            !capacitiesInfo || capacitiesInfo.length === 0;
-            else privateRoom
-          "
-        >
+        <ng-container *ngIf="isSpecificType(bookingType); else room">
           <h5 class="inter-6">Availability</h5>
           <div class="d-flex align-items-center gap-3">
             <div
@@ -76,11 +72,11 @@
             >
               <img [src]="iconsUrl + 'areaicon' + iconsFormat" />
             </div>
-            <div class="inter-5 fs-5">30 desks</div>
+            <div class="inter-5 fs-5">{{ rooms.length }} desks</div>
           </div>
         </ng-container>
-        <!-- or private room -->
-        <ng-template #privateRoom>
+        <!-- or room -->
+        <ng-template #room>
           <h5 class="inter-6">Capacity options</h5>
           <div class="d-flex align-items-center gap-3">
             <div
@@ -132,7 +128,9 @@
     </ng-container>
     <!--If user booked info-->
     <ng-container
-      *ngIf="booking?.bookingInfos && booking?.bookingInfos?.length !== 0"
+      *ngIf="
+        bookingType?.bookingInfos && bookingType?.bookingInfos?.length !== 0
+      "
     >
       <div class="mb-2">
         <!-- If not open space -->
@@ -144,7 +142,7 @@
         >
           <ul class="list-unstyled d-flex flex-column gap-2">
             <li
-              *ngFor="let bookedInfo of booking?.bookingInfos"
+              *ngFor="let bookedInfo of bookingType?.bookingInfos"
               class="booked d-flex align-items-center px-3 gap-2"
             >
               <!--Finding capacity of booked room-->
@@ -179,15 +177,18 @@
         <ng-template #bookedOpenSpace>
           <ul class="list-unstyled d-flex flex-column gap-2">
             <li
-              *ngFor="let bookedInfo of booking?.bookingInfos"
+              *ngFor="
+                let bookedInfo of calculateDesks(bookingType?.bookingInfos)
+              "
               class="booked d-flex align-items-center px-3 gap-2"
             >
               <img [src]="'done' + iconsFormat" />
               <span
-                >This workspace is already booked by you! Area for
+                >This workspace is already booked by you!
+                {{ bookedInfo[1] }} desks for
                 <span class="fw-semibold">
-                  {{ bookedInfo.booking.startDate | date : "MMMM d, y" }} to
-                  {{ bookedInfo.booking.endDate | date : "MMMM d, y" }}
+                  {{ bookedInfo[0][0] | date : "MMMM d, y" }} to
+                  {{ bookedInfo[0][1] | date : "MMMM d, y" }}
                 </span></span
               >
             </li>

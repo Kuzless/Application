@@ -3,8 +3,8 @@ using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
 {
-    public class GetAllBookingsInfoQuery : IRequest<List<RoomTypeInfoDTO>> 
+    public class GetAllBookingsInfoQuery : IRequest<List<BookingTypeInfoDTO>> 
     {
-        public string Email { get; set; }
+        public string UserId { get; set; }
     }
 }

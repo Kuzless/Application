@@ -21,10 +21,10 @@ namespace BookingApp.API.Controllers
             _mediator = mediator;
             _apiResponseHandler = apiResponseHandler;
         }
-        [HttpGet("{email}")]
-        public async Task<IActionResult> GetBookingsInfo(string email)
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetBookingsInfo(string userId)
         {
-            var bookings = await _mediator.Send(new GetAllBookingsInfoQuery() { Email = email });
+            var bookings = await _mediator.Send(new GetAllBookingsInfoQuery() { UserId = userId });
             return _apiResponseHandler.Handle(bookings);
         }
 

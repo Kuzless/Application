@@ -7,6 +7,6 @@
         public string Description { get; set; }
         public List<Room> Rooms { get; set; }
         public List<RoomTypeAmenity> RoomTypeAmenities { get; set; }
-        public List<RoomCapacityRoomType> RoomCapacities { get; set; }
+        public List<RoomCapacityRoomType>? RoomCapacities { get; set; }
     }
 }

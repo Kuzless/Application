@@ -4,6 +4,7 @@ using BookingApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250605101032_AddedTimeAsSeparateField")]
+    partial class AddedTimeAsSeparateField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,132 +160,72 @@ namespace BookingApp.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 7,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 8,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 9,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 10,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 11,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 12,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 13,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 14,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 15,
-                            RoomTypeId = 1
-                        },
-                        new
-                        {
-                            Id = 16,
                             RoomCapacityId = 1,
                             RoomTypeId = 3
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 5,
                             RoomCapacityId = 5,
                             RoomTypeId = 3
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 6,
                             RoomCapacityId = 5,
                             RoomTypeId = 3
                         },
                         new
                         {
-                            Id = 19,
+                            Id = 7,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 8,
                             RoomCapacityId = 2,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 21,
+                            Id = 9,
                             RoomCapacityId = 3,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 10,
                             RoomCapacityId = 4,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 11,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 12,
                             RoomCapacityId = 2,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 13,
                             RoomCapacityId = 3,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 26,
+                            Id = 14,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 27,
+                            Id = 15,
                             RoomCapacityId = 2,
                             RoomTypeId = 2
                         });

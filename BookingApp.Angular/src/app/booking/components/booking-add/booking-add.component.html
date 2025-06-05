@@ -129,7 +129,6 @@
       <div
         formGroupName="endDateGroup"
         class="d-flex flex-row justify-content-between gap-3"
-        (change)="onEndDayChange()"
       >
         <select formControlName="day" class="rounded-3 input w-33">
           <option *ngFor="let day of endDates.availableDays" [ngValue]="day">

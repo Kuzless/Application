@@ -19,6 +19,7 @@ namespace BookingApp.Infrastructure.Repositories
                 .Include(rt => rt.RoomCapacities)
                 .ThenInclude(rc => rc.RoomCapacity)
                 .ThenInclude(rc => rc.Rooms)
+                .Include(rt => rt.Rooms)
                 .Include(rt => rt.RoomTypeAmenities)
                 .ThenInclude(ra => ra.Amenity)
                 .ToListAsync();

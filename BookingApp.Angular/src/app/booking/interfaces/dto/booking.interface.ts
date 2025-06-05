@@ -5,4 +5,6 @@ export interface BookingInterface {
   customerEmail: string;
   startDate: string;
   endDate: string;
+  startTime: string;
+  endTime: string;
 }

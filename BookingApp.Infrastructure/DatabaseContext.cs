@@ -88,23 +88,26 @@ namespace BookingApp.Infrastructure
                 new RoomTypeAmenity { RoomTypeId = 3, AmenityId = 6 }
             );
 
-            modelBuilder.Entity<Room>().HasData(
-                new Room { Id = 1, RoomTypeId = 1 },
-                new Room { Id = 2, RoomTypeId = 1 },
-                new Room { Id = 3, RoomTypeId = 1 },
-                new Room { Id = 4, RoomCapacityId = 1, RoomTypeId = 3 },
-                new Room { Id = 5, RoomCapacityId = 5, RoomTypeId = 3 },
-                new Room { Id = 6, RoomCapacityId = 5, RoomTypeId = 3 },
-                new Room { Id = 7, RoomCapacityId = 1, RoomTypeId = 2 },
-                new Room { Id = 8, RoomCapacityId = 2, RoomTypeId = 2 },
-                new Room { Id = 9, RoomCapacityId = 3, RoomTypeId = 2 },
-                new Room { Id = 10, RoomCapacityId = 4, RoomTypeId = 2 },
-                new Room { Id = 11, RoomCapacityId = 1, RoomTypeId = 2 },
-                new Room { Id = 12, RoomCapacityId = 2, RoomTypeId = 2 },
-                new Room { Id = 13, RoomCapacityId = 3, RoomTypeId = 2 },
-                new Room { Id = 14, RoomCapacityId = 1, RoomTypeId = 2 },
-                new Room { Id = 15, RoomCapacityId = 2, RoomTypeId = 2 }
-            );
+            var rooms = new List<Room>();
+            int i = 1;
+            for (; i <= 15; i++)
+            {
+                rooms.Add(new Room { Id = i, RoomTypeId = 1 });
+            }
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
+
+            modelBuilder.Entity<Room>().HasData(rooms);
         }
     }
 }

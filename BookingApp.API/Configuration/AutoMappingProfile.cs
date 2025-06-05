@@ -29,8 +29,10 @@ namespace BookingApp.API.Configuration
 
             // booking add commands
             CreateMap<CreateNewBookingCommand, Booking>()
-                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => DateTime.Parse(src.StartDate)))
-                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => DateTime.Parse(src.EndDate)));
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => DateOnly.Parse(src.StartDate)))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => DateOnly.Parse(src.EndDate)))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.StartTime)))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.EndTime)));
 
             // booking add queries
             CreateMap<RoomType, NewBookingStructureDTO>()
@@ -47,8 +49,9 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room));
             CreateMap<RoomCapacityRoomType, RoomCapacityInfoDTO>()
                 .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.RoomCapacity.Rooms));
-            CreateMap<RoomType, RoomTypeInfoDTO>()
+            CreateMap<RoomType, BookingTypeInfoDTO>()
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.Rooms))
                 .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src => src.RoomTypeAmenities))
                 .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
         }
