@@ -5,6 +5,7 @@ using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
 using BookingApp.Application.CQRS.Booking.Queries.GetAllBookings;
 using BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit;
 using BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking;
+using BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,38 +29,32 @@ namespace BookingApp.API.Controllers
             return _apiResponseHandler.Handle(bookings);
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetBookingsByUserId(string userId)
+        {
+            var bookings = await _mediator.Send(new GetUserBookingsInfoQuery() { UserId = userId });
+            return _apiResponseHandler.Handle(bookings);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> CreateBooking([FromBody] CreateNewBookingCommand command)
         {
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
+            return _apiResponseHandler.Handle(result);
         }
 
-        [HttpPut]
+        [HttpPut("edit")]
         public async Task<IActionResult> UpdateBooking([FromBody] UpdateBookingCommand command)
         {
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
+            return _apiResponseHandler.Handle(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
-            var command = new DeleteBookingCommand { Id = id };
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return _apiResponseHandler.Handle(result.ErrorCode, result.Message);
+            var result = await _mediator.Send(new DeleteBookingCommand { Id = id });
+            return _apiResponseHandler.Handle(result);
         }
 
         [HttpGet("add")]

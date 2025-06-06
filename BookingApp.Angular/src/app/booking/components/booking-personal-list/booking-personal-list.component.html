@@ -1,0 +1,12 @@
+<div>
+  <h1 class="inter-7">My bookings on {{ title }}</h1>
+  <ng-container *ngIf="pageData$ | async as bookings">
+    <ul class="list-unstyled">
+      <li class="py-3" *ngFor="let booking of bookings">
+        <app-booking-personal-element
+          [booking]="booking"
+        ></app-booking-personal-element>
+      </li>
+    </ul>
+  </ng-container>
+</div>

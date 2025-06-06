@@ -3,7 +3,7 @@ using MediatR;
 
 namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
 {
-    public class CreateNewBookingCommand : IRequest<OperationResult>
+    public class CreateNewBookingCommand : IRequest<OperationResult<object>>
     {
         public int? RoomId { get; set; }
         public int RoomTypeId { get; set; }

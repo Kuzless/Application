@@ -4,6 +4,6 @@ namespace BookingApp.Application.Interfaces
 {
     public interface IResponseHandlerService
     {
-        OperationResult Handle(int errorCode, string? message = "Unknown error");
+        OperationResult<T> Handle<T>(int errorCode, string? message = "Unknown error", T? data = default);
     }
 }

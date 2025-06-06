@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
 {
-    public class UpdateBookingCommandHandler : IRequestHandler<UpdateBookingCommand, OperationResult>
+    public class UpdateBookingCommandHandler : IRequestHandler<UpdateBookingCommand, OperationResult<object>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<object>> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
             }
             catch (Exception ex)
             {
-                return _responseHandler.Handle(500, ex.Message);
+                return _responseHandler.Handle<object>(500, ex.Message);
             }
         }
     }

@@ -12,8 +12,11 @@ namespace BookingApp.Infrastructure
         public DbSet<RoomTypeAmenity> RoomTypeAmenties { get; set; }
         public DbSet<RoomCapacity> RoomCapacities { get; set; }
         public DbSet<RoomCapacityRoomType> RoomCapacityRoomTypes { get; set; }
-        public DatabaseContext() : base() { }
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options){}
+        public DatabaseContext() : base() {}
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

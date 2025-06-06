@@ -1,38 +1,50 @@
 ﻿using AutoMapper;
+using BookingApp.Application.DTOs;
 using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
+using BookingApp.Application.Interfaces;
 using BookingApp.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
 {
-    public class GetAllBookingsInfoQueryHandler : IRequestHandler<GetAllBookingsInfoQuery, List<BookingTypeInfoDTO>>
+    public class GetAllBookingsInfoQueryHandler : IRequestHandler<GetAllBookingsInfoQuery, OperationResult<List<BookingTypeInfoDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public GetAllBookingsInfoQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IResponseHandlerService _responseHandler;
+        public GetAllBookingsInfoQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, [FromKeyedServices("booking")] IResponseHandlerService responseHandler)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _responseHandler = responseHandler;
         }
-        public async Task<List<BookingTypeInfoDTO>> Handle(GetAllBookingsInfoQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<BookingTypeInfoDTO>>> Handle(GetAllBookingsInfoQuery request, CancellationToken cancellationToken)
         {
-            var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfo();
-            var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomByUserId(request.UserId);
-            // mapping full data about 'booking type'
-            var fullInfo = _mapper.Map<List<BookingTypeInfoDTO>>(typeInfo);
-            // adding user bookings to each type (to show on which types did user book)
-            foreach (var dto in fullInfo)
+            try
             {
-                dto.BookingInfos = new List<BookingInfoDTO>();
-                foreach (var booking in userBookings)
+                var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfo();
+                var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomByUserId(request.UserId);
+                // mapping full data about 'booking type'
+                var fullInfo = _mapper.Map<List<BookingTypeInfoDTO>>(typeInfo);
+                // adding user bookings to each type (to show on which types did user book)
+                foreach (var dto in fullInfo)
                 {
-                    if (dto.RoomType.Id == booking.Room.RoomTypeId)
+                    dto.BookingInfos = new List<BookingInfoDTO>();
+                    foreach (var booking in userBookings)
                     {
-                        dto.BookingInfos.Add(_mapper.Map<BookingInfoDTO>(booking));
+                        if (dto.RoomType.Id == booking.Room.RoomTypeId)
+                        {
+                            dto.BookingInfos.Add(_mapper.Map<BookingInfoDTO>(booking));
+                        }
                     }
                 }
+                return _responseHandler.Handle(200, data: fullInfo);
             }
-            return fullInfo;
+            catch
+            {
+                return _responseHandler.Handle<List<BookingTypeInfoDTO>>(500, "An error occurred while retrieving data");
+            }
         }
     }
 }

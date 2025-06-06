@@ -4,6 +4,7 @@ using BookingApp.Application.DTOs.Booking;
 using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
 using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
+using BookingApp.Application.DTOs.Booking.GetUserBookingsInfo;
 using BookingApp.Domain.Entities;
 
 namespace BookingApp.API.Configuration
@@ -54,6 +55,15 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.Rooms))
                 .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src => src.RoomTypeAmenities))
                 .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
+
+            // user bookings page
+            CreateMap<Room, UserRoomInfoDTO>()
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.RoomType))
+                .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.RoomCapacity));
+            CreateMap<Booking, UserBookingInfoDTO>()
+                .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.UserRoomInfo, opt => opt.MapFrom(src => src.Room));
         }
     }
 }

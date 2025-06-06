@@ -1,19 +1,43 @@
 import { Routes } from '@angular/router';
-import { BookingComponent } from './booking/components/booking/booking.component';
-import { BookingAddComponent } from './booking/components/booking-add/booking-add.component';
+import { BookingListComponent } from './booking/components/booking-list/booking-list.component';
+import { BookingFormComponent } from './booking/components/booking-form/booking-form.component';
+import { BookingComponent } from './booking/booking.component';
+import { BookingPersonalListComponent } from './booking/components/booking-personal-list/booking-personal-list.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'bookings',
+    redirectTo: 'booking',
     pathMatch: 'full',
   },
   {
-    path: 'bookings',
+    path: 'booking',
     component: BookingComponent,
+    children: [
+      {
+        path: '',
+        component: BookingListComponent,
+      },
+      {
+        path: 'add',
+        component: BookingFormComponent,
+      },
+      {
+        path: 'edit/:id',
+        component: BookingFormComponent,
+      },
+      {
+        path: 'my',
+        component: BookingPersonalListComponent,
+      },
+      {
+        path: '**',
+        redirectTo: '',
+      },
+    ],
   },
   {
-    path: 'add',
-    component: BookingAddComponent,
+    path: '**',
+    redirectTo: '',
   },
 ];

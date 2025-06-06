@@ -2,7 +2,7 @@
 using BookingApp.API.Services;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.Interfaces;
-using BookingApp.Application.Services.ErrorHandler;
+using BookingApp.Application.Services;
 using BookingApp.Domain.Interfaces;
 using BookingApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,8 @@ namespace BookingApp.API.Configuration
         {
             builder.Services.AddDbContext<DatabaseContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration["DbConnectionString"]);
+                //options.UseSqlServer(builder.Configuration["ConnectionStrings:DbConnectionString"]);
+                options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgresDb"]);
             });
 
             builder.Services.AddAutoMapper(typeof(AutoMappingProfile));

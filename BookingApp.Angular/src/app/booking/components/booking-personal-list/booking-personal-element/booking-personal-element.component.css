@@ -1,0 +1,24 @@
+.image {
+  box-sizing: content-box;
+  width: 280px;
+  height: 192px;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.icon-edit,
+.icon-delete {
+  background-color: white;
+  width: 44px;
+  height: 44px;
+}
+
+.icon-edit {
+  border: 1px solid #c2bcd8;
+}
+
+.icon-delete {
+  border: 1px solid #f56e6e;
+}

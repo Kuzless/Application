@@ -1,3 +1,7 @@
+html {
+  scrollbar-gutter: stable;
+}
+
 .test {
   background: #f7f6f9;
 }
@@ -25,4 +29,10 @@
 
 .inter-7 {
   font-weight: 700;
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  background: #f5f3fb;
 }

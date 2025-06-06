@@ -5,11 +5,10 @@ using BookingApp.Domain.Entities;
 using BookingApp.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
 {
-    public class CreateNewBookingCommandHandler : IRequestHandler<CreateNewBookingCommand, OperationResult>
+    public class CreateNewBookingCommandHandler : IRequestHandler<CreateNewBookingCommand, OperationResult<object>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,12 +19,12 @@ namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult> Handle(CreateNewBookingCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<object>> Handle(CreateNewBookingCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var availableRooms = await _unitOfWork.RoomRepository.GetRoomsByTypeAndCapacity(request.RoomTypeId, request.RoomCapacityId);
-                var freeRooms = new List<Room>();
+                Room? freeRoom = null;
                 var startDate = DateOnly.Parse(request.StartDate);
                 var endDate = DateOnly.Parse(request.EndDate);
                 var startTime = TimeOnly.Parse(request.StartTime);
@@ -42,24 +41,24 @@ namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
                     var isBooked = await _unitOfWork.BookingRepository.IsRoomBookedForTimePeriod(room.Id, startDate, endDate, startTime, endTime);
                     if (!isBooked)
                     {
-                        freeRooms.Add(room);
+                        freeRoom = room;
                     }
                 }
-                if (freeRooms.IsNullOrEmpty())
+                if (freeRoom == null)
                 {
-                    return _responseHandler.Handle(409);
+                    return _responseHandler.Handle<object>(409);
                 }
-                request.RoomId = freeRooms[0].Id;
+                request.RoomId = freeRoom.Id;
                 _unitOfWork.BookingRepository.Add(_mapper.Map<Domain.Entities.Booking>(request));
                 var changesNum = await _unitOfWork.SaveChangesAsync();
                 if (changesNum > 0)
                 {
-                    return _responseHandler.Handle(200);
+                    return _responseHandler.Handle<object>(200);
                 }
                 throw new Exception("An unexpected error occurred");
             } catch (Exception ex)
             {
-                return _responseHandler.Handle(500, ex.Message);
+                return _responseHandler.Handle<object>(500, ex.Message);
             }
         }
     }
