@@ -1,35 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarService } from '../../shared/services/calendar.service';
-import { CommonModule } from '@angular/common';
+import { CalendarService } from './interfaces/services/calendar.service';
+import { CommonModule, DatePipe } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TimeInterface } from '../../shared/interfaces/calendar/time.interface';
-import { DateSelectInterface } from '../../shared/interfaces/calendar/date-select.interface';
-import { Observable, tap } from 'rxjs';
+import { TimeInterface } from './interfaces/calendar/time.interface';
+import { DateSelectInterface } from './interfaces/calendar/date-select.interface';
+import { Observable, tap, map, catchError, throwError } from 'rxjs';
 import { NewBookingStructureResponseInterface } from './interfaces/new-booking-structure-response.interface';
 import { BookingApiService } from '../../shared/services/booking-api.service';
 import { WorkspaceTypes } from '../../shared/enums/workspace-types.enum';
 import { RoomCapacityInterface } from '../../shared/interfaces/dto/room-capacity.interface';
 import { AddBookingCommandInterface } from './interfaces/add-booking-command.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EditBookingResponseInterface } from './interfaces/edit-booking-response.interface';
+import { BookingInterface } from '../../shared/interfaces/dto/booking.interface';
 
 @Component({
   selector: 'app-booking-form',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe],
   templateUrl: './booking-form.component.html',
   styleUrl: './booking-form.component.css',
 })
 export class BookingFormComponent implements OnInit {
   private readonly userId: string = localStorage.getItem('uniqueId')!;
-  private readonly endpoint: string = 'Booking/add';
+  private readonly mode: string;
+  private readonly endpoint: string = 'Booking/';
+  bookingId?: number;
 
   // how many years should be populated into startDate
   readonly numberOfYears: number = 5;
 
-  roomTypes: Observable<NewBookingStructureResponseInterface[]>;
+  roomTypes$!: Observable<NewBookingStructureResponseInterface[]>;
   bookingForm: FormGroup;
 
   // flags for input fields focus
@@ -137,8 +142,12 @@ export class BookingFormComponent implements OnInit {
   constructor(
     private calendarService: CalendarService,
     private fb: FormBuilder,
-    private apiService: BookingApiService
+    private apiService: BookingApiService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
+    this.mode = this.route.snapshot.data['mode'];
+    this.endpoint += this.mode;
     this.bookingForm = this.fb.group({
       userDataGroup: this.fb.group({
         name: ['', Validators.required],
@@ -164,22 +173,129 @@ export class BookingFormComponent implements OnInit {
       startTime: '',
       endTime: '',
     });
-    this.roomTypes = apiService
-      .get<NewBookingStructureResponseInterface[]>(this.endpoint)
-      .pipe(
-        tap((types) => {
-          if (types && types.length > 0) {
-            this.roomInfoGroup.get('roomInfo')?.setValue(types[0]);
-            this.configureRoomType();
-          }
-        })
-      );
   }
 
   ngOnInit(): void {
-    this.repopulateDates();
-    this.repopulateEndDates();
-    this.repopulateTime();
+    this.bookingForm.reset();
+    this.populateData();
+  }
+
+  populateData() {
+    let id = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.mode === 'edit') {
+      if (isNaN(id)) {
+        this.router.navigate(['booking/add']);
+        return;
+      }
+      let result$ = this.apiService
+        .getById<EditBookingResponseInterface>(this.endpoint, Number(id))
+        .pipe(
+          catchError((err) => {
+            this.router.navigate(['booking/add']);
+            return throwError(() => err);
+          })
+        );
+      this.roomTypes$ = result$.pipe(map((response) => response.roomTypes));
+      result$.pipe(map((response) => response)).subscribe((response) => {
+        let booking = response.booking;
+
+        this.bookingId = booking.id;
+
+        this.userDataGroup.get('name')?.setValue(booking.customerName);
+        this.userDataGroup.get('email')?.setValue(booking.customerEmail);
+
+        const startDate = new Date(booking.startDate);
+        const endDate = new Date(booking.endDate);
+
+        // repopulate years
+        this.repopulateDates();
+        const matchingYear = this.startDates.availableYears.find(
+          (y) => y === startDate.getFullYear()
+        );
+        this.startDateGroup.get('year')?.setValue(matchingYear);
+
+        // repopulate months based on years
+        this.repopulateDates(matchingYear);
+        const matchingMonth = this.startDates.availableMonths.find(
+          (m) => m === startDate.getMonth()
+        );
+        this.startDateGroup.get('month')?.setValue(matchingMonth);
+
+        // repopulate days based on years and months
+        this.repopulateDates(matchingYear, matchingMonth);
+        const matchingDay = this.startDates.availableDays.find(
+          (d) => d === startDate.getDate()
+        );
+        this.startDateGroup.get('day')?.setValue(matchingDay);
+
+        // repopulate end years
+        this.repopulateEndDates();
+        const matchingEndYear = this.endDates.availableYears.find(
+          (y) => y === endDate.getFullYear()
+        );
+        this.endDateGroup.get('year')?.setValue(matchingEndYear);
+
+        // repopulate end months based on years
+        this.repopulateEndDates(matchingYear);
+        const matchingEndMonth = this.endDates.availableMonths.find(
+          (m) => m === endDate.getMonth()
+        );
+        this.endDateGroup.get('month')?.setValue(matchingEndMonth);
+
+        // repopulate end days based on years and months
+        this.repopulateEndDates(matchingEndYear, matchingEndMonth);
+        const matchingEndDay = this.endDates.availableDays.find(
+          (d) => d === endDate.getDate()
+        );
+        this.endDateGroup.get('day')?.setValue(matchingEndDay);
+
+        // converting HH:MM string minutes
+        const [startHour, startMinute] = booking.startTime.split(':');
+        const startTimeInMinutes = Number(startHour) * 60 + Number(startMinute);
+        const [endHour, endMinute] = booking.endTime.split(':');
+        const endTimeInMinutes = Number(endHour) * 60 + Number(endMinute);
+
+        // repopulating time
+        this.repopulateTime();
+        const matchingStartTime = this.availableTime.find(
+          (t) => t.timeInMinutes === startTimeInMinutes
+        );
+        this.bookingForm.get('startTime')?.setValue(matchingStartTime);
+        this.repopulateEndTime();
+        const matchingEndTime = this.availableEndTime.find(
+          (t) => t.timeInMinutes === endTimeInMinutes
+        );
+        this.bookingForm.get('endTime')?.setValue(matchingEndTime);
+
+        // repopulating roomtypes
+        const matchingRoomType = response.roomTypes.find(
+          (rt) => rt.roomType.id === response.roomType.id
+        );
+        this.roomInfoGroup.get('roomInfo')?.setValue(matchingRoomType);
+
+        // repopulating room capacities
+        this.configureRoomType();
+        if (response.roomCapacity.id && this.hasRooms) {
+          this.roomCapacityGroup
+            .get('roomChosenCapacityId')
+            ?.setValue(response.roomCapacity.id);
+        }
+      });
+    } else {
+      this.roomTypes$ = this.apiService
+        .get<NewBookingStructureResponseInterface[]>(this.endpoint)
+        .pipe(
+          tap((types) => {
+            if (types && types.length > 0) {
+              this.roomInfoGroup.get('roomInfo')?.setValue(types[0]);
+              this.configureRoomType();
+            }
+          })
+        );
+      this.repopulateDates();
+      this.repopulateEndDates();
+      this.repopulateTime();
+    }
   }
 
   // gets month name from calendarService depending on month number -1
@@ -189,46 +305,22 @@ export class BookingFormComponent implements OnInit {
 
   // submit form event handler
   onSubmit() {
-    console.clear();
-    console.log(`User's name: ${this.userName}`);
-    console.log(`User's email: ${this.userEmail}`);
-    console.log(
-      `Start Date: ${new Date(
-        this.chosenYear,
-        this.chosenMonth,
-        this.chosenDay,
-        this.chosenTime.hours,
-        this.chosenTime.minutes
-      )}`
-    );
-    console.log(
-      `End Date: ${new Date(
-        this.chosenEndYear,
-        this.chosenEndMonth,
-        this.chosenEndDay,
-        this.chosenEndTime.hours,
-        this.chosenEndTime.minutes
-      )}`
-    );
-    console.log(`${this.chosenTime.hours}:${this.chosenTime.minutes}0`);
-    console.log(`${this.chosenEndTime.hours}:${this.chosenEndTime.minutes}0`);
     if (this.hasRooms) {
       if (!this.roomChosenCapacityId) {
-        console.log('PLEASE CHOOSE ROOM CAPACITY');
         this.bookingForm.setErrors({ invalidForm: true });
       }
     }
-    console.log(`Form validation: ${this.bookingForm.valid}`);
     if (this.bookingForm.valid) {
       const formattedStartMinutes =
-        this.chosenTime.minutes > 9
-          ? `${this.chosenTime.minutes}`
-          : `${this.chosenTime.minutes}0`;
+        this.chosenTime.time.getMinutes() > 9
+          ? `${this.chosenTime.time.getMinutes()}`
+          : `${this.chosenTime.time.getMinutes()}0`;
       const formattedEndMinutes =
-        this.chosenEndTime.minutes > 9
-          ? `${this.chosenEndTime.minutes}`
-          : `${this.chosenEndTime.minutes}0`;
+        this.chosenEndTime.time.getMinutes() > 9
+          ? `${this.chosenEndTime.time.getMinutes()}`
+          : `${this.chosenEndTime.time.getMinutes()}0`;
       let data: AddBookingCommandInterface = {
+        bookingId: this.bookingId || null,
         roomTypeId: this.roomInfo.roomType.id,
         roomCapacityId: Number(this.roomChosenCapacityId) || null,
         customerId: this.userId,
@@ -240,14 +332,22 @@ export class BookingFormComponent implements OnInit {
         endDate: `${this.chosenEndYear}-${this.chosenEndMonth + 1}-${
           this.chosenEndDay
         }`,
-        startTime: `${this.chosenTime.hours}:${formattedStartMinutes}`,
-        endTime: `${this.chosenEndTime.hours}:${formattedEndMinutes}`,
+        startTime: `${this.chosenTime.time.getHours()}:${formattedStartMinutes}`,
+        endTime: `${this.chosenEndTime.time.getHours()}:${formattedEndMinutes}`,
       };
-      this.apiService
-        .post<AddBookingCommandInterface>(this.endpoint, data)
-        .subscribe((response) => {
-          console.log(response);
-        });
+      if (this.mode === 'edit') {
+        this.apiService
+          .put<AddBookingCommandInterface>(this.endpoint, data)
+          .subscribe((response) => {
+            console.log(response);
+          });
+      } else {
+        this.apiService
+          .post<AddBookingCommandInterface>(this.endpoint, data)
+          .subscribe((response) => {
+            console.log(response);
+          });
+      }
     }
   }
 
@@ -258,7 +358,6 @@ export class BookingFormComponent implements OnInit {
   }
 
   // date/time change event handlers
-
   onYearChange() {
     this.repopulateDates(this.chosenYear);
     this.repopulateEndDates();
@@ -286,6 +385,13 @@ export class BookingFormComponent implements OnInit {
 
   onTimeChange() {
     this.repopulateEndTime();
+  }
+
+  compareRoomTypes(
+    a: NewBookingStructureResponseInterface,
+    b: NewBookingStructureResponseInterface
+  ): boolean {
+    return a && b ? a.roomType.id === b.roomType.id : a === b;
   }
 
   // configures rules for room types, repopulates roomCapacities, repopulates end time/date if maxDays available for booking has changed

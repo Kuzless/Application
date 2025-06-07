@@ -1,4 +1,5 @@
 export interface AddBookingCommandInterface {
+  bookingId: number | null;
   roomTypeId: number;
   roomCapacityId: number | null;
   customerId: string;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
+using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
 using BookingApp.Application.DTOs.Booking;
 using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
@@ -28,8 +29,16 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RoomCapacity.Id))
                 .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.RoomCapacity.Capacity));
 
-            // booking add commands
+            // booking add command
             CreateMap<CreateNewBookingCommand, Booking>()
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => DateOnly.Parse(src.StartDate)))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => DateOnly.Parse(src.EndDate)))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.StartTime)))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.EndTime)));
+
+            // booking update command
+            CreateMap<UpdateBookingCommand, Booking>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.BookingId))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => DateOnly.Parse(src.StartDate)))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => DateOnly.Parse(src.EndDate)))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.StartTime)))
@@ -41,8 +50,10 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
 
             // booking editing queries
-            CreateMap<RoomType, RoomTypeWithCapacitiesDTO>();
-            CreateMap<Booking, BookingWithAllRoomTypesDTO>();
+            CreateMap<Booking, EditBookingDTO>()
+                .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.Room.RoomType))
+                .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.Room.RoomCapacity));
 
             // booking page
             CreateMap<Booking, BookingInfoDTO>()

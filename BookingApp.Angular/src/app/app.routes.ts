@@ -21,10 +21,12 @@ export const routes: Routes = [
       {
         path: 'add',
         component: BookingFormComponent,
+        data: { mode: 'add' },
       },
       {
         path: 'edit/:id',
         component: BookingFormComponent,
+        data: { mode: 'edit' },
       },
       {
         path: 'my',

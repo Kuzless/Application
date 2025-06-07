@@ -42,6 +42,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
                     if (!isBooked)
                     {
                         freeRoom = room;
+                        break;
                     }
                 }
                 if (freeRoom == null)

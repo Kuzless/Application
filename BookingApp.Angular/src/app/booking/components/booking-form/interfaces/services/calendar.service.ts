@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TimeInterface } from '../interfaces/calendar/time.interface';
-import { DateSelectInterface } from '../interfaces/calendar/date-select.interface';
+import { TimeInterface } from '../calendar/time.interface';
+import { DateSelectInterface } from '../calendar/date-select.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +14,6 @@ export class CalendarService {
 
   // 24:00 in minutes. Used to indicate last available minute for day
   readonly lastMinuteOfDay = 1440;
-
-  // 12:00 in minutes. Used to move from AM to PM
-  readonly firstMinuteOfSecondHalf = 720;
 
   readonly monthNames = [
     'January',
@@ -46,36 +43,33 @@ export class CalendarService {
     startTime: number | null = null
   ): TimeInterface[] {
     let result: TimeInterface[] = [];
-    let time = 0;
+    let resultTimeInMinutes = 0;
     let lastMinute = this.lastMinuteOfDay;
     if (chosenDay === this.firstAvailableDay) {
       if (!startTime) {
-        time = this.firstAvailableTimeInMinutes;
+        resultTimeInMinutes = this.firstAvailableTimeInMinutes;
         lastMinute = this.lastMinuteOfDay - 30;
       }
     }
     if (startTime !== null) {
-      time = startTime + 30;
-      let temp = time % 30;
-      time -= temp;
+      resultTimeInMinutes = startTime + 30;
+      let temp = resultTimeInMinutes % 30;
+      resultTimeInMinutes -= temp;
       if (temp !== 0) {
-        time += 30;
+        resultTimeInMinutes += 30;
       }
     }
-    for (; time <= lastMinute; time += 30) {
-      let hours = Math.floor(time / 60) % 12;
-      let minutes = time % 60;
-      if (hours === 0) hours = 12;
-      let stamp =
-        time < this.firstMinuteOfSecondHalf || time === this.lastMinuteOfDay
-          ? 'AM'
-          : 'PM';
-      let additionalZero = minutes === 0 ? '0' : '';
+    for (; resultTimeInMinutes <= lastMinute; resultTimeInMinutes += 30) {
+      let date = new Date();
+      date.setHours(
+        Math.floor(resultTimeInMinutes / 60),
+        resultTimeInMinutes % 60,
+        0,
+        0
+      );
       result.push({
-        hours: Math.floor(time / 60),
-        minutes: time % 60,
-        timeInMinutes: time,
-        formattedTime: `${hours}:${minutes}${additionalZero} ${stamp}`,
+        time: date,
+        timeInMinutes: resultTimeInMinutes,
       });
     }
     return result;

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookingApp.Application.DTOs;
 using BookingApp.Application.Interfaces;
+using BookingApp.Domain.Entities;
 using BookingApp.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,27 +23,39 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
         {
             try
             {
-                /*
-                var bookings = await _unitOfWork.BookingRepository.GetRoomBookingsForTimePeriod(request.RoomId, request.StartDate, request.EndDate);
-                switch (bookings.Count)
+                var availableRooms = await _unitOfWork.RoomRepository.GetRoomsByTypeAndCapacity(request.RoomTypeId, request.RoomCapacityId);
+                Room? freeRoom = null;
+                var startDate = DateOnly.Parse(request.StartDate);
+                var endDate = DateOnly.Parse(request.EndDate);
+                var startTime = TimeOnly.Parse(request.StartTime);
+
+                if (request.EndTime == "24:00")
                 {
-                    case 0:
-                        return _responseHandler.Handle(404);
-                    case 1:
-                        if (bookings.First().Id != request.Id)
-                        {
-                            return _responseHandler.Handle(409);
-                        }
-                        _unitOfWork.BookingRepository.Update(_mapper.Map<Domain.Entities.Booking>(request));
-                        var changesNum = await _unitOfWork.SaveChangesAsync();
-                        if (changesNum > 0)
-                        {
-                            return _responseHandler.Handle(200);
-                        }
+                    request.EndTime = "00:00";
+                    endDate = endDate.AddDays(1);
+                    request.EndDate = endDate.ToString("yyyy-MM-dd");
+                }
+                var endTime = TimeOnly.Parse(request.EndTime);
+                foreach (Room room in availableRooms)
+                {
+                    var isBooked = await _unitOfWork.BookingRepository.IsRoomBookedForTimePeriod(room.Id, startDate, endDate, startTime, endTime, request.BookingId);
+                    if (!isBooked)
+                    {
+                        freeRoom = room;
                         break;
-                    default:
-                        return _responseHandler.Handle(409);
-                }*/
+                    }
+                }
+                if (freeRoom == null)
+                {
+                    return _responseHandler.Handle<object>(409);
+                }
+                request.RoomId = freeRoom.Id;
+                _unitOfWork.BookingRepository.Update(_mapper.Map<Domain.Entities.Booking>(request));
+                var changesNum = await _unitOfWork.SaveChangesAsync();
+                if (changesNum > 0)
+                {
+                    return _responseHandler.Handle<object>(200);
+                }
                 throw new Exception("An unexpected error occurred");
             }
             catch (Exception ex)
