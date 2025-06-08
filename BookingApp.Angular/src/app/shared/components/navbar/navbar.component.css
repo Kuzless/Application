@@ -2,7 +2,7 @@
   position: fixed;
   padding-left: 5%;
   padding-right: 5%;
-  height: 88px;
+  min-height: 88px;
   top: 0;
   left: 0;
   right: 0;
@@ -10,6 +10,9 @@
   background-color: white;
 }
 
+.logo {
+  max-height: 88px;
+}
 a {
   text-decoration: none;
 }

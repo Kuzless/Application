@@ -1,10 +1,14 @@
-<h1 class="inter-7">Book your workspace</h1>
+<h1 class="inter-7">
+  {{ mode === "add" ? "Book your workspace" : "Edit your booking" }}
+</h1>
 <form
   [formGroup]="bookingForm"
-  class="d-flex align-items-start inter-4 w-100 gap-4"
+  class="d-flex flex-column flex-md-row align-items-start inter-4 w-100 gap-4 py-3"
   (ngSubmit)="onSubmit()"
 >
-  <div class="d-flex flex-column bg-white rounded-4 w-60 p-4 px-5 gap-4">
+  <div
+    class="d-flex flex-column bg-white rounded-4 w-100 w-md-60 p-4 px-5 gap-4"
+  >
     <h2 class="inter-7">Reservation details</h2>
     <div formGroupName="userDataGroup" class="d-flex flex-column gap-4">
       <div class="d-flex flex-column gap-1 mb-3">
@@ -81,7 +85,9 @@
       </ng-container>
     </ng-container>
   </div>
-  <div class="d-flex flex-column bg-white rounded-4 w-40 p-4 px-5 gap-4">
+  <div
+    class="d-flex flex-column bg-white rounded-4 w-100 w-md-40 p-4 px-5 gap-4"
+  >
     <h2 class="inter-7">Choose date and time</h2>
     <div class="d-flex flex-column gap-1 mb-3">
       <h4 class="inter-7 fw-bold">Start date</h4>
@@ -185,6 +191,23 @@
         </option>
       </select>
     </div>
-    <button type="submit" class="btn btn-primary inter-6 input">Submit</button>
+    <ng-container *ngIf="mode === 'add'; else edit">
+      <button type="submit" class="btn btn-primary bkn-button inter-6">
+        Submit
+      </button>
+    </ng-container>
+    <ng-template #edit>
+      <div class="d-flex flex-fill gap-3">
+        <button type="submit" class="btn w-50 btn-primary bkn-button inter-6">
+          Save changes
+        </button>
+        <button
+          routerLink="/booking/my"
+          class="btn w-50 btn-primary bkn-button-2 inter-6"
+        >
+          Cancel
+        </button>
+      </div>
+    </ng-template>
   </div>
 </form>

@@ -5,10 +5,11 @@ import { BookingApiService } from '../../shared/services/booking-api.service';
 import { Title } from '@angular/platform-browser';
 import { UserBookingInfoResponseInterface } from './interfaces/user-booking-info-response.interface';
 import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-booking-personal-list',
-  imports: [CommonModule, BookingPersonalElementComponent],
+  imports: [CommonModule, BookingPersonalElementComponent, RouterLink],
   templateUrl: './booking-personal-list.component.html',
   styleUrl: './booking-personal-list.component.css',
 })

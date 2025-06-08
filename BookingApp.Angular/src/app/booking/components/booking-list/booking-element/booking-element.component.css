@@ -1,18 +1,29 @@
-.images {
-  width: 340px;
-  height: 303px;
+.image {
+  flex-basis: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
-.preview-image {
-  min-width: 0;
+.main-image-box {
+  min-height: 227px;
+  max-width: 340px;
 }
 
-.button {
+.preview-images-box {
+  min-height: 64px;
+  max-width: 340px;
+}
+
+.bkn-button {
   width: 180px;
   height: 48px;
 }
 
 .booked {
   background-color: #eaf7ee;
-  height: 44px;
+  min-height: 44px;
 }

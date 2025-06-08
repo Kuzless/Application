@@ -15,20 +15,19 @@ import { BookingApiService } from '../../shared/services/booking-api.service';
 import { WorkspaceTypes } from '../../shared/enums/workspace-types.enum';
 import { RoomCapacityInterface } from '../../shared/interfaces/dto/room-capacity.interface';
 import { AddBookingCommandInterface } from './interfaces/add-booking-command.interface';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EditBookingResponseInterface } from './interfaces/edit-booking-response.interface';
-import { BookingInterface } from '../../shared/interfaces/dto/booking.interface';
 
 @Component({
   selector: 'app-booking-form',
-  imports: [CommonModule, ReactiveFormsModule, DatePipe],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, RouterLink],
   templateUrl: './booking-form.component.html',
   styleUrl: './booking-form.component.css',
 })
 export class BookingFormComponent implements OnInit {
   private readonly userId: string = localStorage.getItem('uniqueId')!;
-  private readonly mode: string;
   private readonly endpoint: string = 'Booking/';
+  readonly mode: string;
   bookingId?: number;
 
   // how many years should be populated into startDate
@@ -253,7 +252,10 @@ export class BookingFormComponent implements OnInit {
         const [startHour, startMinute] = booking.startTime.split(':');
         const startTimeInMinutes = Number(startHour) * 60 + Number(startMinute);
         const [endHour, endMinute] = booking.endTime.split(':');
-        const endTimeInMinutes = Number(endHour) * 60 + Number(endMinute);
+        const endTimeInMinutes =
+          Number(endHour) * 60 + Number(endMinute) === 0
+            ? 1440
+            : Number(endHour) * 60 + Number(endMinute);
 
         // repopulating time
         this.repopulateTime();
@@ -275,7 +277,7 @@ export class BookingFormComponent implements OnInit {
 
         // repopulating room capacities
         this.configureRoomType();
-        if (response.roomCapacity.id && this.hasRooms) {
+        if (response.roomCapacity?.id && this.hasRooms) {
           this.roomCapacityGroup
             .get('roomChosenCapacityId')
             ?.setValue(response.roomCapacity.id);
