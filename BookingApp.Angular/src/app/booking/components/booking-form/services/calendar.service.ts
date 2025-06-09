@@ -47,8 +47,10 @@ export class CalendarService {
     if (chosenDay === this.firstAvailableDay) {
       if (!startTime) {
         resultTimeInMinutes = this.firstAvailableTimeInMinutes;
-        lastMinute = this.lastMinuteOfDay - 30;
       }
+    }
+    if (!startTime) {
+      lastMinute = this.lastMinuteOfDay - 30;
     }
     if (startTime !== null) {
       resultTimeInMinutes = startTime + 30;
