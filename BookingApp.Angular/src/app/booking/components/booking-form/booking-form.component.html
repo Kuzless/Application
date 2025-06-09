@@ -7,13 +7,14 @@
   (ngSubmit)="onSubmit()"
 >
   <div
-    class="d-flex flex-column bg-white rounded-4 w-100 w-md-60 p-4 px-5 gap-4"
+    class="d-flex flex-column bg-white rounded-4 w-100 w-md-60 py-4 px-4 px-lg-5 gap-4"
   >
     <h2 class="inter-7">Reservation details</h2>
     <div formGroupName="userDataGroup" class="d-flex flex-column gap-4">
       <div class="d-flex flex-column gap-1 mb-3">
         <label class="inter-5">Name</label>
         <input
+          [readOnly]="isEditMode()"
           formControlName="name"
           (focus)="nameFocus = true"
           (blur)="nameFocus = false"
@@ -33,6 +34,7 @@
       <div class="d-flex flex-column gap-1 mb-3">
         <label class="inter-5">Email</label>
         <input
+          [readOnly]="isEditMode()"
           formControlName="email"
           (focus)="emailFocus = true"
           (blur)="emailFocus = false"
@@ -86,7 +88,7 @@
     </ng-container>
   </div>
   <div
-    class="d-flex flex-column bg-white rounded-4 w-100 w-md-40 p-4 px-5 gap-4"
+    class="d-flex flex-column bg-white rounded-4 w-100 w-md-40 py-4 px-4 px-lg-5 gap-4"
   >
     <h2 class="inter-7">Choose date and time</h2>
     <div class="d-flex flex-column gap-1 mb-3">
@@ -192,13 +194,21 @@
       </select>
     </div>
     <ng-container *ngIf="mode === 'add'; else edit">
-      <button type="submit" class="btn btn-primary bkn-button inter-6">
+      <button
+        type="submit"
+        [disabled]="!bookingForm.valid"
+        class="btn btn-primary bkn-button inter-6"
+      >
         Submit
       </button>
     </ng-container>
     <ng-template #edit>
       <div class="d-flex flex-fill gap-3">
-        <button type="submit" class="btn w-50 btn-primary bkn-button inter-6">
+        <button
+          type="submit"
+          [disabled]="!bookingForm.valid"
+          class="btn w-50 btn-primary bkn-button inter-6"
+        >
           Save changes
         </button>
         <button
@@ -211,3 +221,9 @@
     </ng-template>
   </div>
 </form>
+<ng-container *ngIf="showErrorComponent">
+  <app-failure (closed)="closeError()"></app-failure>
+</ng-container>
+<ng-container *ngIf="showSuccessComponent">
+  <app-success [email]="userEmail" (closed)="closeSuccess()"></app-success>
+</ng-container>

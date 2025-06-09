@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { TimeInterface } from '../calendar/time.interface';
-import { DateSelectInterface } from '../calendar/date-select.interface';
+import { TimeInterface } from '../interfaces/calendar/time.interface';
+import { DateSelectInterface } from '../interfaces/calendar/date-select.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CalendarService {
-  // represent info on on today's date
   firstAvailableYear!: number;
   firstAvailableMonth!: number;
   firstAvailableDay!: number;

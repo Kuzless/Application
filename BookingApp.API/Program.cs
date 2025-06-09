@@ -37,7 +37,7 @@ namespace BookingApp.API
 
             app.UseCors("AllowSpecificOrigin");
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

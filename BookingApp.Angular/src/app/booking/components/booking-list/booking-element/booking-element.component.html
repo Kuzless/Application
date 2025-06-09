@@ -2,8 +2,8 @@
   class="d-flex flex-column flex-md-row align-items-center align-items-md-start rounded-4 bg-white inter-4 w-100"
 >
   <!--Images-->
-  <div class="d-flex flex-column p-3">
-    <div class="d-flex main-image-box">
+  <div class="d-flex flex-column image-container p-1 pt-3 pe-1 p-md-3 pe-lg-3">
+    <div class="d-flex w-100 main-image-box">
       <img
         class="rounded-4 image pb-2"
         [src]="
@@ -34,7 +34,7 @@
   <!--Block that holds description-->
   <div class="d-flex flex-column flex-fill p-3">
     <!--Description and button-->
-    <div class="d-flex flex-column flex-md-row pt-2 mb-2">
+    <div class="d-flex flex-column flex-md-row pt-2 mb-4 mb-md-2">
       <div class="pe-5">
         <h2 class="inter-6">{{ bookingType?.roomType?.type }}</h2>
         <p class="text-muted">

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarService } from './interfaces/services/calendar.service';
+import { CalendarService } from './services/calendar.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import {
   FormBuilder,
@@ -17,10 +17,19 @@ import { RoomCapacityInterface } from '../../shared/interfaces/dto/room-capacity
 import { AddBookingCommandInterface } from './interfaces/add-booking-command.interface';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EditBookingResponseInterface } from './interfaces/edit-booking-response.interface';
+import { SuccessComponent } from './components/success/success.component';
+import { FailureComponent } from './components/failure/failure.component';
 
 @Component({
   selector: 'app-booking-form',
-  imports: [CommonModule, ReactiveFormsModule, DatePipe, RouterLink],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DatePipe,
+    RouterLink,
+    SuccessComponent,
+    FailureComponent,
+  ],
   templateUrl: './booking-form.component.html',
   styleUrl: './booking-form.component.css',
 })
@@ -42,6 +51,8 @@ export class BookingFormComponent implements OnInit {
 
   // flag that indicates if roomType supposed to have rooms
   hasRooms: boolean = false;
+  showErrorComponent: boolean = false;
+  showSuccessComponent: boolean = false;
 
   startDates: DateSelectInterface = {
     availableYears: [],
@@ -150,7 +161,14 @@ export class BookingFormComponent implements OnInit {
     this.bookingForm = this.fb.group({
       userDataGroup: this.fb.group({
         name: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
+        email: [
+          '',
+          [
+            Validators.required,
+            Validators.email,
+            Validators.pattern(/^[a-z]+@[a-z]+\.[a-z]+$/),
+          ],
+        ],
       }),
       startDateGroup: this.fb.group({
         year: '',
@@ -180,109 +198,8 @@ export class BookingFormComponent implements OnInit {
   }
 
   populateData() {
-    let id = Number(this.route.snapshot.paramMap.get('id'));
-    if (this.mode === 'edit') {
-      if (isNaN(id)) {
-        this.router.navigate(['booking/add']);
-        return;
-      }
-      let result$ = this.apiService
-        .getById<EditBookingResponseInterface>(this.endpoint, Number(id))
-        .pipe(
-          catchError((err) => {
-            this.router.navigate(['booking/add']);
-            return throwError(() => err);
-          })
-        );
-      this.roomTypes$ = result$.pipe(map((response) => response.roomTypes));
-      result$.pipe(map((response) => response)).subscribe((response) => {
-        let booking = response.booking;
-
-        this.bookingId = booking.id;
-
-        this.userDataGroup.get('name')?.setValue(booking.customerName);
-        this.userDataGroup.get('email')?.setValue(booking.customerEmail);
-
-        const startDate = new Date(booking.startDate);
-        const endDate = new Date(booking.endDate);
-
-        // repopulate years
-        this.repopulateDates();
-        const matchingYear = this.startDates.availableYears.find(
-          (y) => y === startDate.getFullYear()
-        );
-        this.startDateGroup.get('year')?.setValue(matchingYear);
-
-        // repopulate months based on years
-        this.repopulateDates(matchingYear);
-        const matchingMonth = this.startDates.availableMonths.find(
-          (m) => m === startDate.getMonth()
-        );
-        this.startDateGroup.get('month')?.setValue(matchingMonth);
-
-        // repopulate days based on years and months
-        this.repopulateDates(matchingYear, matchingMonth);
-        const matchingDay = this.startDates.availableDays.find(
-          (d) => d === startDate.getDate()
-        );
-        this.startDateGroup.get('day')?.setValue(matchingDay);
-
-        // repopulate end years
-        this.repopulateEndDates();
-        const matchingEndYear = this.endDates.availableYears.find(
-          (y) => y === endDate.getFullYear()
-        );
-        this.endDateGroup.get('year')?.setValue(matchingEndYear);
-
-        // repopulate end months based on years
-        this.repopulateEndDates(matchingYear);
-        const matchingEndMonth = this.endDates.availableMonths.find(
-          (m) => m === endDate.getMonth()
-        );
-        this.endDateGroup.get('month')?.setValue(matchingEndMonth);
-
-        // repopulate end days based on years and months
-        this.repopulateEndDates(matchingEndYear, matchingEndMonth);
-        const matchingEndDay = this.endDates.availableDays.find(
-          (d) => d === endDate.getDate()
-        );
-        this.endDateGroup.get('day')?.setValue(matchingEndDay);
-
-        // converting HH:MM string minutes
-        const [startHour, startMinute] = booking.startTime.split(':');
-        const startTimeInMinutes = Number(startHour) * 60 + Number(startMinute);
-        const [endHour, endMinute] = booking.endTime.split(':');
-        const endTimeInMinutes =
-          Number(endHour) * 60 + Number(endMinute) === 0
-            ? 1440
-            : Number(endHour) * 60 + Number(endMinute);
-
-        // repopulating time
-        this.repopulateTime();
-        const matchingStartTime = this.availableTime.find(
-          (t) => t.timeInMinutes === startTimeInMinutes
-        );
-        this.bookingForm.get('startTime')?.setValue(matchingStartTime);
-        this.repopulateEndTime();
-        const matchingEndTime = this.availableEndTime.find(
-          (t) => t.timeInMinutes === endTimeInMinutes
-        );
-        this.bookingForm.get('endTime')?.setValue(matchingEndTime);
-
-        // repopulating roomtypes
-        const matchingRoomType = response.roomTypes.find(
-          (rt) => rt.roomType.id === response.roomType.id
-        );
-        this.roomInfoGroup.get('roomInfo')?.setValue(matchingRoomType);
-
-        // repopulating room capacities
-        this.configureRoomType();
-        if (response.roomCapacity?.id && this.hasRooms) {
-          this.roomCapacityGroup
-            .get('roomChosenCapacityId')
-            ?.setValue(response.roomCapacity.id);
-        }
-      });
+    if (this.isEditMode()) {
+      this.populateEditData();
     } else {
       this.roomTypes$ = this.apiService
         .get<NewBookingStructureResponseInterface[]>(this.endpoint)
@@ -307,11 +224,6 @@ export class BookingFormComponent implements OnInit {
 
   // submit form event handler
   onSubmit() {
-    if (this.hasRooms) {
-      if (!this.roomChosenCapacityId) {
-        this.bookingForm.setErrors({ invalidForm: true });
-      }
-    }
     if (this.bookingForm.valid) {
       const formattedStartMinutes =
         this.chosenTime.time.getMinutes() > 9
@@ -337,17 +249,33 @@ export class BookingFormComponent implements OnInit {
         startTime: `${this.chosenTime.time.getHours()}:${formattedStartMinutes}`,
         endTime: `${this.chosenEndTime.time.getHours()}:${formattedEndMinutes}`,
       };
-      if (this.mode === 'edit') {
+      if (this.isEditMode()) {
         this.apiService
           .put<AddBookingCommandInterface>(this.endpoint, data)
+          .pipe(
+            catchError((err) => {
+              this.showErrorComponent = true;
+              return throwError(() => err);
+            })
+          )
           .subscribe((response) => {
-            console.log(response);
+            if (response) {
+              this.showSuccessComponent = true;
+            }
           });
       } else {
         this.apiService
           .post<AddBookingCommandInterface>(this.endpoint, data)
+          .pipe(
+            catchError((err) => {
+              this.showErrorComponent = true;
+              return throwError(() => err);
+            })
+          )
           .subscribe((response) => {
-            console.log(response);
+            if (response) {
+              this.showSuccessComponent = true;
+            }
           });
       }
     }
@@ -396,6 +324,128 @@ export class BookingFormComponent implements OnInit {
     return a && b ? a.roomType.id === b.roomType.id : a === b;
   }
 
+  closeError() {
+    this.showErrorComponent = false;
+  }
+
+  closeSuccess() {
+    this.showSuccessComponent = false;
+  }
+
+  isEditMode(): boolean {
+    return this.mode === 'edit';
+  }
+
+  // populate data with already existing booking
+  private populateEditData() {
+    let id = Number(this.route.snapshot.paramMap.get('id'));
+    if (isNaN(id)) {
+      this.router.navigate(['booking/add']);
+      return;
+    }
+    let result$ = this.apiService
+      .getById<EditBookingResponseInterface>(this.endpoint, Number(id))
+      .pipe(
+        catchError((err) => {
+          this.router.navigate(['booking/add']);
+          return throwError(() => err);
+        })
+      );
+    this.roomTypes$ = result$.pipe(map((response) => response.roomTypes));
+    result$.pipe(map((response) => response)).subscribe((response) => {
+      let booking = response.booking;
+
+      this.bookingId = booking.id;
+
+      this.userDataGroup.get('name')?.setValue(booking.customerName);
+      this.userDataGroup.get('email')?.setValue(booking.customerEmail);
+
+      const startDate = new Date(booking.startDate);
+      const endDate = new Date(booking.endDate);
+
+      // repopulate years
+      this.repopulateDates();
+      const matchingYear =
+        this.startDates.availableYears.find(
+          (y) => y === startDate.getFullYear()
+        ) ?? this.startDates.availableYears[0];
+      this.startDateGroup.get('year')?.setValue(matchingYear);
+
+      // repopulate months based on years
+      this.repopulateDates(matchingYear);
+      const matchingMonth =
+        this.startDates.availableMonths.find(
+          (m) => m === startDate.getMonth()
+        ) ?? this.startDates.availableMonths[0];
+      this.startDateGroup.get('month')?.setValue(matchingMonth);
+
+      // repopulate days based on years and months
+      this.repopulateDates(matchingYear, matchingMonth);
+      const matchingDay =
+        this.startDates.availableDays.find((d) => d === startDate.getDate()) ??
+        this.startDates.availableDays[0];
+      this.startDateGroup.get('day')?.setValue(matchingDay);
+
+      // repopulate end years
+      this.repopulateEndDates();
+      const matchingEndYear =
+        this.endDates.availableYears.find((y) => y === endDate.getFullYear()) ??
+        this.endDates.availableYears[0];
+      this.endDateGroup.get('year')?.setValue(matchingEndYear);
+
+      // repopulate end months based on years
+      this.repopulateEndDates(matchingYear);
+      const matchingEndMonth =
+        this.endDates.availableMonths.find((m) => m === endDate.getMonth()) ??
+        this.endDates.availableMonths[0];
+      this.endDateGroup.get('month')?.setValue(matchingEndMonth);
+
+      // repopulate end days based on years and months
+      this.repopulateEndDates(matchingEndYear, matchingEndMonth);
+      const matchingEndDay =
+        this.endDates.availableDays.find((d) => d === endDate.getDate()) ??
+        this.endDates.availableDays[0];
+      this.endDateGroup.get('day')?.setValue(matchingEndDay);
+
+      // converting HH:MM string minutes
+      const [startHour, startMinute] = booking.startTime.split(':');
+      const startTimeInMinutes = Number(startHour) * 60 + Number(startMinute);
+      const [endHour, endMinute] = booking.endTime.split(':');
+      const endTimeInMinutes =
+        Number(endHour) * 60 + Number(endMinute) === 0
+          ? 1440
+          : Number(endHour) * 60 + Number(endMinute);
+
+      // repopulating time
+      this.repopulateTime();
+      const matchingStartTime =
+        this.availableTime.find(
+          (t) => t.timeInMinutes === startTimeInMinutes
+        ) ?? this.availableTime[0];
+      this.bookingForm.get('startTime')?.setValue(matchingStartTime);
+      this.repopulateEndTime();
+      const matchingEndTime =
+        this.availableEndTime.find(
+          (t) => t.timeInMinutes === endTimeInMinutes
+        ) ?? this.availableEndTime[0];
+      this.bookingForm.get('endTime')?.setValue(matchingEndTime);
+
+      // repopulating roomtypes
+      const matchingRoomType = response.roomTypes.find(
+        (rt) => rt.roomType.id === response.roomType.id
+      );
+      this.roomInfoGroup.get('roomInfo')?.setValue(matchingRoomType);
+
+      // repopulating room capacities
+      this.configureRoomType();
+      if (response.roomCapacity?.id && this.hasRooms) {
+        this.roomCapacityGroup
+          .get('roomChosenCapacityId')
+          ?.setValue(response.roomCapacity.id);
+      }
+    });
+  }
+
   // configures rules for room types, repopulates roomCapacities, repopulates end time/date if maxDays available for booking has changed
   // all room types with unique maxDays / types without rooms should be added here
   private configureRoomType() {
@@ -406,6 +456,11 @@ export class BookingFormComponent implements OnInit {
         roomCapacities: '',
         roomChosenCapacityId: '',
       });
+      this.roomCapacityGroup.get('roomChosenCapacityId')?.clearValidators();
+      this.roomCapacityGroup
+        .get('roomChosenCapacityId')
+        ?.updateValueAndValidity();
+
       this.hasRooms = false;
       let temp = this.maxDays;
       this.maxDays = 1;
@@ -416,6 +471,12 @@ export class BookingFormComponent implements OnInit {
       this.roomCapacityGroup
         .get('roomCapacities')
         ?.setValue(this.roomInfo.roomCapacities);
+      this.roomCapacityGroup
+        .get('roomChosenCapacityId')
+        ?.setValidators([Validators.required]);
+      this.roomCapacityGroup
+        .get('roomChosenCapacityId')
+        ?.updateValueAndValidity();
       this.hasRooms = true;
       let temp = this.maxDays;
       this.maxDays = 30;

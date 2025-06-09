@@ -98,6 +98,7 @@ namespace BookingApp.Infrastructure
                 rooms.Add(new Room { Id = i, RoomTypeId = 1 });
             }
             rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3 });
             rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
             rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
             rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });

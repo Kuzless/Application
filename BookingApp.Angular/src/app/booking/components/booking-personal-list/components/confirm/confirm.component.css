@@ -1,0 +1,8 @@
+.bkn-button,
+.bkn-button-2 {
+  height: 48px;
+}
+
+.warning-bg {
+  background-color: rgba(0, 0, 0, 0.5);
+}

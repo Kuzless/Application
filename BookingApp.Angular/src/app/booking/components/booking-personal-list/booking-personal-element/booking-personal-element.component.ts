@@ -6,7 +6,8 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DatePipe } from '@angular/common';
 import { MultipleToSinglePipe } from './pipes/multiple-to-single.pipe';
-import { BookingApiService } from '../../../shared/services/booking-api.service';
+import { ConfirmComponent } from '../components/confirm/confirm.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-booking-personal-element',
@@ -17,14 +18,13 @@ import { BookingApiService } from '../../../shared/services/booking-api.service'
     DatePipe,
     CommonModule,
     MultipleToSinglePipe,
+    ConfirmComponent,
   ],
   templateUrl: './booking-personal-element.component.html',
   styleUrl: './booking-personal-element.component.css',
 })
 export class BookingPersonalElementComponent {
   @Input() booking?: UserBookingInfoResponseInterface;
-
-  private readonly endpoint: string = 'Booking';
 
   readonly iconsUrl: string = 'booking/booking-element/icons/';
   readonly imagesUrl: string = 'booking/booking-element/images/';
@@ -37,7 +37,9 @@ export class BookingPersonalElementComponent {
   readonly calendarIconName: string = 'calendar';
   readonly clockIconName: string = 'clock';
 
-  constructor(private apiService: BookingApiService) {}
+  showWarning: boolean = false;
+
+  constructor(private router: Router) {}
 
   get editBookingRoute() {
     return `../edit/${this.booking?.booking.id}`;
@@ -51,11 +53,18 @@ export class BookingPersonalElementComponent {
     return `${this.booking?.booking.endDate}T${this.booking?.booking.endTime}`;
   }
 
-  deleteBooking() {
-    this.apiService
-      .delete(this.endpoint, this.booking?.booking.id!)
-      .subscribe((response) => {
-        console.log(response);
-      });
+  openWarning() {
+    this.showWarning = true;
+  }
+
+  closeWarning() {
+    this.showWarning = false;
+  }
+
+  refreshPage() {
+    this.showWarning = false;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/booking/my']);
+    });
   }
 }
