@@ -1,0 +1,23 @@
+.navbar {
+  position: fixed;
+  padding-left: 5%;
+  padding-right: 5%;
+  min-height: 88px;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: white;
+}
+
+.logo {
+  max-height: 88px;
+}
+a {
+  text-decoration: none;
+}
+
+.link {
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid #5c5af3;
+}

@@ -1,0 +1,104 @@
+<div
+  class="d-flex flex-column flex-md-row align-items-center align-items-md-start rounded-4 bg-white inter-5 w-100"
+>
+  <!--Image-->
+  <div class="d-flex flex-column p-3">
+    <div class="image-box p-3">
+      <img
+        class="image rounded-4 pb-2"
+        [src]="
+          imagesUrl +
+          ((booking?.userRoomInfo?.roomType)!.type | formatImg | lowercase) +
+          '/' +
+          imageName +
+          imagesFormat
+        "
+      />
+    </div>
+  </div>
+  <!--Description Block-->
+  <div class="d-flex flex-fill p-3 py-5">
+    <div class="d-flex flex-column flex-fill gap-3">
+      <h2 class="inter-7">
+        {{ booking?.userRoomInfo?.roomType?.type ?? "" | multipleToSingle }}
+        <ng-container
+          *ngIf="booking?.userRoomInfo?.roomCapacity?.capacity as capacity"
+        >
+          for {{ capacity }} {{ capacity > 1 ? "people" : "person" }}
+        </ng-container>
+      </h2>
+      <div class="d-flex gap-3 align-items-center">
+        <div
+          class="icon rounded-3 d-flex justify-content-center align-items-center"
+        >
+          <img
+            [src]="
+              iconsUrl +
+              (calendarIconName | formatImg | lowercase) +
+              iconsFormat
+            "
+          />
+        </div>
+        <h5 style="margin: 0">
+          {{ startDateTime | date : "MMMM d, y" }}
+          <ng-container
+            *ngIf="
+              booking?.booking?.startDate !== booking?.booking?.endDate;
+              else single
+            "
+          >
+            - {{ booking?.booking?.endDate | date : "MMMM d, y" }}
+          </ng-container>
+          <ng-template #single>(1 day)</ng-template>
+        </h5>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div
+          class="icon rounded-3 d-flex justify-content-center align-items-center gap-2"
+        >
+          <img
+            [src]="
+              iconsUrl + (clockIconName | formatImg | lowercase) + iconsFormat
+            "
+          />
+        </div>
+        <h5 style="margin: 0">
+          {{ startDateTime | date : "h:mm a" }} -
+          {{ endDateTime | date : "h:mm a" }}
+        </h5>
+      </div>
+    </div>
+    <!--Buttons block-->
+    <div
+      class="d-flex flex-column flex-md-row justify-content-end w-15 ps-2 gap-3"
+    >
+      <a
+        [routerLink]="editBookingRoute"
+        class="rounded-3 d-flex icon icon-edit justify-content-center align-items-center"
+      >
+        <img
+          [src]="
+            iconsUrl + (editIconName | formatImg | lowercase) + iconsFormat
+          "
+        />
+      </a>
+      <button
+        class="rounded-3 d-flex icon icon-delete justify-content-center align-items-center"
+        (click)="openWarning()"
+      >
+        <img
+          [src]="
+            iconsUrl + (deleteIconName | formatImg | lowercase) + iconsFormat
+          "
+        />
+      </button>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="showWarning">
+  <app-confirm
+    [id]="booking?.booking?.id!"
+    (closed)="closeWarning()"
+    (deleted)="refreshPage()"
+  ></app-confirm>
+</ng-container>

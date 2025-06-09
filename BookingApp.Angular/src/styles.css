@@ -1,0 +1,71 @@
+html {
+  scrollbar-gutter: stable;
+}
+
+.background {
+  background: #f7f6f9;
+}
+
+.inter-4,
+.inter-5,
+.inter-6,
+.inter-7 {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.inter-4 {
+  font-weight: 400;
+}
+
+.inter-5 {
+  font-weight: 500;
+}
+
+.inter-6 {
+  font-weight: 600;
+}
+
+.inter-7 {
+  font-weight: 700;
+}
+
+.icon {
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  background: #f5f3fb;
+}
+
+.warning-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.warning-icon {
+  min-width: 80px;
+  min-height: 80px;
+  width: 80px;
+  height: 80px;
+  background: white;
+}
+
+.bkn-button,
+.bkn-button-2 {
+  padding: 0.8% 1.3% !important;
+}
+
+.bkn-button {
+  background: #5c5af3 !important;
+}
+
+.bkn-button-2 {
+  border: 2px solid #5c5af3 !important;
+  background-color: white !important;
+  color: #5c5af3 !important;
+}

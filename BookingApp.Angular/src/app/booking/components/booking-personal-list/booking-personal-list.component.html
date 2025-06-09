@@ -1,0 +1,30 @@
+<div>
+  <h1 class="inter-7">My bookings on {{ title }}</h1>
+  <ng-container *ngIf="pageData$ | async as bookings">
+    <ng-container *ngIf="bookings.length !== 0; else empty">
+      <ul class="list-unstyled">
+        <li class="py-3" *ngFor="let booking of bookings">
+          <app-booking-personal-element
+            [booking]="booking"
+          ></app-booking-personal-element>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #empty>
+      <div
+        class="d-flex flex-column rounded-4 bg-white inter-5 w-100 align-items-center empty gap-5"
+      >
+        <h1>🔍</h1>
+        <div class="d-flex flex-column align-items-center">
+          <h1 class="fw-semibold inter-7">You don't have any bookings yet</h1>
+          <span class="inter-4 fw-light"
+            >Start by choosing a coworking space</span
+          >
+        </div>
+        <a routerLink=".." class="btn btn-primary bkn-button inter-6">
+          Select a workspace
+        </a>
+      </div>
+    </ng-template>
+  </ng-container>
+</div>

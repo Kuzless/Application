@@ -1,0 +1,34 @@
+<div class="modal warning-bg show d-block" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="d-flex flex-column bg-white rounded-4 p-4 px-5 gap-4">
+        <div class="d-flex justify-content-between">
+          <div class="warning">
+            <img [src]="iconsUrl + iconName + iconsFormat" />
+          </div>
+          <button
+            type="button"
+            class="btn-close shadow-none pt-4"
+            (click)="close()"
+          ></button>
+        </div>
+        <h1 class="inter-6 fw-bold">Cancel your booking?</h1>
+        <p class="inter-4 text-muted">This action cannot be undone</p>
+        <div class="d-flex w-100 justify-content-center gap-2">
+          <button
+            class="btn btn-primary bkn-button-2 inter-6 w-50 fw-semibold"
+            (click)="deleteBooking()"
+          >
+            Yes, cancel it
+          </button>
+          <button
+            class="btn btn-primary bkn-button inter-6 w-50 fw-semibold"
+            (click)="close()"
+          >
+            No, keep it
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

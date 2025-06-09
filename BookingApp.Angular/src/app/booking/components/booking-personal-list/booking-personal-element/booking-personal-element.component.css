@@ -1,0 +1,31 @@
+.image {
+  flex-basis: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.image-box {
+  min-height: 227px;
+  max-width: 340px;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.icon-edit,
+.icon-delete {
+  background-color: white;
+}
+
+.icon-edit {
+  border: 1px solid #c2bcd8;
+}
+
+.icon-delete {
+  border: 1px solid #f56e6e;
+}

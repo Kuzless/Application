@@ -1,0 +1,49 @@
+.image-container {
+  width: 100%;
+  max-width: 340px;
+}
+
+.image {
+  flex-basis: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-width: 0%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.main-image-box {
+  min-height: 227px;
+  max-width: 340px;
+}
+
+.preview-images-box {
+  min-height: 64px;
+  max-width: 340px;
+}
+
+.bkn-button {
+  width: 180px;
+  height: 48px;
+}
+
+.booked {
+  background-color: #eaf7ee;
+  min-height: 44px;
+}
+
+@media (max-width: 992px) {
+  * {
+    font-size: 0.97em !important;
+  }
+
+  h2 {
+    font-size: 2em !important;
+  }
+
+  .bkn-button {
+    width: 160px;
+    height: 40px;
+  }
+}
