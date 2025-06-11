@@ -8,7 +8,7 @@ namespace BookingApp.Infrastructure.Repositories
     {
         public RoomRepository(DatabaseContext context) : base(context)
         {
-            
+
         }
         public async Task<List<Room>> GetRoomsByTypeAndCapacity(int typeId, int? capacityId)
         {

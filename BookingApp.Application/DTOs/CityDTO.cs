@@ -1,6 +1,6 @@
-﻿namespace BookingApp.Application.DTOs.Booking
+﻿namespace BookingApp.Application.DTOs
 {
-    public class AmenityDTO
+    public class CityDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

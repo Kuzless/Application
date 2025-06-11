@@ -2,7 +2,6 @@
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.DeleteBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
-using BookingApp.Application.CQRS.Booking.Queries.GetAllBookings;
 using BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit;
 using BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking;
 using BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo;
@@ -21,15 +20,6 @@ namespace BookingApp.API.Controllers
         {
             _mediator = mediator;
             _apiResponseHandler = apiResponseHandler;
-        }
-
-        // retrieves booking types with all additional info
-        // userid is needed to retrieve info about bookings that user booked
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetBookingsInfo(string userId)
-        {
-            var bookings = await _mediator.Send(new GetAllBookingsInfoQuery() { UserId = userId });
-            return _apiResponseHandler.Handle(bookings);
         }
 
         // retrieves bookings info made by user

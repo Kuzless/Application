@@ -1,25 +1,25 @@
 ﻿using AutoMapper;
 using BookingApp.Application.DTOs;
-using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
+using BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo;
 using BookingApp.Application.Interfaces;
 using BookingApp.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookingApp.Application.CQRS.Booking.Queries.GetAllBookings
+namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo
 {
-    public class GetAllBookingsInfoQueryHandler : IRequestHandler<GetAllBookingsInfoQuery, OperationResult<List<BookingTypeInfoDTO>>>
+    public class GetAllWorkspacesInfoQueryHandler : IRequestHandler<GetAllWorkspacesInfoQuery, OperationResult<List<BookingTypeInfoDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IResponseHandlerService _responseHandler;
-        public GetAllBookingsInfoQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, [FromKeyedServices("booking")] IResponseHandlerService responseHandler)
+        public GetAllWorkspacesInfoQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, [FromKeyedServices("workspace")] IResponseHandlerService responseHandler)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult<List<BookingTypeInfoDTO>>> Handle(GetAllBookingsInfoQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<BookingTypeInfoDTO>>> Handle(GetAllWorkspacesInfoQuery request, CancellationToken cancellationToken)
         {
             try
             {

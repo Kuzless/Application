@@ -1,4 +1,4 @@
-﻿namespace BookingApp.Application.DTOs.Booking
+﻿namespace BookingApp.Application.DTOs
 {
     public class AddressDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace BookingApp.Application.DTOs.Booking.GetAllBookingsInfo
+﻿namespace BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo
 {
     public class RoomCapacityInfoDTO
     {

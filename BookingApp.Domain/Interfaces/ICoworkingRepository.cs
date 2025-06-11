@@ -4,5 +4,6 @@ namespace BookingApp.Domain.Interfaces
 {
     public interface ICoworkingRepository : IGenericRepository<Coworking>
     {
+        Task<List<Coworking>> GetCoworkingsInfoWithTypesAndRooms();
     }
 }

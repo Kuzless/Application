@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
-using BookingApp.Application.DTOs.Booking;
-using BookingApp.Application.DTOs.Booking.GetAllBookingsInfo;
+using BookingApp.Application.DTOs;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
 using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
 using BookingApp.Application.DTOs.Booking.GetUserBookingsInfo;
+using BookingApp.Application.DTOs.Workspace.GetAllCoworkingsInfo;
+using BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo;
 using BookingApp.Domain.Entities;
 
 namespace BookingApp.API.Configuration
@@ -15,6 +16,9 @@ namespace BookingApp.API.Configuration
         public AutoMappingProfile()
         {
             // base dtos
+            CreateMap<City, CityDTO>();
+            CreateMap<Address, AddressDTO>();
+            CreateMap<Coworking, CoworkingDTO>();
             CreateMap<Booking, BookingDTO>();
             CreateMap<RoomCapacity, RoomCapacityDTO>();
             CreateMap<Room, RoomDTO>();
@@ -75,6 +79,12 @@ namespace BookingApp.API.Configuration
             CreateMap<Booking, UserBookingInfoDTO>()
                 .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.UserRoomInfo, opt => opt.MapFrom(src => src.Room));
+
+            // coworking page
+            CreateMap<Coworking, CoworkingInfoDTO>()
+                .ForMember(dest => dest.Coworking, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
         }
     }
 }

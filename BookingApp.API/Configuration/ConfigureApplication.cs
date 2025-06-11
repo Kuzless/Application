@@ -29,6 +29,7 @@ namespace BookingApp.API.Configuration
             builder.Services.AddScoped<IApiResponseHandler, ApiResponseHandler>();
 
             builder.Services.AddKeyedScoped<IResponseHandlerService, BookingResponseHandlerService>("booking");
+            builder.Services.AddKeyedScoped<IResponseHandlerService, WorkspaceResponseHandlerService>("workspace");
         }
     }
 }

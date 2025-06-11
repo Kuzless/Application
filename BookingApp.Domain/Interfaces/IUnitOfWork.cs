@@ -6,5 +6,6 @@
         IBookingRepository BookingRepository { get; }
         IRoomTypeRepository RoomTypeRepository { get; }
         IRoomRepository RoomRepository { get; }
+        ICoworkingRepository CoworkingRepository { get; }
     }
 }
