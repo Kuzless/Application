@@ -5,6 +5,9 @@ namespace BookingApp.Infrastructure
 {
     public class DatabaseContext : DbContext
     {
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Coworking> Coworkings { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
@@ -15,7 +18,7 @@ namespace BookingApp.Infrastructure
         public DatabaseContext() : base() {}
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +27,7 @@ namespace BookingApp.Infrastructure
             modelBuilder.Entity<RoomType>().HasIndex(t => t.Type).IsUnique();
             modelBuilder.Entity<Amenity>().HasIndex(a => a.Name).IsUnique();
             modelBuilder.Entity<RoomCapacity>().HasIndex(c => c.Capacity).IsUnique();
+            modelBuilder.Entity<City>().HasIndex(c => c.Name).IsUnique();
 
             modelBuilder.Entity<RoomTypeAmenity>().HasKey(ta => new { ta.RoomTypeId, ta.AmenityId });
             modelBuilder.Entity<RoomTypeAmenity>().HasOne(ta => ta.RoomType)
@@ -42,6 +46,28 @@ namespace BookingApp.Infrastructure
                 .HasForeignKey(ct => ct.RoomTypeId);
 
             // seed
+
+            modelBuilder.Entity<City>().HasData(
+                new City { Id = 1, Name = "Kyiv" },
+                new City { Id = 2, Name = "Lviv" },
+                new City { Id = 3, Name = "Dnipro" }
+            );
+
+            modelBuilder.Entity<Address>().HasData(
+                new Address { Id = 1, CityId = 1, Street = "Khreshchatyk St", HouseNumber = "12" },
+                new Address { Id = 2, CityId = 1, Street = "Velyka Vasylkivska St", HouseNumber = "7" },
+                new Address { Id = 3, CityId = 2, Street = "Svobody Avenue", HouseNumber = "5" },
+                new Address { Id = 4, CityId = 2, Street = "Halytska St", HouseNumber = "14" },
+                new Address { Id = 5, CityId = 3, Street = "Troitska Square", HouseNumber = "4" }
+            );
+
+            modelBuilder.Entity<Coworking>().HasData(
+                new Coworking { Id = 1, Name = "UrbanSpace Kyiv", Description = "A modern coworking space in the heart of Kyiv with high-speed internet and flexible workstations.", AddressId = 1 },
+                new Coworking { Id = 2, Name = "HiveHub", Description = "Creative hub for freelancers and startups, located near central metro lines in Kyiv.", AddressId = 2 },
+                new Coworking { Id = 3, Name = "Lviv Loft", Description = "Industrial-style coworking in Lviv offering 24/7 access and cozy meeting rooms.", AddressId = 3 },
+                new Coworking { Id = 4, Name = "Galician Space", Description = "Coworking in historic Lviv with a focus on tech startups and events.", AddressId = 4 },
+                new Coworking { Id = 5, Name = "Dnipro Works", Description = "Spacious coworking center in Dnipro with private offices and open desks.", AddressId = 5 }
+            );
 
             modelBuilder.Entity<RoomType>().HasData(
                 new RoomType { Id = 1, Type = "Open Space", Description = "A vibrant shared area perfect for freelancers or small teams who enjoy a collaborative atmosphere. Choose any available desk and get to work with flexibility and ease." },
@@ -93,23 +119,67 @@ namespace BookingApp.Infrastructure
 
             var rooms = new List<Room>();
             int i = 1;
-            for (; i <= 15; i++)
+            // seeding desks
+            for (; i <= 100; i++)
             {
-                rooms.Add(new Room { Id = i, RoomTypeId = 1 });
+                if (i < 21)
+                {
+                    rooms.Add(new Room { Id = i, RoomTypeId = 1, CoworkingId = 1 });
+                }
+                else if (i < 40)
+                {
+                    rooms.Add(new Room { Id = i, RoomTypeId = 1, CoworkingId = 2 });
+                }
+                else if (i < 60)
+                {
+                    rooms.Add(new Room { Id = i, RoomTypeId = 1, CoworkingId = 3 });
+                }
+                else if (i <= 82)
+                {
+                    rooms.Add(new Room { Id = i, RoomTypeId = 1, CoworkingId = 4 });
+                }
+                else
+                {
+                    rooms.Add(new Room { Id = i, RoomTypeId = 1, CoworkingId = 5 });
+                }
             }
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 3 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2 });
-            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2 });
+            // adding rooms to all coworkings
+            for (int j = 1; j <= 5; j++)
+            {
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3, CoworkingId = j });
+                // skip private rooms for coworking 4
+                if (j == 4)
+                {
+                    continue;
+                }
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2, CoworkingId = j });
+                rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = j });
+            }
+            // adding unqiue rooms to coworkings
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2, CoworkingId = 1 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3, CoworkingId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2, CoworkingId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3, CoworkingId = 4 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = 5 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = 1 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2, CoworkingId = 1 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3, CoworkingId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3, CoworkingId = 2 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 1, RoomTypeId = 2, CoworkingId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 2, CoworkingId = 3 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 5, RoomTypeId = 3, CoworkingId = 4 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 4, RoomTypeId = 3, CoworkingId = 4 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 2, RoomTypeId = 2, CoworkingId = 5 });
+            rooms.Add(new Room { Id = i++, RoomCapacityId = 3, RoomTypeId = 2, CoworkingId = 5 });
 
             modelBuilder.Entity<Room>().HasData(rooms);
         }

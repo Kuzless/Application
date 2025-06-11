@@ -1,0 +1,8 @@
+﻿namespace BookingApp.Application.DTOs.Booking
+{
+    public class CityDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+}

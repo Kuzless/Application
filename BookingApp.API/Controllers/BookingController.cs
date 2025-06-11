@@ -6,7 +6,6 @@ using BookingApp.Application.CQRS.Booking.Queries.GetAllBookings;
 using BookingApp.Application.CQRS.Booking.Queries.GetBookingForEdit;
 using BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking;
 using BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo;
-using BookingApp.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

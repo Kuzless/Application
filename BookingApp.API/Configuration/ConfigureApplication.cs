@@ -15,8 +15,8 @@ namespace BookingApp.API.Configuration
         {
             builder.Services.AddDbContext<DatabaseContext>(options =>
             {
-                //options.UseSqlServer(builder.Configuration["ConnectionStrings:DbConnectionString"]);
-                options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgresDb"]);
+                options.UseSqlServer(builder.Configuration["ConnectionStrings:MSSQLDb"]);
+                //options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgresDb"]);
             });
 
             builder.Services.AddAutoMapper(typeof(AutoMappingProfile));
