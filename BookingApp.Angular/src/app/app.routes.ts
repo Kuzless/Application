@@ -3,6 +3,7 @@ import { BookingListComponent } from './booking/components/booking-list/booking-
 import { BookingFormComponent } from './booking/components/booking-form/booking-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { BookingPersonalListComponent } from './booking/components/booking-personal-list/booking-personal-list.component';
+import { CoworkingListComponent } from './booking/components/coworking-list/coworking-list.component';
 
 export const routes: Routes = [
   {
@@ -16,20 +17,24 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        component: CoworkingListComponent,
+      },
+      {
+        path: ':coworkingId',
         component: BookingListComponent,
       },
       {
-        path: 'add',
+        path: 'add/:coworkingId',
         component: BookingFormComponent,
         data: { mode: 'add' },
       },
       {
-        path: 'edit/:id',
+        path: 'edit/:coworkingId/:id',
         component: BookingFormComponent,
         data: { mode: 'edit' },
       },
       {
-        path: 'my',
+        path: 'my/:coworkingId',
         component: BookingPersonalListComponent,
       },
       {
