@@ -23,7 +23,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.UpdateBooking
         {
             try
             {
-                var availableRooms = await _unitOfWork.RoomRepository.GetRoomsByTypeAndCapacity(request.RoomTypeId, request.RoomCapacityId);
+                var availableRooms = await _unitOfWork.RoomRepository.GetRoomsByTypeAndCapacity(request.RoomTypeId, request.CoworkingId, request.RoomCapacityId);
                 Room? freeRoom = null;
                 var startDate = DateOnly.Parse(request.StartDate);
                 var endDate = DateOnly.Parse(request.EndDate);

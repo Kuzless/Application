@@ -20,6 +20,10 @@ export class CoworkingListComponent implements OnInit {
   constructor(private apiService: BookingApiService) {}
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData() {
     this.pageData$ = this.apiService.get<CoworkingInfoResponseInterface[]>(
       this.endpoint
     );

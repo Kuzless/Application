@@ -10,10 +10,10 @@ namespace BookingApp.Infrastructure.Repositories
         {
 
         }
-        public async Task<List<Room>> GetRoomsByTypeAndCapacity(int typeId, int? capacityId)
+        public async Task<List<Room>> GetRoomsByTypeAndCapacity(int typeId, int coworkingId, int? capacityId)
         {
             return await _context.Set<Room>()
-                .Where(r => r.RoomTypeId == typeId && r.RoomCapacityId == capacityId)
+                .Where(r => r.RoomTypeId == typeId && r.CoworkingId == coworkingId && r.RoomCapacityId == capacityId)
                 .ToListAsync();
         }
     }

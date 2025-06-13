@@ -166,7 +166,7 @@ export class BookingFormComponent implements OnInit {
           [
             Validators.required,
             Validators.email,
-            Validators.pattern(/^[a-z]+@[a-z]+\.[a-z]+$/),
+            Validators.pattern(/^[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]+$/),
           ],
         ],
       }),
@@ -236,6 +236,7 @@ export class BookingFormComponent implements OnInit {
       let data: AddBookingCommandInterface = {
         bookingId: this.bookingId || null,
         roomTypeId: this.roomInfo.roomType.id,
+        coworkingId: Number(this.route.snapshot.paramMap.get('coworkingId')),
         roomCapacityId: Number(this.roomChosenCapacityId) || null,
         customerId: this.userId,
         customerName: this.userName,

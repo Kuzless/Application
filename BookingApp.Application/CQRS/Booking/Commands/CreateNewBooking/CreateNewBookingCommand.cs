@@ -7,6 +7,7 @@ namespace BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking
     {
         public int? RoomId { get; set; }
         public int RoomTypeId { get; set; }
+        public int CoworkingId { get; set; }
         public int? RoomCapacityId { get; set; }
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }

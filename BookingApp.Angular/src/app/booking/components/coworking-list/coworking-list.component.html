@@ -2,10 +2,32 @@
   <h1 class="inter-7">Available coworking spaces</h1>
   <h5 class="inter-4">Browse and choose a workspace that fits your needs</h5>
   <ng-container *ngIf="pageData$ | async as coworkings">
-    <ul class="list-unstyled">
-      <li class="py-3" *ngFor="let coworking of coworkings">
-        <app-coworking-element [coworking]="coworking"></app-coworking-element>
-      </li>
-    </ul>
+    <ng-container *ngIf="coworkings.length !== 0; else empty">
+      <ul class="list-unstyled">
+        <li class="py-3" *ngFor="let coworking of coworkings">
+          <app-coworking-element
+            [coworking]="coworking"
+          ></app-coworking-element>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #empty>
+      <div
+        class="d-flex flex-column rounded-4 bg-white inter-5 w-100 align-items-center empty gap-5"
+      >
+        <h1>👨‍💻</h1>
+        <div class="d-flex flex-column align-items-center">
+          <h1 class="fw-semibold inter-7">
+            No coworking spaces available at the moment
+          </h1>
+          <span class="inter-4 fw-light"
+            >Please check back later or try adjusting your filters</span
+          >
+        </div>
+        <button (click)="loadData()" class="btn btn-primary bkn-button inter-6">
+          Refresh list
+        </button>
+      </div>
+    </ng-template>
   </ng-container>
 </div>

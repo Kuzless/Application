@@ -1,5 +1,6 @@
 export interface AddBookingCommandInterface {
   bookingId: number | null;
+  coworkingId: number;
   roomTypeId: number;
   roomCapacityId: number | null;
   customerId: string;

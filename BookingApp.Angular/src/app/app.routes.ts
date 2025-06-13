@@ -24,12 +24,12 @@ export const routes: Routes = [
         component: BookingPersonalListComponent,
       },
       {
-        path: 'add/:coworkingId',
+        path: ':coworkingId/add',
         component: BookingFormComponent,
         data: { mode: 'add' },
       },
       {
-        path: 'edit/:coworkingId/:id',
+        path: ':coworkingId/edit/:id',
         component: BookingFormComponent,
         data: { mode: 'edit' },
       },
