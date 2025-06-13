@@ -63,8 +63,6 @@ namespace BookingApp.API.Configuration
             CreateMap<Booking, BookingInfoDTO>()
                 .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room));
-            CreateMap<RoomCapacityRoomType, RoomCapacityInfoDTO>()
-                .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.RoomCapacity.Rooms));
             CreateMap<RoomType, BookingTypeInfoDTO>()
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.Rooms))

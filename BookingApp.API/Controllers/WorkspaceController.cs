@@ -32,7 +32,7 @@ namespace BookingApp.API.Controllers
         [HttpGet("{coworkingId}/{userId}")]
         public async Task<IActionResult> GetWorkspacesInfo(int coworkingId, string userId)
         {
-            var bookings = await _mediator.Send(new GetAllWorkspacesInfoQuery() { UserId = userId });
+            var bookings = await _mediator.Send(new GetAllWorkspacesInfoQuery() { UserId = userId, CoworkingId = coworkingId });
             return _apiResponseHandler.Handle(bookings);
         }
     }

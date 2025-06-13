@@ -5,6 +5,6 @@ namespace BookingApp.Domain.Interfaces
     public interface IRoomTypeRepository : IGenericRepository<RoomType>
     {
         Task<List<RoomType>> GetRoomTypesWithCapacity();
-        Task<List<RoomType>> GetRoomTypesWithFullInfo();
+        Task<List<RoomType>> GetRoomTypesWithFullInfoByCoworkingId(int coworkingId);
     }
 }

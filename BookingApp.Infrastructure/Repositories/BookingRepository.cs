@@ -8,10 +8,10 @@ namespace BookingApp.Infrastructure.Repositories
     {
         public BookingRepository(DatabaseContext context) : base(context) { }
 
-        public async Task<List<Booking>> GetBookingsWithRoomByUserId(string userId)
+        public async Task<List<Booking>> GetBookingsWithRoomByUserId(int coworkingId, string userId)
         {
             return await _context.Set<Booking>()
-                .Where(b => b.CustomerId == userId)
+                .Where(b => b.CustomerId == userId && b.Room.CoworkingId == coworkingId)
                 .Include(b => b.Room)
                 .ToListAsync();
         }

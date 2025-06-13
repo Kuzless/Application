@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BookingTypeInfoResponseInterface } from '../interfaces/room-type-info-response.interface';
 import { CommonModule } from '@angular/common';
 import { FormatImgPipe } from '../../../shared/pipes/format-img.pipe';
 import { RoomInterface } from '../../../shared/interfaces/dto/room.interface';
-import { RoomCapacityInfoInterface } from '../../booking-list/interfaces/room-capacity-info.interface';
 import { RouterLink } from '@angular/router';
 import { WorkspaceTypes } from '../../../shared/enums/workspace-types.enum';
 import { BookingInfoInterface } from '../../booking-list/interfaces/booking-info.interface';
@@ -14,11 +13,8 @@ import { BookingInfoInterface } from '../../booking-list/interfaces/booking-info
   templateUrl: './booking-element.component.html',
   styleUrl: './booking-element.component.css',
 })
-export class BookingElementComponent implements OnInit {
+export class BookingElementComponent {
   @Input() bookingType?: BookingTypeInfoResponseInterface;
-
-  rooms: RoomInterface[] = [];
-  capacitiesInfo: RoomCapacityInfoInterface[] = [];
 
   readonly iconsUrl: string = 'booking/booking-element/icons/';
   readonly imagesUrl: string = 'booking/booking-element/images/';
@@ -29,15 +25,6 @@ export class BookingElementComponent implements OnInit {
   readonly checkmarkImageName: string = 'done';
 
   mainImageName: string = '1';
-
-  ngOnInit(): void {
-    this.bookingType?.roomCapacities.forEach((capacity) => {
-      this.capacitiesInfo.push(capacity);
-    });
-    this.bookingType?.rooms.forEach((room) => {
-      this.rooms.push(room);
-    });
-  }
 
   isSpecificType(
     bookingType: BookingTypeInfoResponseInterface | undefined
@@ -87,5 +74,12 @@ export class BookingElementComponent implements OnInit {
       }
     });
     return result;
+  }
+
+  getRoomsByCapacity(capacityId: number): RoomInterface[] {
+    return (
+      this.bookingType?.rooms.filter((r) => r.roomCapacityId === capacityId) ||
+      []
+    );
   }
 }

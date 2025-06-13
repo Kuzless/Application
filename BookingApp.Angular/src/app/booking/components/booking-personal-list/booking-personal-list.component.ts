@@ -25,7 +25,7 @@ export class BookingPersonalListComponent {
     private apiService: BookingApiService
   ) {
     this.title = titleService.getTitle();
-    this.pageData$ = apiService.getByUserId<UserBookingInfoResponseInterface[]>(
+    this.pageData$ = apiService.get<UserBookingInfoResponseInterface[]>(
       this.endpoint,
       this.userId
     );

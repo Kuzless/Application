@@ -13,13 +13,12 @@ namespace BookingApp.Infrastructure.Repositories
                 .ThenInclude(rc => rc.RoomCapacity).ToListAsync();
         }
 
-        public async Task<List<RoomType>> GetRoomTypesWithFullInfo()
+        public async Task<List<RoomType>> GetRoomTypesWithFullInfoByCoworkingId(int coworkingId)
         {
             return await _context.Set<RoomType>()
                 .Include(rt => rt.RoomCapacities)
                 .ThenInclude(rc => rc.RoomCapacity)
-                .ThenInclude(rc => rc.Rooms)
-                .Include(rt => rt.Rooms)
+                .Include(rt => rt.Rooms.Where(r => r.CoworkingId == coworkingId))
                 .Include(rt => rt.RoomTypeAmenities)
                 .ThenInclude(ra => ra.Amenity)
                 .ToListAsync();

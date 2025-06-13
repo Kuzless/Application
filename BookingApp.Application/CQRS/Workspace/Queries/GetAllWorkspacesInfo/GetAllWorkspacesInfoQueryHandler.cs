@@ -23,8 +23,8 @@ namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo
         {
             try
             {
-                var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfo();
-                var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomByUserId(request.UserId);
+                var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfoByCoworkingId(request.CoworkingId);
+                var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomByUserId(request.CoworkingId, request.UserId);
                 // mapping full data about 'booking type'
                 var fullInfo = _mapper.Map<List<BookingTypeInfoDTO>>(typeInfo);
                 // adding user bookings to each type (to show on which types did user book)

@@ -20,8 +20,8 @@ export const routes: Routes = [
         component: CoworkingListComponent,
       },
       {
-        path: ':coworkingId',
-        component: BookingListComponent,
+        path: 'my',
+        component: BookingPersonalListComponent,
       },
       {
         path: 'add/:coworkingId',
@@ -34,8 +34,8 @@ export const routes: Routes = [
         data: { mode: 'edit' },
       },
       {
-        path: 'my/:coworkingId',
-        component: BookingPersonalListComponent,
+        path: ':coworkingId',
+        component: BookingListComponent,
       },
       {
         path: '**',

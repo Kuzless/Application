@@ -12,58 +12,21 @@ export class BookingApiService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getByUserId<T>(endpoint: string, userId: string): Observable<T> {
-    return this.httpClient
-      .get<OperationResult<T>>(`${this.baseUrl}/${endpoint}/${userId}`)
-      .pipe(
-        map((result) => {
-          if (result.isSuccess) {
-            return result.data!;
-          } else {
-            throw new Error(result.message);
-          }
-        }),
-        catchError((err) => {
-          console.error(err);
-          return throwError(() => err);
-        })
-      );
-  }
-
-  get<T>(endpoint: string): Observable<T> {
-    return this.httpClient
-      .get<OperationResult<T>>(`${this.baseUrl}/${endpoint}`)
-      .pipe(
-        map((result) => {
-          if (result.isSuccess) {
-            return result.data!;
-          } else {
-            throw new Error(result.message);
-          }
-        }),
-        catchError((err) => {
-          console.error(err);
-          return throwError(() => err);
-        })
-      );
-  }
-
-  getById<T>(endpoint: string, id: number): Observable<T> {
-    return this.httpClient
-      .get<OperationResult<T>>(`${this.baseUrl}/${endpoint}/${id}`)
-      .pipe(
-        map((result) => {
-          if (result.isSuccess) {
-            return result.data!;
-          } else {
-            throw new Error(result.message);
-          }
-        }),
-        catchError((err) => {
-          console.error(err);
-          return throwError(() => err);
-        })
-      );
+  get<T>(endpoint: string, ...options: string[]): Observable<T> {
+    var url = `${this.baseUrl}/${endpoint}/${options.join('/')}`;
+    return this.httpClient.get<OperationResult<T>>(url).pipe(
+      map((result) => {
+        if (result.isSuccess) {
+          return result.data!;
+        } else {
+          throw new Error(result.message);
+        }
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      })
+    );
   }
 
   post<T>(endpoint: string, body: T): Observable<boolean> {

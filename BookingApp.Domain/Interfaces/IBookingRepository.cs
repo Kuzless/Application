@@ -6,7 +6,7 @@ namespace BookingApp.Domain.Interfaces
     {
         Task<bool> IsRoomBookedForTimePeriod(int roomId, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, int? bookingId = null);
         Task<Booking> GetBookingWithRoomDataById(int id);
-        Task<List<Booking>> GetBookingsWithRoomByUserId(string userId);
+        Task<List<Booking>> GetBookingsWithRoomByUserId(int coworkingId, string userId);
         Task<List<Booking>> GetBookingsWithRoomDataByUserId(string userId);
     }
 }

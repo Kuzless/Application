@@ -338,13 +338,13 @@ export class BookingFormComponent implements OnInit {
 
   // populate data with already existing booking
   private populateEditData() {
-    let id = Number(this.route.snapshot.paramMap.get('id'));
-    if (isNaN(id)) {
+    let id = this.route.snapshot.paramMap.get('id')!;
+    if (isNaN(Number(id))) {
       this.router.navigate(['booking/add']);
       return;
     }
     let result$ = this.apiService
-      .getById<EditBookingResponseInterface>(this.endpoint, Number(id))
+      .get<EditBookingResponseInterface>(this.endpoint, id)
       .pipe(
         catchError((err) => {
           this.router.navigate(['booking/add']);
