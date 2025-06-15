@@ -1,9 +1,9 @@
 ﻿using BookingApp.Application.DTOs;
 using BookingApp.Application.Interfaces;
 
-namespace BookingApp.Application.Services
+namespace BookingApp.Infrastructure.Services.ResponseHandling
 {
-    public class BookingResponseHandlerService : IResponseHandlerService
+    public class WorkspaceResponseHandlerService : IResponseHandlerService
     {
         public OperationResult<T> Handle<T>(int errorCode = 500, string? message = "Unknown error", T? data = default)
         {
@@ -21,15 +21,8 @@ namespace BookingApp.Application.Services
                     return new OperationResult<T>
                     {
                         IsSuccess = false,
-                        Message = "Booking not found",
+                        Message = "Workspace not found",
                         ErrorCode = 404
-                    };
-                case 409:
-                    return new OperationResult<T>
-                    {
-                        IsSuccess = false,
-                        Message = "This time is already booked",
-                        ErrorCode = 409
                     };
                 default:
                     return new OperationResult<T>

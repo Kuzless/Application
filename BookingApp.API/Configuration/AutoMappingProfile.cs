@@ -5,6 +5,7 @@ using BookingApp.Application.DTOs;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
 using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
 using BookingApp.Application.DTOs.Booking.GetUserBookingsInfo;
+using BookingApp.Application.DTOs.Groq;
 using BookingApp.Application.DTOs.Workspace.GetAllCoworkingsInfo;
 using BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo;
 using BookingApp.Domain.Entities;
@@ -83,6 +84,17 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.Coworking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
+            // groq
+            CreateMap<Booking, BookingRequestGroqDTO>()
+                .ForMember(dest => dest.CoworkingName, opt => opt.MapFrom(src => src.Room.Coworking.Name))
+                .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.Room.RoomType.Type))
+                .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.Room.RoomCapacity.Capacity))
+                .ForMember(dest => dest.CoworkingId, opt => opt.MapFrom(src => src.Room.Coworking.Id))
+                .ForMember(dest => dest.RoomTypeId, opt => opt.MapFrom(src => src.Room.RoomType.Id))
+                .ForMember(dest => dest.RoomCapacityId, opt => opt.MapFrom(src => src.Room.RoomCapacity.Id))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToDateTime(src.StartTime)))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToDateTime(src.EndTime)));
         }
     }
 }

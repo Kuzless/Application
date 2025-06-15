@@ -8,15 +8,13 @@ namespace BookingApp.Infrastructure.Repositories
     {
         public BookingRepository(DatabaseContext context) : base(context) { }
 
-        public async Task<List<Booking>> GetBookingsWithRoomByUserId(int coworkingId, string userId)
+        public async Task<List<Booking>> GetBookingsWithRoomDataByCoworkingIdAndUserId(int coworkingId, string userId)
         {
             return await _context.Set<Booking>()
                 .Where(b => b.CustomerId == userId && b.Room.CoworkingId == coworkingId)
                 .Include(b => b.Room)
                 .ToListAsync();
         }
-
-
         public async Task<Booking> GetBookingWithRoomDataById(int id)
         {
             return await _context.Set<Booking>()
@@ -34,19 +32,8 @@ namespace BookingApp.Infrastructure.Repositories
                 .Include(b => b.Room)
                 .ThenInclude(r => r.RoomType)
                 .Include(b => b.Room.RoomCapacity)
+                .Include(b => b.Room.Coworking)
                 .ToListAsync();
-        }
-
-        public async Task<bool> IsRoomBookedForTimePeriod(int roomId, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, int? bookingId = null)
-        {
-            var isBooked = await _context.Set<Booking>()
-                .Where(b =>
-                    b.RoomId == roomId
-                    && (b.StartDate <= endDate && b.EndDate >= startDate)
-                    && (b.StartTime < endTime && b.EndTime > startTime)
-                    && (bookingId == null || b.Id != bookingId)
-                ).AnyAsync();
-            return isBooked;
         }
     }
 }
