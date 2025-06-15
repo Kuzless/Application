@@ -45,7 +45,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
 
                     b.HasData(
                         new
@@ -102,7 +102,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Amenities");
+                    b.ToTable("Amenities", (string)null);
 
                     b.HasData(
                         new
@@ -176,7 +176,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("BookingApp.Domain.Entities.City", b =>
@@ -196,7 +196,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
 
                     b.HasData(
                         new
@@ -239,7 +239,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Coworkings");
+                    b.ToTable("Coworkings", (string)null);
 
                     b.HasData(
                         new
@@ -304,7 +304,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
 
                     b.HasData(
                         new
@@ -1387,7 +1387,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Capacity")
                         .IsUnique();
 
-                    b.ToTable("RoomCapacities");
+                    b.ToTable("RoomCapacities", (string)null);
 
                     b.HasData(
                         new
@@ -1429,7 +1429,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("RoomCapacityRoomTypes");
+                    b.ToTable("RoomCapacityRoomTypes", (string)null);
 
                     b.HasData(
                         new
@@ -1485,7 +1485,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Type")
                         .IsUnique();
 
-                    b.ToTable("RoomTypes");
+                    b.ToTable("RoomTypes", (string)null);
 
                     b.HasData(
                         new
@@ -1520,7 +1520,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("AmenityId");
 
-                    b.ToTable("RoomTypeAmenties");
+                    b.ToTable("RoomTypeAmenties", (string)null);
 
                     b.HasData(
                         new

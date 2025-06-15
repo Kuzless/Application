@@ -3,8 +3,6 @@ using System.Text.Json;
 using System.Text;
 using BookingApp.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
-
 namespace BookingApp.Infrastructure.Services
 {
     public class GroqClient : IGroqClient

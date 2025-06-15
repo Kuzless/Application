@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { UserBookingInfoResponseInterface } from '../interfaces/user-booking-info-response.interface';
+import { UserBookingInfoInterface } from '../interfaces/user-booking-info.interface';
 import { FormatImgPipe } from '../../../shared/pipes/format-img.pipe';
 import { LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
   styleUrl: './booking-personal-element.component.css',
 })
 export class BookingPersonalElementComponent {
-  @Input() booking?: UserBookingInfoResponseInterface;
+  @Input() booking?: UserBookingInfoInterface;
 
   readonly iconsUrl: string = 'booking/booking-element/icons/';
   readonly imagesUrl: string = 'booking/booking-element/images/';

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BookingPersonalElementComponent } from './booking-personal-element/booking-personal-element.component';
 import { BookingApiService } from '../../shared/services/booking-api.service';
 import { Title } from '@angular/platform-browser';
-import { UserBookingInfoResponseInterface } from './interfaces/user-booking-info-response.interface';
+import { CoworkingWithRoomsResponseInterface } from './interfaces/coworking-with-rooms-response.interface';
 import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
 export class BookingPersonalListComponent {
   readonly title: string;
   private readonly userId: string = localStorage.getItem('uniqueId')!;
-  pageData$?: Observable<UserBookingInfoResponseInterface[]>;
+  pageData$?: Observable<CoworkingWithRoomsResponseInterface[]>;
 
   private endpoint: string = 'Booking/user';
 
@@ -25,7 +25,7 @@ export class BookingPersonalListComponent {
     private apiService: BookingApiService
   ) {
     this.title = titleService.getTitle();
-    this.pageData$ = apiService.get<UserBookingInfoResponseInterface[]>(
+    this.pageData$ = apiService.get<CoworkingWithRoomsResponseInterface[]>(
       this.endpoint,
       this.userId
     );

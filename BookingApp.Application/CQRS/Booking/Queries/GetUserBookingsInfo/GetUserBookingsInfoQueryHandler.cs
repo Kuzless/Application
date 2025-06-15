@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo
 {
-    public class GetUserBookingsInfoQueryHandler : IRequestHandler<GetUserBookingsInfoQuery, OperationResult<List<UserBookingInfoDTO>>>
+    public class GetUserBookingsInfoQueryHandler : IRequestHandler<GetUserBookingsInfoQuery, OperationResult<List<CoworkingWithBookingsDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,16 +20,26 @@ namespace BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo
             _mapper = mapper;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult<List<UserBookingInfoDTO>>> Handle(GetUserBookingsInfoQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<CoworkingWithBookingsDTO>>> Handle(GetUserBookingsInfoQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var bookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomDataByUserId(request.UserId);
-                var result = _mapper.Map<List<UserBookingInfoDTO>>(bookings);
+                var coworkings = await _unitOfWork.CoworkingRepository.GetCoworkingsWithBookingsByUserId(request.UserId);
+                var result = coworkings.Select(c => new CoworkingWithBookingsDTO
+                {
+                    Coworking = _mapper.Map<CoworkingDTO>(c),
+                    Bookings = c.Rooms.SelectMany(r => r.Bookings.Select(b => new UserBookingInfoDTO
+                    {
+                        Booking = _mapper.Map<BookingDTO>(b),
+                        Room = _mapper.Map<RoomDTO>(r),
+                        RoomType = _mapper.Map<RoomTypeDTO>(r.RoomType),
+                        RoomCapacity = _mapper.Map<RoomCapacityDTO>(r.RoomCapacity)
+                    })).ToList()
+                }).ToList();
                 return _responseHandler.Handle(200, data: result);
             } catch
             {
-                return _responseHandler.Handle<List<UserBookingInfoDTO>>(500, "An error occurred while retrieving data");
+                return _responseHandler.Handle<List<CoworkingWithBookingsDTO>>(500, "An error occurred while retrieving data");
             }
         }
     }
