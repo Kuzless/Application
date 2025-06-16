@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingPersonalCardComponent } from '../booking-personal-card/booking-personal-card.component';
-import { ApiService } from '../../../shared/services/api.service';
-import { Title } from '@angular/platform-browser';
-import { BookingPersonalCardDataInterface } from '../../interfaces/booking-personal-page/booking-personal-card-data.interface';
-import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { GroqAssistantComponent } from '../../../shared/components/groq-assistant/groq-assistant.component';
+import { Store } from '@ngrx/store';
+import { selectCoworkings } from './state/personal-bookings.selectors';
+import {
+  loadCoworkings,
+  deleteBooking,
+} from './state/personal-bookings.actions';
+import { Observable } from 'rxjs';
+import { BookingCardDataInterface } from '../../interfaces/booking-page/booking-card-data.interface';
 
 @Component({
   selector: 'app-booking-personal-page',
@@ -20,11 +24,13 @@ import { GroqAssistantComponent } from '../../../shared/components/groq-assistan
   styleUrl: './booking-personal-page.component.css',
 })
 export class BookingPersonalPageComponent {
-  private readonly userId: string = localStorage.getItem('uniqueId')!;
-  pageData$?: Observable<BookingPersonalCardDataInterface[]>;
+  private readonly store = inject(Store);
+  pageData$ = this.store.select(selectCoworkings);
 
-  private endpoint: string = 'Booking/user';
+  private getEndpoint: string = 'Booking/user';
+  private deleteEndpoint: string = 'Booking';
   readonly groqEndpoint = 'Groq/booking';
+
   readonly groqTemplate = [
     'How many bookings do i have?',
     'What was booked last week?',
@@ -36,10 +42,18 @@ export class BookingPersonalPageComponent {
     })}?`,
   ];
 
-  constructor(private titleService: Title, private apiService: ApiService) {
-    this.pageData$ = apiService.get<BookingPersonalCardDataInterface[]>(
-      this.endpoint,
-      this.userId
+  constructor() {
+    this.store.dispatch(
+      loadCoworkings({
+        endpoint: this.getEndpoint,
+        userId: localStorage.getItem('uniqueId')!,
+      })
+    );
+  }
+
+  onDelete(bookingId: number) {
+    this.store.dispatch(
+      deleteBooking({ endpoint: this.deleteEndpoint, id: bookingId })
     );
   }
 }

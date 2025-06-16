@@ -8,11 +8,8 @@ import { ApiService } from '../../../../shared/services/api.service';
   styleUrl: './confirm.component.css',
 })
 export class ConfirmComponent {
-  @Input() id!: number;
   @Output() closed = new EventEmitter<void>();
-  @Output() deleted = new EventEmitter<void>();
-
-  private readonly endpoint: string = 'Booking';
+  @Output() delete = new EventEmitter<void>();
 
   readonly iconsUrl: string = 'booking/icons/';
   readonly iconsFormat: string = '.svg';
@@ -25,7 +22,6 @@ export class ConfirmComponent {
   }
 
   deleteBooking() {
-    this.apiService.delete(this.endpoint, this.id).subscribe();
-    this.deleted.emit();
+    this.delete.emit();
   }
 }

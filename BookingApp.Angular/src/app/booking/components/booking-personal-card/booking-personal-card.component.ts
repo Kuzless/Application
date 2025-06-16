@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BookingInfoInterface } from '../../interfaces/booking-info.interface';
 import { FormatImgPipe } from '../../pipes/format-img.pipe';
 import { LowerCasePipe } from '@angular/common';
@@ -6,8 +6,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DatePipe } from '@angular/common';
 import { MultipleToSinglePipe } from '../../pipes/multiple-to-single.pipe';
-import { ConfirmComponent } from '../booking-personal-page/confirm/confirm.component';
-import { Router } from '@angular/router';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 @Component({
   selector: 'app-booking-personal-card',
@@ -25,6 +24,7 @@ import { Router } from '@angular/router';
 })
 export class BookingPersonalCardComponent {
   @Input() booking?: BookingInfoInterface;
+  @Output() delete = new EventEmitter<number>();
 
   readonly iconsUrl: string = 'booking/booking-element/icons/';
   readonly imagesUrl: string = 'booking/booking-element/images/';
@@ -37,9 +37,9 @@ export class BookingPersonalCardComponent {
   readonly calendarIconName: string = 'calendar';
   readonly clockIconName: string = 'clock';
 
-  showWarning: boolean = false;
+  private readonly endpoint: string = 'Booking';
 
-  constructor(private router: Router) {}
+  showWarning: boolean = false;
 
   get editBookingRoute() {
     return `../${this.booking?.room.coworkingId}/edit/${this.booking?.booking.id}`;
@@ -61,10 +61,8 @@ export class BookingPersonalCardComponent {
     this.showWarning = false;
   }
 
-  refreshPage() {
+  deleteBooking() {
+    this.delete.emit(this.booking!.booking.id);
     this.showWarning = false;
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/booking/my']);
-    });
   }
 }
