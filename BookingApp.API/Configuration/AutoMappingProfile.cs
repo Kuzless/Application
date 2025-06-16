@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.CQRS.Booking.Commands.UpdateBooking;
+using BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking;
+using BookingApp.Application.CQRS.Booking.Queries.GetUserBookingsInfo;
+using BookingApp.Application.CQRS.Workspace.Queries.GetAllCoworkingsInfo;
+using BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo;
 using BookingApp.Application.DTOs;
+using BookingApp.Application.DTOs.Booking;
 using BookingApp.Application.DTOs.Booking.GetBookingForEdit;
-using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
-using BookingApp.Application.DTOs.Booking.GetUserBookingsInfo;
 using BookingApp.Application.DTOs.Groq;
-using BookingApp.Application.DTOs.Workspace.GetAllCoworkingsInfo;
-using BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo;
+using BookingApp.Application.DTOs.Workspace;
 using BookingApp.Domain.Entities;
 
 namespace BookingApp.API.Configuration
@@ -50,44 +52,44 @@ namespace BookingApp.API.Configuration
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => TimeOnly.Parse(src.EndTime)));
 
             // booking add queries
-            CreateMap<RoomType, NewBookingStructureDTO>()
+            CreateMap<RoomType, RoomTypeWithCapacitiesDTO>()
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
 
             // booking editing queries
-            CreateMap<Booking, EditBookingDTO>()
+            CreateMap<Booking, GetBookingForEditQueryDTO>()
                 .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.Room.RoomType))
                 .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.Room.RoomCapacity));
 
             // booking page
-            CreateMap<Booking, BookingInfoDTO>()
+            CreateMap<Booking, BookingWithRoomDTO>()
                 .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room));
-            CreateMap<RoomType, BookingTypeInfoDTO>()
+            CreateMap<RoomType, GetAllWorkspacesInfoQueryDTO>()
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.Rooms))
                 .ForMember(dest => dest.Amenities, opt => opt.MapFrom(src => src.RoomTypeAmenities))
                 .ForMember(dest => dest.RoomCapacities, opt => opt.MapFrom(src => src.RoomCapacities));
 
             // user bookings page
-            CreateMap<Room, UserBookingInfoDTO>()
+            CreateMap<Room, BookingInfoDTO>()
                 .ForMember(dest => dest.Booking, opt => opt.MapFrom(src => src.Bookings))
                 .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.RoomType))
                 .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.RoomCapacity));
-            CreateMap<Coworking, CoworkingWithBookingsDTO>()
+            CreateMap<Coworking, GetUserBookingsInfoQueryDTO>()
                 .ForMember(dest => dest.Coworking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Bookings, opt => opt.MapFrom(src => src.Rooms));
 
             // coworking page
-            CreateMap<Coworking, CoworkingInfoDTO>()
+            CreateMap<Coworking, GetAllCoworkingsInfoQueryDTO>()
                 .ForMember(dest => dest.Coworking, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
             // groq
-            CreateMap<Booking, BookingRequestGroqDTO>()
+            CreateMap<Booking, GroqBookingDataDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.CoworkingName, opt => opt.MapFrom(src => src.Room.Coworking.Name))
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.Room.RoomType.Type))

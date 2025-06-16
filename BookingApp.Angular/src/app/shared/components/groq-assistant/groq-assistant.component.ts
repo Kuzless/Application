@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserPromptGroqRequestInterface } from '../../../booking/components/booking-personal-list/interfaces/user-prompt-groq-request.interface';
+import { GroqRequestInterface } from '../../../booking/interfaces/booking-personal-page/groq-request.interface';
 import { ApiService } from '../../services/api.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
@@ -9,7 +9,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { FormatImgPipe } from '../../../booking/shared/pipes/format-img.pipe';
+import { FormatImgPipe } from '../../../booking/pipes/format-img.pipe';
 
 @Component({
   selector: 'app-groq-assistant',
@@ -49,11 +49,11 @@ export class GroqAssistantComponent {
   }
 
   private sendRequest(prompt: string) {
-    let request: UserPromptGroqRequestInterface = {
+    let request: GroqRequestInterface = {
       userId: this.userId,
       prompt: prompt,
     };
-    this.groqResponse$ = this.apiService.post<UserPromptGroqRequestInterface>(
+    this.groqResponse$ = this.apiService.post<GroqRequestInterface>(
       this.groqEndpoint,
       request
     );

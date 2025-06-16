@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarService } from './services/calendar.service';
+import { CalendarService } from '../../services/calendar.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import {
   FormBuilder,
@@ -7,16 +7,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TimeInterface } from './interfaces/calendar/time.interface';
-import { DateSelectInterface } from './interfaces/calendar/date-select.interface';
+import { TimeInterface } from '../../interfaces/calendar/time.interface';
+import { DateSelectInterface } from '../../interfaces/calendar/date-select.interface';
 import { Observable, tap, map, catchError, throwError } from 'rxjs';
-import { NewBookingStructureResponseInterface } from './interfaces/new-booking-structure-response.interface';
+import { RoomTypeWithCapacities } from '../../interfaces/room-type-with-capacities.interface';
 import { ApiService } from '../../../shared/services/api.service';
-import { WorkspaceTypes } from '../../shared/enums/workspace-types.enum';
-import { RoomCapacityInterface } from '../../shared/interfaces/dto/room-capacity.interface';
-import { AddBookingCommandInterface } from './interfaces/add-booking-command.interface';
+import { WorkspaceTypes } from '../../enums/workspace-types.enum';
+import { RoomCapacityInterface } from '../../interfaces/base-dtos/room-capacity.interface';
+import { AddBookingCommandInterface } from '../../interfaces/booking-form/add-booking-command.interface';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { EditBookingResponseInterface } from './interfaces/edit-booking-response.interface';
+import { BookingEditFormDataInterface } from '../../interfaces/booking-form/booking-edit-form-data.interface';
 import { SuccessComponent } from './components/success/success.component';
 import { FailureComponent } from './components/failure/failure.component';
 
@@ -42,7 +42,7 @@ export class BookingFormComponent implements OnInit {
   // how many years should be populated into startDate
   readonly numberOfYears: number = 5;
 
-  roomTypes$!: Observable<NewBookingStructureResponseInterface[]>;
+  roomTypes$!: Observable<RoomTypeWithCapacities[]>;
   bookingForm: FormGroup;
 
   // flags for input fields focus
@@ -137,7 +137,7 @@ export class BookingFormComponent implements OnInit {
     return this.bookingForm.get('endTime')?.value;
   }
 
-  get roomInfo(): NewBookingStructureResponseInterface {
+  get roomInfo(): RoomTypeWithCapacities {
     return this.roomInfoGroup.get('roomInfo')?.value;
   }
 
@@ -202,7 +202,7 @@ export class BookingFormComponent implements OnInit {
       this.populateEditData();
     } else {
       this.roomTypes$ = this.apiService
-        .get<NewBookingStructureResponseInterface[]>(this.endpoint)
+        .get<RoomTypeWithCapacities[]>(this.endpoint)
         .pipe(
           tap((types) => {
             if (types && types.length > 0) {
@@ -319,8 +319,8 @@ export class BookingFormComponent implements OnInit {
   }
 
   compareRoomTypes(
-    a: NewBookingStructureResponseInterface,
-    b: NewBookingStructureResponseInterface
+    a: RoomTypeWithCapacities,
+    b: RoomTypeWithCapacities
   ): boolean {
     return a && b ? a.roomType.id === b.roomType.id : a === b;
   }
@@ -345,7 +345,7 @@ export class BookingFormComponent implements OnInit {
       return;
     }
     let result$ = this.apiService
-      .get<EditBookingResponseInterface>(this.endpoint, id)
+      .get<BookingEditFormDataInterface>(this.endpoint, id)
       .pipe(
         catchError((err) => {
           this.router.navigate(['booking/add']);
@@ -451,7 +451,7 @@ export class BookingFormComponent implements OnInit {
   // all room types with unique maxDays / types without rooms should be added here
   private configureRoomType() {
     const roomInfo = this.roomInfoGroup.get('roomInfo')
-      ?.value as NewBookingStructureResponseInterface;
+      ?.value as RoomTypeWithCapacities;
     if (roomInfo.roomType.type === WorkspaceTypes.OPENSPACE) {
       this.roomInfoGroup.get('roomCapacityGroup')?.patchValue({
         roomCapacities: '',

@@ -2,6 +2,6 @@
 {
     public interface IGroqClient
     {
-        Task<string> GenerateResponseAsync(string instructions, string context, string input, string expectedOutput);
+        Task<string> SendRequest(string instructions, string context, string input, string expectedOutput);
     }
 }

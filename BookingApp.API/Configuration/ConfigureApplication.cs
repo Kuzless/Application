@@ -1,4 +1,5 @@
-﻿using BookingApp.API.Interfaces;
+﻿using System.Net.Http.Headers;
+using BookingApp.API.Interfaces;
 using BookingApp.API.Services;
 using BookingApp.Application.CQRS.Booking.Commands.CreateNewBooking;
 using BookingApp.Application.Interfaces;
@@ -38,7 +39,11 @@ namespace BookingApp.API.Configuration
             builder.Services.AddKeyedScoped<IResponseHandlerService, WorkspaceResponseHandlerService>("workspace");
             builder.Services.AddKeyedScoped<IResponseHandlerService, GroqResponseHandlerService>("groq");
 
-            builder.Services.AddHttpClient<IGroqClient, GroqClient>();
+            builder.Services.AddHttpClient<IGroqClient, GroqClient>(options =>
+            {
+                options.BaseAddress = new Uri(builder.Configuration["Groq:BaseUrl"]);
+                options.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", builder.Configuration["Groq:Key"]);
+            });
         }
     }
 }

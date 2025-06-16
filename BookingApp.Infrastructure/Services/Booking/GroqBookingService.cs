@@ -28,7 +28,7 @@ namespace BookingApp.Infrastructure.Services
             {
                 return _responseHandler.Handle<string>(200, data: "Sorry, I didn't understand that. Please try rephrasing your question");
             }
-            var data = _mapper.Map<List<BookingRequestGroqDTO>>(await _unitOfWork.BookingRepository.GetBookingsWithRoomDataByUserId(userId));
+            var data = _mapper.Map<List<GroqBookingDataDTO>>(await _unitOfWork.BookingRepository.GetBookingsWithRoomDataByUserId(userId));
             var context = JsonSerializer.Serialize(data, new JsonSerializerOptions());
             var dateInfo = CalculateDate();
             var instructions =
@@ -52,7 +52,7 @@ namespace BookingApp.Infrastructure.Services
             var output = "Response format requirements: " +
                 "- Keep responses short and informative, preferably in one sentence " +
                 "- Do not include explanations or reasoning " +
-                "- Follow the format: '📅 <strong>Date</strong> — Room type for X people at Location (Start Time – End Time)' " +
+                "- Follow the format: '📅 <strong>Date</strong> — Room type {for X people}{desk} at Location (Start Time – End Time)'. Use first option in {} if there's a capacity, second - if not. " +
                 "- Use 📅 emoji for booking date/time related entities " +
                 "- Time should be formatted in 'AM/PM' format" +
                 "- Use html formatting " +
@@ -70,8 +70,7 @@ namespace BookingApp.Infrastructure.Services
                 "A: '📅 <strong>June 15, 2025</strong> — Meeting room for 10 people at UrbanSpace Kyiv (1:00 PM – 1:30 PM)<br>📅 <strong>June 16, 2025</strong> — Private room for 5 people at HiveHub (2:00 PM – 3:00 PM)' " +
                 "Q: 'What about next week?' " +
                 "A: 'No bookings found for next week.' ";
-            var response = await _groqClient.GenerateResponseAsync(instructions, context, message, output);
-            Console.WriteLine(context);
+            var response = await _groqClient.SendRequest(instructions, context, message, output);
             return _responseHandler.Handle<string>(200, data: response);
         }
 

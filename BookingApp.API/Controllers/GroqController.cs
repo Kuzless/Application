@@ -19,7 +19,7 @@ namespace BookingApp.API.Controllers
         }
 
         [HttpPost("booking")]
-        public async Task<IActionResult> GenerateBookingResponse([FromBody] UserPromptGroqDTO request)
+        public async Task<IActionResult> GenerateBookingResponse([FromBody] GroqRequestDTO request)
         {
             var response = await _groqService.GeneratePersonalBookingResponse(request.Prompt, request.UserId);
             return _apiResponseHandler.Handle(response);

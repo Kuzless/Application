@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookingApp.Application.DTOs;
-using BookingApp.Application.DTOs.Workspace.GetAllWorkspacesInfo;
+using BookingApp.Application.DTOs.Workspace;
 using BookingApp.Application.Interfaces;
 using BookingApp.Domain.Interfaces;
 using MediatR;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo
 {
-    public class GetAllWorkspacesInfoQueryHandler : IRequestHandler<GetAllWorkspacesInfoQuery, OperationResult<List<BookingTypeInfoDTO>>>
+    public class GetAllWorkspacesInfoQueryHandler : IRequestHandler<GetAllWorkspacesInfoQuery, OperationResult<List<GetAllWorkspacesInfoQueryDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,23 +19,23 @@ namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult<List<BookingTypeInfoDTO>>> Handle(GetAllWorkspacesInfoQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<GetAllWorkspacesInfoQueryDTO>>> Handle(GetAllWorkspacesInfoQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 var typeInfo = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithFullInfoByCoworkingId(request.CoworkingId);
                 var userBookings = await _unitOfWork.BookingRepository.GetBookingsWithRoomDataByCoworkingIdAndUserId(request.CoworkingId, request.UserId);
                 // mapping full data about 'booking type'
-                var fullInfo = _mapper.Map<List<BookingTypeInfoDTO>>(typeInfo);
+                var fullInfo = _mapper.Map<List<GetAllWorkspacesInfoQueryDTO>>(typeInfo);
                 // adding user bookings to each type (to show on which types did user book)
                 foreach (var dto in fullInfo)
                 {
-                    dto.BookingInfos = new List<BookingInfoDTO>();
+                    dto.BookingInfos = new List<BookingWithRoomDTO>();
                     foreach (var booking in userBookings)
                     {
                         if (dto.RoomType.Id == booking.Room.RoomTypeId)
                         {
-                            dto.BookingInfos.Add(_mapper.Map<BookingInfoDTO>(booking));
+                            dto.BookingInfos.Add(_mapper.Map<BookingWithRoomDTO>(booking));
                         }
                     }
                 }
@@ -43,7 +43,7 @@ namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllWorkspacesInfo
             }
             catch
             {
-                return _responseHandler.Handle<List<BookingTypeInfoDTO>>(500, "An error occurred while retrieving data");
+                return _responseHandler.Handle<List<GetAllWorkspacesInfoQueryDTO>>(500, "An error occurred while retrieving data");
             }
         }
     }

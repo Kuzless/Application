@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookingApp.Application.DTOs;
-using BookingApp.Application.DTOs.Workspace.GetAllCoworkingsInfo;
+using BookingApp.Application.DTOs.Workspace;
 using BookingApp.Application.Interfaces;
 using BookingApp.Domain.Interfaces;
 using MediatR;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllCoworkingsInfo
 {
-    public class GetAllCoworkingsInfoQueryHandler : IRequestHandler<GetAllCoworkingsInfoQuery, OperationResult<List<CoworkingInfoDTO>>>
+    public class GetAllCoworkingsInfoQueryHandler : IRequestHandler<GetAllCoworkingsInfoQuery, OperationResult<List<GetAllCoworkingsInfoQueryDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,12 +19,12 @@ namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllCoworkingsInfo
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult<List<CoworkingInfoDTO>>> Handle(GetAllCoworkingsInfoQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<GetAllCoworkingsInfoQueryDTO>>> Handle(GetAllCoworkingsInfoQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 var coworkings = await _unitOfWork.CoworkingRepository.GetCoworkingsInfoWithTypesAndRooms();
-                var result = _mapper.Map<List<CoworkingInfoDTO>>(coworkings);
+                var result = _mapper.Map<List<GetAllCoworkingsInfoQueryDTO>>(coworkings);
                 for (int i = 0; i < coworkings.Count; i++)
                 {
                     result[i].RoomTypesWithRooms = coworkings[i].Rooms.GroupBy(r => r.RoomType)
@@ -38,7 +38,7 @@ namespace BookingApp.Application.CQRS.Workspace.Queries.GetAllCoworkingsInfo
             }
             catch
             {
-                return _responseHandler.Handle<List<CoworkingInfoDTO>>(500, "An error occurred while retrieving data");
+                return _responseHandler.Handle<List<GetAllCoworkingsInfoQueryDTO>>(500, "An error occurred while retrieving data");
             }
         }
     }

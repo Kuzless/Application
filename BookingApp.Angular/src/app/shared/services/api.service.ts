@@ -35,7 +35,7 @@ export class ApiService {
       .pipe(
         map((result) => {
           if (result.isSuccess) {
-            return result.data;
+            return result.data ? result.data : result.isSuccess;
           } else {
             throw new Error(result.message);
           }
@@ -47,13 +47,13 @@ export class ApiService {
       );
   }
 
-  put<T>(endpoint: string, body: T): Observable<boolean> {
+  put<T>(endpoint: string, body: T): Observable<any> {
     return this.httpClient
       .put<OperationResult<T>>(`${this.baseUrl}/${endpoint}`, body)
       .pipe(
         map((result) => {
           if (result.isSuccess) {
-            return result.isSuccess;
+            return result.data ? result.data : result.isSuccess;
           } else {
             throw new Error(result.message);
           }
@@ -65,13 +65,13 @@ export class ApiService {
       );
   }
 
-  delete(endpoint: string, id: number): Observable<boolean> {
+  delete(endpoint: string, id: number): Observable<any> {
     return this.httpClient
       .delete<OperationResult<any>>(`${this.baseUrl}/${endpoint}/${id}`)
       .pipe(
         map((result) => {
           if (result.isSuccess) {
-            return result.isSuccess;
+            return result.data ? result.data : result.isSuccess;
           } else {
             throw new Error(result.message);
           }
