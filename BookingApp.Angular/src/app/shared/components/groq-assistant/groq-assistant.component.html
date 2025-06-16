@@ -1,0 +1,44 @@
+<form
+  [formGroup]="groqForm"
+  (ngSubmit)="onSubmit()"
+  class="d-flex flex-column gap-4"
+>
+  <h1 class="inter-7">AI assistant</h1>
+  <ng-container *ngIf="groqResponse$ | async as response">
+    <div class="d-flex flex-column bg-white gap-2 p-3 border rounded-2">
+      <h3 class="inter-7">{{ activeQuestion }}</h3>
+      <div class="inter-5" [innerHTML]="response"></div>
+    </div>
+  </ng-container>
+  <div class="d-flex flex-column gap-3">
+    <div class="inter-6">Example questions</div>
+    <div class="d-flex flex-wrap gap-2">
+      <button
+        class="btn btn-primary template-button inter-6"
+        type="button"
+        *ngFor="let template of templateMessages"
+        (click)="submitTemplate(template)"
+      >
+        {{ template }}
+      </button>
+    </div>
+  </div>
+  <div class="d-flex rounded-2 bg-white input-block p-2">
+    <input
+      placeholder="Ask anything..."
+      [ngClass]="{ 'inter-5': !message, 'inter-4': !!message }"
+      class="flex-fill border-0"
+      style="outline: none; box-shadow: none"
+      formControlName="message"
+    />
+    <button
+      class="rounded-3 d-flex icon icon-send justify-content-center align-items-center border-0"
+      type="submit"
+      [disabled]="!groqForm.valid"
+    >
+      <img
+        [src]="iconsUrl + (sendIconName | formatImg | lowercase) + iconsFormat"
+      />
+    </button>
+  </div>
+</form>

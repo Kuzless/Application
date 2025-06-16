@@ -36,6 +36,7 @@ namespace BookingApp.API.Configuration
 
             builder.Services.AddKeyedScoped<IResponseHandlerService, BookingResponseHandlerService>("booking");
             builder.Services.AddKeyedScoped<IResponseHandlerService, WorkspaceResponseHandlerService>("workspace");
+            builder.Services.AddKeyedScoped<IResponseHandlerService, GroqResponseHandlerService>("groq");
 
             builder.Services.AddHttpClient<IGroqClient, GroqClient>();
         }

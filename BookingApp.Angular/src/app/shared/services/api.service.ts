@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../environments/environment.development';
 import { Observable, catchError, map, throwError } from 'rxjs';
-import { OperationResult } from '../../../shared/interfaces/operation-result.interface';
+import { OperationResult } from '../interfaces/operation-result.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BookingApiService {
+export class ApiService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient) {}
@@ -29,13 +29,13 @@ export class BookingApiService {
     );
   }
 
-  post<T>(endpoint: string, body: T): Observable<boolean> {
+  post<T>(endpoint: string, body: T): Observable<any> {
     return this.httpClient
       .post<OperationResult<T>>(`${this.baseUrl}/${endpoint}`, body)
       .pipe(
         map((result) => {
           if (result.isSuccess) {
-            return result.isSuccess;
+            return result.data;
           } else {
             throw new Error(result.message);
           }

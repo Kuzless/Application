@@ -42,7 +42,7 @@ export class BookingPersonalElementComponent {
   constructor(private router: Router) {}
 
   get editBookingRoute() {
-    return `../edit/${this.booking?.booking.id}`;
+    return `../${this.booking?.room.coworkingId}/edit/${this.booking?.booking.id}`;
   }
 
   get startDateTime() {

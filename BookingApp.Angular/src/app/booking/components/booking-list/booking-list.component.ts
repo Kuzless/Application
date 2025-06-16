@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BookingApiService } from '../../shared/services/booking-api.service';
+import { ApiService } from '../../../shared/services/api.service';
 import { BookingTypeInfoResponseInterface } from './interfaces/room-type-info-response.interface';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -18,10 +18,7 @@ export class BookingListComponent implements OnInit {
 
   private endpoint: string = 'Workspace';
 
-  constructor(
-    private apiService: BookingApiService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     var coworkingId = this.route.snapshot.paramMap.get('coworkingId')!;

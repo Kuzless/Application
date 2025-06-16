@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BookingApiService } from '../../shared/services/booking-api.service';
+import { ApiService } from '../../../shared/services/api.service';
 import { CoworkingInfoResponseInterface } from './interfaces/coworking-info-response.interface';
 import { Observable } from 'rxjs';
 import { CoworkingElementComponent } from './coworking-element/coworking-element.component';
@@ -17,7 +17,7 @@ export class CoworkingListComponent implements OnInit {
 
   private endpoint: string = 'Workspace';
 
-  constructor(private apiService: BookingApiService) {}
+  constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.loadData();

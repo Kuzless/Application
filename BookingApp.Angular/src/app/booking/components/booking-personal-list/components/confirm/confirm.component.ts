@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { BookingApiService } from '../../../../shared/services/booking-api.service';
+import { ApiService } from '../../../../../shared/services/api.service';
 
 @Component({
   selector: 'app-confirm',
@@ -18,7 +18,7 @@ export class ConfirmComponent {
   readonly iconsFormat: string = '.svg';
   readonly iconName: string = 'trash';
 
-  constructor(private apiService: BookingApiService) {}
+  constructor(private apiService: ApiService) {}
 
   close() {
     this.closed.emit();

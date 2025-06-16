@@ -1,4 +1,6 @@
-﻿using BookingApp.Application.Interfaces.Booking;
+﻿using BookingApp.API.Interfaces;
+using BookingApp.Application.DTOs.Groq;
+using BookingApp.Application.Interfaces.Booking;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingApp.API.Controllers
@@ -8,17 +10,19 @@ namespace BookingApp.API.Controllers
     public class GroqController : ControllerBase
     {
         private readonly IGroqBookingService _groqService;
+        private readonly IApiResponseHandler _apiResponseHandler;
 
-        public GroqController(IGroqBookingService groqService)
+        public GroqController(IGroqBookingService groqService, IApiResponseHandler apiResponseHandler)
         {
             _groqService = groqService;
+            _apiResponseHandler = apiResponseHandler;
         }
 
-        [HttpPost("booking/{userId}")]
-        public async Task<IActionResult> GenerateResponse([FromBody] string prompt, string userId)
+        [HttpPost("booking")]
+        public async Task<IActionResult> GenerateBookingResponse([FromBody] UserPromptGroqDTO request)
         {
-            var response = await _groqService.GeneratePersonalBookingResponse(prompt, userId);
-            return Ok(response);
+            var response = await _groqService.GeneratePersonalBookingResponse(request.Prompt, request.UserId);
+            return _apiResponseHandler.Handle(response);
         }
     }
 }

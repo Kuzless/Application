@@ -88,6 +88,7 @@ namespace BookingApp.API.Configuration
 
             // groq
             CreateMap<Booking, BookingRequestGroqDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.CoworkingName, opt => opt.MapFrom(src => src.Room.Coworking.Name))
                 .ForMember(dest => dest.RoomType, opt => opt.MapFrom(src => src.Room.RoomType.Type))
                 .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.Room.RoomCapacity.Capacity))

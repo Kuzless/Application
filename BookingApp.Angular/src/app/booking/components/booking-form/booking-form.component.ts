@@ -11,7 +11,7 @@ import { TimeInterface } from './interfaces/calendar/time.interface';
 import { DateSelectInterface } from './interfaces/calendar/date-select.interface';
 import { Observable, tap, map, catchError, throwError } from 'rxjs';
 import { NewBookingStructureResponseInterface } from './interfaces/new-booking-structure-response.interface';
-import { BookingApiService } from '../../shared/services/booking-api.service';
+import { ApiService } from '../../../shared/services/api.service';
 import { WorkspaceTypes } from '../../shared/enums/workspace-types.enum';
 import { RoomCapacityInterface } from '../../shared/interfaces/dto/room-capacity.interface';
 import { AddBookingCommandInterface } from './interfaces/add-booking-command.interface';
@@ -152,7 +152,7 @@ export class BookingFormComponent implements OnInit {
   constructor(
     private calendarService: CalendarService,
     private fb: FormBuilder,
-    private apiService: BookingApiService,
+    private apiService: ApiService,
     private router: Router,
     private route: ActivatedRoute
   ) {

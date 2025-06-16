@@ -2,6 +2,7 @@
 {
     public class BookingRequestGroqDTO
     {
+        public int Id { get; set; }
         public int CoworkingId { get; set; }
         public string CoworkingName { get; set; }
         public int RoomTypeId { get; set; }
