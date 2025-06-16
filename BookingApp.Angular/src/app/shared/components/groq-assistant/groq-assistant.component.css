@@ -1,0 +1,18 @@
+.template-button {
+  background: #edf0ff !important;
+  border: 1.5px solid #5c5af3 !important;
+  color: #5c5af3;
+}
+
+.input-block {
+  height: 64px;
+  border: 1px solid #c2bcd8;
+}
+
+.icon-send {
+  background: #5c5af3;
+}
+
+.icon-send:disabled {
+  background: #b1b1c6;
+}

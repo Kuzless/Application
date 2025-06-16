@@ -8,13 +8,21 @@ namespace BookingApp.Infrastructure.Repositories
     {
         public RoomRepository(DatabaseContext context) : base(context)
         {
-            
+
         }
-        public async Task<List<Room>> GetRoomsByTypeAndCapacity(int typeId, int? capacityId)
+        public async Task<Room?> GetAvailableRoom(int typeId, int coworkingId, int? capacityId, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, int? bookingId = null)
         {
             return await _context.Set<Room>()
-                .Where(r => r.RoomTypeId == typeId && r.RoomCapacityId == capacityId)
-                .ToListAsync();
+                .Where(r => 
+                r.RoomTypeId == typeId 
+                && r.CoworkingId == coworkingId 
+                && r.RoomCapacityId == capacityId 
+                && !r.Bookings.Any(b =>
+                    (b.StartDate <= endDate && b.EndDate >= startDate)
+                    && (b.StartTime < endTime && b.EndTime > startTime)
+                    && (bookingId == null || b.Id != bookingId)
+                ))
+                .FirstOrDefaultAsync();
         }
     }
 }

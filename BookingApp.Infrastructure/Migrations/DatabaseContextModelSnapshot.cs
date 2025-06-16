@@ -22,6 +22,69 @@ namespace BookingApp.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BookingApp.Domain.Entities.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HouseNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Addresses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CityId = 1,
+                            HouseNumber = "12",
+                            Street = "Khreshchatyk St"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CityId = 1,
+                            HouseNumber = "7",
+                            Street = "Velyka Vasylkivska St"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityId = 2,
+                            HouseNumber = "5",
+                            Street = "Svobody Avenue"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CityId = 2,
+                            HouseNumber = "14",
+                            Street = "Halytska St"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CityId = 3,
+                            HouseNumber = "4",
+                            Street = "Troitska Square"
+                        });
+                });
+
             modelBuilder.Entity("BookingApp.Domain.Entities.Amenity", b =>
                 {
                     b.Property<int>("Id")
@@ -39,7 +102,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Amenities");
+                    b.ToTable("Amenities", (string)null);
 
                     b.HasData(
                         new
@@ -113,7 +176,107 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
+                });
+
+            modelBuilder.Entity("BookingApp.Domain.Entities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Cities", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Kyiv"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Lviv"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Dnipro"
+                        });
+                });
+
+            modelBuilder.Entity("BookingApp.Domain.Entities.Coworking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Coworkings", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddressId = 1,
+                            Description = "A modern coworking space in the heart of Kyiv with high-speed internet and flexible workstations.",
+                            Name = "UrbanSpace Kyiv"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddressId = 2,
+                            Description = "Creative hub for freelancers and startups, located near central metro lines in Kyiv.",
+                            Name = "HiveHub"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddressId = 3,
+                            Description = "Industrial-style coworking in Lviv offering 24/7 access and cozy meeting rooms.",
+                            Name = "Lviv Loft"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddressId = 4,
+                            Description = "Coworking in historic Lviv with a focus on tech startups and events.",
+                            Name = "Galician Space"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddressId = 5,
+                            Description = "Spacious coworking center in Dnipro with private offices and open desks.",
+                            Name = "Dnipro Works"
+                        });
                 });
 
             modelBuilder.Entity("BookingApp.Domain.Entities.Room", b =>
@@ -124,6 +287,9 @@ namespace BookingApp.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CoworkingId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RoomCapacityId")
                         .HasColumnType("int");
 
@@ -132,164 +298,1075 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CoworkingId");
+
                     b.HasIndex("RoomCapacityId");
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 2,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 3,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 4,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 5,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 6,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 7,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 8,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 9,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 10,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 11,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 12,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 13,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 14,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 15,
+                            CoworkingId = 1,
                             RoomTypeId = 1
                         },
                         new
                         {
                             Id = 16,
-                            RoomCapacityId = 1,
-                            RoomTypeId = 3
+                            CoworkingId = 1,
+                            RoomTypeId = 1
                         },
                         new
                         {
                             Id = 17,
-                            RoomCapacityId = 4,
-                            RoomTypeId = 3
+                            CoworkingId = 1,
+                            RoomTypeId = 1
                         },
                         new
                         {
                             Id = 18,
-                            RoomCapacityId = 5,
-                            RoomTypeId = 3
+                            CoworkingId = 1,
+                            RoomTypeId = 1
                         },
                         new
                         {
                             Id = 19,
+                            CoworkingId = 1,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CoworkingId = 1,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 39,
+                            CoworkingId = 2,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 40,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 41,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 42,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 43,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 44,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 45,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 46,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 47,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 48,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 49,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 50,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 51,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 52,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 53,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 54,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 55,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 56,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 57,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 58,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 59,
+                            CoworkingId = 3,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 60,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 61,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 62,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 63,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 64,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 65,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 67,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 68,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 69,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 70,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 71,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 72,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 73,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 74,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 75,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 76,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 77,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 78,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 79,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 80,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 81,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 82,
+                            CoworkingId = 4,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 83,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 84,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 85,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 86,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 87,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 88,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 89,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 90,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 91,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 92,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 93,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 94,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 95,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 96,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 97,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 98,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 99,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 100,
+                            CoworkingId = 5,
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 101,
+                            CoworkingId = 1,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 102,
+                            CoworkingId = 1,
                             RoomCapacityId = 5,
                             RoomTypeId = 3
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 103,
+                            CoworkingId = 1,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 104,
+                            CoworkingId = 1,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 21,
+                            Id = 105,
+                            CoworkingId = 1,
                             RoomCapacityId = 2,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 106,
+                            CoworkingId = 1,
                             RoomCapacityId = 3,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 107,
+                            CoworkingId = 1,
                             RoomCapacityId = 4,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 108,
+                            CoworkingId = 1,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 109,
+                            CoworkingId = 1,
                             RoomCapacityId = 2,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 26,
+                            Id = 110,
+                            CoworkingId = 1,
                             RoomCapacityId = 3,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 27,
+                            Id = 111,
+                            CoworkingId = 1,
                             RoomCapacityId = 1,
                             RoomTypeId = 2
                         },
                         new
                         {
-                            Id = 28,
+                            Id = 112,
+                            CoworkingId = 1,
                             RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 113,
+                            CoworkingId = 2,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 114,
+                            CoworkingId = 2,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 115,
+                            CoworkingId = 2,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 116,
+                            CoworkingId = 2,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 117,
+                            CoworkingId = 2,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 118,
+                            CoworkingId = 2,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 119,
+                            CoworkingId = 2,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 120,
+                            CoworkingId = 2,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 121,
+                            CoworkingId = 2,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 122,
+                            CoworkingId = 2,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 123,
+                            CoworkingId = 2,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 124,
+                            CoworkingId = 2,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 125,
+                            CoworkingId = 3,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 126,
+                            CoworkingId = 3,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 127,
+                            CoworkingId = 3,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 128,
+                            CoworkingId = 3,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 129,
+                            CoworkingId = 3,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 130,
+                            CoworkingId = 3,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 131,
+                            CoworkingId = 3,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 132,
+                            CoworkingId = 3,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 133,
+                            CoworkingId = 3,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 134,
+                            CoworkingId = 3,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 135,
+                            CoworkingId = 3,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 136,
+                            CoworkingId = 3,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 137,
+                            CoworkingId = 4,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 138,
+                            CoworkingId = 4,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 139,
+                            CoworkingId = 4,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 140,
+                            CoworkingId = 5,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 141,
+                            CoworkingId = 5,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 142,
+                            CoworkingId = 5,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 143,
+                            CoworkingId = 5,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 144,
+                            CoworkingId = 5,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 145,
+                            CoworkingId = 5,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 146,
+                            CoworkingId = 5,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 147,
+                            CoworkingId = 5,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 148,
+                            CoworkingId = 5,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 149,
+                            CoworkingId = 5,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 150,
+                            CoworkingId = 5,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 151,
+                            CoworkingId = 5,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 152,
+                            CoworkingId = 1,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 153,
+                            CoworkingId = 2,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 154,
+                            CoworkingId = 3,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 155,
+                            CoworkingId = 4,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 156,
+                            CoworkingId = 5,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 157,
+                            CoworkingId = 1,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 158,
+                            CoworkingId = 1,
+                            RoomCapacityId = 3,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 159,
+                            CoworkingId = 2,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 160,
+                            CoworkingId = 2,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 161,
+                            CoworkingId = 3,
+                            RoomCapacityId = 1,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 162,
+                            CoworkingId = 3,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 163,
+                            CoworkingId = 4,
+                            RoomCapacityId = 5,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 164,
+                            CoworkingId = 4,
+                            RoomCapacityId = 4,
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 165,
+                            CoworkingId = 5,
+                            RoomCapacityId = 2,
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 166,
+                            CoworkingId = 5,
+                            RoomCapacityId = 3,
                             RoomTypeId = 2
                         });
                 });
@@ -310,7 +1387,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Capacity")
                         .IsUnique();
 
-                    b.ToTable("RoomCapacities");
+                    b.ToTable("RoomCapacities", (string)null);
 
                     b.HasData(
                         new
@@ -352,7 +1429,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("RoomCapacityRoomTypes");
+                    b.ToTable("RoomCapacityRoomTypes", (string)null);
 
                     b.HasData(
                         new
@@ -408,7 +1485,7 @@ namespace BookingApp.Infrastructure.Migrations
                     b.HasIndex("Type")
                         .IsUnique();
 
-                    b.ToTable("RoomTypes");
+                    b.ToTable("RoomTypes", (string)null);
 
                     b.HasData(
                         new
@@ -443,7 +1520,7 @@ namespace BookingApp.Infrastructure.Migrations
 
                     b.HasIndex("AmenityId");
 
-                    b.ToTable("RoomTypeAmenties");
+                    b.ToTable("RoomTypeAmenties", (string)null);
 
                     b.HasData(
                         new
@@ -503,6 +1580,15 @@ namespace BookingApp.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookingApp.Domain.Entities.Address", b =>
+                {
+                    b.HasOne("BookingApp.Domain.Entities.City", null)
+                        .WithMany("Addresses")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BookingApp.Domain.Entities.Booking", b =>
                 {
                     b.HasOne("BookingApp.Domain.Entities.Room", "Room")
@@ -514,8 +1600,25 @@ namespace BookingApp.Infrastructure.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("BookingApp.Domain.Entities.Coworking", b =>
+                {
+                    b.HasOne("BookingApp.Domain.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
             modelBuilder.Entity("BookingApp.Domain.Entities.Room", b =>
                 {
+                    b.HasOne("BookingApp.Domain.Entities.Coworking", "Coworking")
+                        .WithMany("Rooms")
+                        .HasForeignKey("CoworkingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BookingApp.Domain.Entities.RoomCapacity", "RoomCapacity")
                         .WithMany("Rooms")
                         .HasForeignKey("RoomCapacityId");
@@ -525,6 +1628,8 @@ namespace BookingApp.Infrastructure.Migrations
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Coworking");
 
                     b.Navigation("RoomCapacity");
 
@@ -572,6 +1677,16 @@ namespace BookingApp.Infrastructure.Migrations
             modelBuilder.Entity("BookingApp.Domain.Entities.Amenity", b =>
                 {
                     b.Navigation("RoomTypeAmenities");
+                });
+
+            modelBuilder.Entity("BookingApp.Domain.Entities.City", b =>
+                {
+                    b.Navigation("Addresses");
+                });
+
+            modelBuilder.Entity("BookingApp.Domain.Entities.Coworking", b =>
+                {
+                    b.Navigation("Rooms");
                 });
 
             modelBuilder.Entity("BookingApp.Domain.Entities.Room", b =>

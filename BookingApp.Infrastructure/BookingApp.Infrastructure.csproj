@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookingApp.Domain\BookingApp.Domain.csproj" />
+    <ProjectReference Include="..\BookingApp.Application\BookingApp.Application.csproj" />
   </ItemGroup>
 
 </Project>

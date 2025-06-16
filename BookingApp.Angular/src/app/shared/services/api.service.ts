@@ -1,0 +1,85 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment.development';
+import { Observable, catchError, map, throwError } from 'rxjs';
+import { OperationResult } from '../interfaces/operation-result.interface';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ApiService {
+  private baseUrl = environment.baseUrl;
+
+  constructor(private httpClient: HttpClient) {}
+
+  get<T>(endpoint: string, ...options: string[]): Observable<T> {
+    var url = `${this.baseUrl}/${endpoint}/${options.join('/')}`;
+    return this.httpClient.get<OperationResult<T>>(url).pipe(
+      map((result) => {
+        if (result.isSuccess) {
+          return result.data!;
+        } else {
+          throw new Error(result.message);
+        }
+      }),
+      catchError((err) => {
+        console.error(err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  post<T>(endpoint: string, body: T): Observable<any> {
+    return this.httpClient
+      .post<OperationResult<T>>(`${this.baseUrl}/${endpoint}`, body)
+      .pipe(
+        map((result) => {
+          if (result.isSuccess) {
+            return result.data ? result.data : result.isSuccess;
+          } else {
+            throw new Error(result.message);
+          }
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
+  }
+
+  put<T>(endpoint: string, body: T): Observable<any> {
+    return this.httpClient
+      .put<OperationResult<T>>(`${this.baseUrl}/${endpoint}`, body)
+      .pipe(
+        map((result) => {
+          if (result.isSuccess) {
+            return result.data ? result.data : result.isSuccess;
+          } else {
+            throw new Error(result.message);
+          }
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
+  }
+
+  delete(endpoint: string, id: number): Observable<any> {
+    return this.httpClient
+      .delete<OperationResult<any>>(`${this.baseUrl}/${endpoint}/${id}`)
+      .pipe(
+        map((result) => {
+          if (result.isSuccess) {
+            return result.data ? result.data : result.isSuccess;
+          } else {
+            throw new Error(result.message);
+          }
+        }),
+        catchError((err) => {
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
+  }
+}

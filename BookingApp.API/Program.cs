@@ -12,7 +12,7 @@ namespace BookingApp.API
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin", policy =>
+                options.AddPolicy("AllowAll", policy =>
                 {
                     policy.AllowAnyOrigin()
                           .AllowAnyHeader()
@@ -35,7 +35,7 @@ namespace BookingApp.API
                 app.UseSwaggerUI();
             }
 
-            app.UseCors("AllowSpecificOrigin");
+            app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
 

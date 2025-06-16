@@ -1,0 +1,95 @@
+<div
+  class="d-flex flex-column flex-md-row align-items-center align-items-md-start rounded-4 bg-white inter-4 w-100"
+>
+  <!--Images-->
+  <div class="d-flex flex-column p-3">
+    <div class="image-box p-3">
+      <img
+        class="image rounded-4 pb-2"
+        [src]="
+          imagesUrl +
+          (coworking?.coworking?.name! | formatImg | lowercase) +
+          '/' +
+          imageName +
+          imagesFormat
+        "
+      />
+    </div>
+  </div>
+  <!--Block that holds description-->
+  <div class="d-flex flex-column flex-fill p-3">
+    <!--Description and button-->
+    <div class="d-flex flex-column flex-md-row pt-2 mb-4 mb-md-2">
+      <div class="pe-5">
+        <h2 class="inter-6">{{ coworking?.coworking?.name }}</h2>
+        <p class="text-muted">
+          {{ coworking?.coworking?.description }}
+        </p>
+      </div>
+      <div class="d-flex flex-md-fill flex-row-reverse">
+        <button
+          [routerLink]="getWorkspaceRoute"
+          class="btn btn-primary bkn-button d-flex align-items-center justify-content-center"
+        >
+          View Details
+        </button>
+      </div>
+    </div>
+    <div class="d-flex flex-column gap-3">
+      <div class="d-flex gap-3 align-items-center">
+        <div
+          class="icon rounded-3 d-flex justify-content-center align-items-center"
+        >
+          <img
+            [src]="
+              iconsUrl +
+              (locationIconName | formatImg | lowercase) +
+              iconsFormat
+            "
+          />
+        </div>
+        <p class="inter-5" style="margin: 0">
+          {{ coworking?.address?.houseNumber }}
+          {{ coworking?.address?.street }},
+          {{ coworking?.city?.name }}
+        </p>
+      </div>
+      <div class="d-flex gap-3 align-items-center">
+        <div
+          class="icon rounded-3 d-flex justify-content-center align-items-center"
+        >
+          <img
+            [src]="
+              iconsUrl +
+              (workspaceIconName | formatImg | lowercase) +
+              iconsFormat
+            "
+          />
+        </div>
+        <p class="inter-5" style="margin: 0">
+          <span *ngIf="getRoomType(WorkspaceTypes.OPENSPACE) as openspace"
+            >🪑
+            {{ openspace.rooms.length === 0 ? "No" : openspace.rooms.length }}
+            {{ openspace.rooms.length === 1 ? "desk" : "desks" }}</span
+          >
+          ·
+          <span *ngIf="getRoomType(WorkspaceTypes.PRIVATEROOMS) as private"
+            >🔒
+            {{ private.rooms.length === 0 ? "No" : private.rooms.length }}
+            {{
+              private.rooms.length === 1 ? "private room" : "private rooms"
+            }}</span
+          >
+          ·
+          <span *ngIf="getRoomType(WorkspaceTypes.MEETINGROOMS) as meeting"
+            >👥
+            {{ meeting.rooms.length === 0 ? "No" : meeting.rooms.length }}
+            {{
+              meeting.rooms.length === 1 ? "meeting room" : "meeting rooms"
+            }}</span
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

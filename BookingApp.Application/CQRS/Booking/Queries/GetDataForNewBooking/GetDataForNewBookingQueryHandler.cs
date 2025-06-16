@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BookingApp.Application.DTOs;
-using BookingApp.Application.DTOs.Booking.GetDataForNewBooking;
 using BookingApp.Application.Interfaces;
 using BookingApp.Domain.Interfaces;
 using MediatR;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking
 {
-    public class GetDataForNewBookingQueryHandler : IRequestHandler<GetDataForNewBookingQuery, OperationResult<List<NewBookingStructureDTO>>>
+    public class GetDataForNewBookingQueryHandler : IRequestHandler<GetDataForNewBookingQuery, OperationResult<List<RoomTypeWithCapacitiesDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,17 +18,17 @@ namespace BookingApp.Application.CQRS.Booking.Queries.GetDataForNewBooking
             _unitOfWork = unitOfWork;
             _responseHandler = responseHandler;
         }
-        public async Task<OperationResult<List<NewBookingStructureDTO>>> Handle(GetDataForNewBookingQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<RoomTypeWithCapacitiesDTO>>> Handle(GetDataForNewBookingQuery request, CancellationToken cancellationToken)
         {
             try 
             {
                 var data = await _unitOfWork.RoomTypeRepository.GetRoomTypesWithCapacity();
-                var result = _mapper.Map<List<NewBookingStructureDTO>>(data);
+                var result = _mapper.Map<List<RoomTypeWithCapacitiesDTO>>(data);
                 return _responseHandler.Handle(200, data: result);
             }
             catch
             {
-                return _responseHandler.Handle<List<NewBookingStructureDTO>>(500, "An error occurred while retrieving data");
+                return _responseHandler.Handle<List<RoomTypeWithCapacitiesDTO>>(500, "An error occurred while retrieving data");
             }
         }
     }

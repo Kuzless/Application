@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
-import { BookingListComponent } from './booking/components/booking-list/booking-list.component';
+import { BookingPageComponent } from './booking/components/booking-page/booking-page.component';
 import { BookingFormComponent } from './booking/components/booking-form/booking-form.component';
 import { BookingComponent } from './booking/booking.component';
-import { BookingPersonalListComponent } from './booking/components/booking-personal-list/booking-personal-list.component';
+import { BookingPersonalPageComponent } from './booking/components/booking-personal-page/booking-personal-page.component';
+import { CoworkingPageComponent } from './booking/components/coworking-page/coworking-page.component';
 
 export const routes: Routes = [
   {
@@ -16,21 +17,25 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: BookingListComponent,
+        component: CoworkingPageComponent,
       },
       {
-        path: 'add',
+        path: 'my',
+        component: BookingPersonalPageComponent,
+      },
+      {
+        path: ':coworkingId/add',
         component: BookingFormComponent,
         data: { mode: 'add' },
       },
       {
-        path: 'edit/:id',
+        path: ':coworkingId/edit/:id',
         component: BookingFormComponent,
         data: { mode: 'edit' },
       },
       {
-        path: 'my',
-        component: BookingPersonalListComponent,
+        path: ':coworkingId',
+        component: BookingPageComponent,
       },
       {
         path: '**',

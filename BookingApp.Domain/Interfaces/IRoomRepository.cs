@@ -4,6 +4,6 @@ namespace BookingApp.Domain.Interfaces
 {
     public interface IRoomRepository : IGenericRepository<Room>
     {
-        Task<List<Room>> GetRoomsByTypeAndCapacity(int typeId, int? capacityId);
+        Task<Room?> GetAvailableRoom(int typeId, int coworkingId, int? capacityId, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, int? bookingId = null);
     }
 }
