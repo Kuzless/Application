@@ -11,6 +11,10 @@ Edit Booking.API/appsettings.Development.json:
 {
   "ConnectionStrings": {
     "PostgresDb": "Host=localhost;Port=5432;Database=BookingDb;Username=postgres;Password=your_password"
+  },
+  "Groq": {
+    "BaseUrl": "https://api.groq.com/",
+    "Key": "Your Groq Key"
   }
 }
 ```
@@ -27,6 +31,10 @@ Create Booking.API/appsettings.json:
   "AllowedHosts": "*",
   "ConnectionStrings": {
     "PostgresDb": "Host=localhost;Port=5432;Database=BookingDb;Username=postgres;Password=your_password"
+  },
+  "Groq": {
+    "BaseUrl": "https://api.groq.com/",
+    "Key": "Your Groq Key"
   }
 }
 ```
