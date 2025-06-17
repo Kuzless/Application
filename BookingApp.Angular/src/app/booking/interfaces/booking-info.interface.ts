@@ -7,5 +7,5 @@ export interface BookingInfoInterface {
   booking: BookingInterface;
   room: RoomInterface;
   roomType: RoomTypeInterface;
-  roomCapacity: RoomCapacityInterface;
+  roomCapacity: RoomCapacityInterface | null;
 }

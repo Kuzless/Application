@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../shared/services/api.service';
-import { CoworkingInfoResponseInterface } from '../../interfaces/coworking-page/coworking-page-data.interface';
+import { CoworkingPageDataInterface } from '../../interfaces/coworking-page/coworking-page-data.interface';
 import { Observable } from 'rxjs';
 import { CoworkingCardComponent } from '../coworking-card/coworking-card.component';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class CoworkingPageComponent implements OnInit {
   private readonly userId: string = localStorage.getItem('uniqueId')!;
-  pageData$?: Observable<CoworkingInfoResponseInterface[]>;
+  pageData$?: Observable<CoworkingPageDataInterface[]>;
 
   private endpoint: string = 'Workspace';
 
@@ -24,7 +24,7 @@ export class CoworkingPageComponent implements OnInit {
   }
 
   loadData() {
-    this.pageData$ = this.apiService.get<CoworkingInfoResponseInterface[]>(
+    this.pageData$ = this.apiService.get<CoworkingPageDataInterface[]>(
       this.endpoint
     );
   }

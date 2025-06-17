@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CoworkingInfoResponseInterface } from '../../interfaces/coworking-page/coworking-page-data.interface';
+import { CoworkingPageDataInterface } from '../../interfaces/coworking-page/coworking-page-data.interface';
 import { FormatImgPipe } from '../../pipes/format-img.pipe';
 import { CommonModule, LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -14,7 +14,7 @@ import { RoomTypeInterface } from '../../interfaces/base-dtos/room-type.interfac
   styleUrl: './coworking-card.component.css',
 })
 export class CoworkingCardComponent {
-  @Input() coworking?: CoworkingInfoResponseInterface;
+  @Input() coworking?: CoworkingPageDataInterface;
 
   readonly WorkspaceTypes = WorkspaceTypes;
 
