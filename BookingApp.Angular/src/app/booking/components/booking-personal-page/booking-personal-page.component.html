@@ -6,6 +6,7 @@
         <ul class="list-unstyled">
           <li class="py-3" *ngFor="let booking of coworking.bookings">
             <app-booking-personal-card
+              (delete)="onDelete($event)"
               [booking]="booking"
             ></app-booking-personal-card>
           </li>

@@ -6,6 +6,6 @@ import { RoomTypeWithCapacities } from '../room-type-with-capacities.interface';
 export interface BookingEditFormDataInterface {
   booking: BookingInterface;
   roomType: RoomTypeInterface;
-  roomCapacity: RoomCapacityInterface;
+  roomCapacity: RoomCapacityInterface | null;
   roomTypes: RoomTypeWithCapacities[];
 }
